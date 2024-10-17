@@ -16,6 +16,11 @@ export enum loras {
   wukong = "https://huggingface.co/wanghaofan/Black-Myth-Wukong-FLUX-LoRA/resolve/main/pytorch_lora_weights.safetensors",
   alvdansen = "https://huggingface.co/alvdansen/flux-koda/resolve/main/araminta_k_flux_koda.safetensors",
   AWPortrait = "https://huggingface.co/prithivMLmods/Canopus-LoRA-Flux-FaceRealism/resolve/main/Canopus-LoRA-Flux-FaceRealism.safetensors",
+  Realism = "https://huggingface.co/XLabs-AI/flux-RealismLora/resolve/main/lora.safetensors",
+  Boreal = "https://huggingface.co/kudzueye/Boreal/blob/main/boreal-flux-dev-lora-v04_1000_steps.safetensors",
+  Tarot = "https://huggingface.co/multimodalart/flux-tarot-v1/blob/main/flux_tarot_v1_lora.safetensors",
+  Anime = "https://huggingface.co/brushpenbob/flux-midjourney-anime/blob/main/FLUX_MidJourney_Anime.safetensors",
+  Logo = "https://huggingface.co/Shakker-Labs/FLUX.1-dev-LoRA-Logo-Design/blob/main/FLUX-dev-lora-Logo-Design.safetensors",
 }
 
 export const LoraConfig = {
@@ -30,6 +35,26 @@ export const LoraConfig = {
   [loras.AWPortrait]: {
     name: "Portrait Lora",
     styleName: "Portrait Style",
+  },
+  [loras.Realism]: {
+    name: "Realism Lora",
+    styleName: "Realism Style",
+  },
+  [loras.Boreal]: {
+    name: "Boring Reality",
+    styleName: "Boring Reality Style",
+  },
+  [loras.Tarot]: {
+    name: "Tarot Card",
+    styleName: "Tarot Card Style",
+  },
+  [loras.Anime]: {
+    name: "Anime",
+    styleName: "Anime Style",
+  },
+  [loras.Logo]: {
+    name: "Logo Design",
+    styleName: "Logo Design Style",
   },
 };
 
