@@ -18,7 +18,7 @@ export enum loras {
   AWPortrait = "https://huggingface.co/prithivMLmods/Canopus-LoRA-Flux-FaceRealism/resolve/main/Canopus-LoRA-Flux-FaceRealism.safetensors",
   Realism = "https://huggingface.co/XLabs-AI/flux-RealismLora/resolve/main/lora.safetensors",
   Boreal = "https://huggingface.co/kudzueye/boreal-flux-dev-v2/resolve/main/boreal_flux_dev_lora_v04_1000_steps.safetensors",
-  Tarot = "https://huggingface.co/multimodalart/flux-tarot-v1/resolve/main/flux_tarot_v1_lora.safetensors",
+  Tarot = "https://huggingface.co/multimodalart/flux-tarot-v1/blob/main/flux_tarot_v1_lora.safetensors",
   Anime = "https://huggingface.co/brushpenbob/flux-midjourney-anime/resolve/main/brushpenbob/flux-midjourney-anime",
   Logo = "https://huggingface.co/Shakker-Labs/FLUX.1-dev-LoRA-Logo-Design/resolve/main/FLUX_dev_lora_Logo_Design.safetensors",
 }
