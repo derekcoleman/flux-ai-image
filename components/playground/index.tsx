@@ -135,8 +135,6 @@ export default function Playground({
     const key = "GENERATOR_PROMPT";
     const _prompt = window.sessionStorage.getItem(key);
     if (_prompt || generatedPrompt) {
-      console.log("oooooooooooooooooo");
-
       setInputPrompt(_prompt || generatedPrompt);
       window.sessionStorage.removeItem(key);
     }

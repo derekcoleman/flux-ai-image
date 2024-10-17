@@ -13,15 +13,12 @@ import { redis } from "@/lib/redis";
 import { defaultLocale, localePrefix, locales } from "./config";
 
 export const config = {
-  matcher: [
-    "/",
-    "/(zh|en)/:path*",
-    "/((?!static|.*\\..*|_next).*)",
-  ], // Run middleware on API routes],
+  matcher: ["/", "/(zh|en)/:path*", "/((?!static|.*\\..*|_next).*)"], // Run middleware on API routes],
 };
 const isProtectedRoute = createRouteMatcher([
   "/:locale/app(.*)",
   "/:locale/admin(.*)",
+  "/app(.*)",
 ]);
 const isPublicRoute = createRouteMatcher(["/api/webhooks(.*)"]);
 
