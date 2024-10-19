@@ -22,6 +22,11 @@ export enum loras {
   Logo = "https://huggingface.co/Shakker-Labs/FLUX.1-dev-LoRA-Logo-Design/blob/main/FLUX-dev-lora-Logo-Design.safetensors",
   Sketch = "https://huggingface.co/Shakker-Labs/FLUX.1-dev-LoRA-Children-Simple-Sketch/blob/main/FLUX-dev-lora-children-simple-sketch.safetensors",
   Comic = "https://huggingface.co/renderartist/retrocomicflux/blob/main/Retro_Comic_Flux_v1_renderartist.safetensors",
+  Illustration = "https://huggingface.co/aleksa-codes/flux-ghibsky-illustration/blob/main/lora.safetensors",
+  Cyberpunk = "https://huggingface.co/fofr/flux-80s-cyberpunk/blob/main/lora.safetensors",
+  Half_Illustration = "https://huggingface.co/davisbro/half_illustration/blob/main/flux_train_replicate.safetensors",
+  Retro_Futurism = "https://huggingface.co/martintomov/retrofuturism-flux/blob/main/retrofuturism_flux_lora_martintomov_v1.safetensors",
+  The_Point = "https://huggingface.co/alvdansen/the-point-flux/blob/main/thepoint_flux_araminta_k.safetensors",
 }
 
 export const LoraConfig = {
@@ -60,6 +65,26 @@ export const LoraConfig = {
   [loras.Comic]: {
     name: "Retro Comic",
     styleName: "Retro Comic Style",
+  },
+  [loras.Illustration]: {
+    name: "Illustration",
+    styleName: "Illustration Style",
+  },
+  [loras.Cyberpunk]: {
+    name: "Cyberpunk",
+    styleName: "Cyberpunk Style",
+  },
+  [loras.Half_Illustration]: {
+    name: "Half Illustration",
+    styleName: "Half Illustration Style",
+  },
+  [loras.Retro_Futurism]: {
+    name: "Retro Futurism",
+    styleName: "Retro Futurism Style",
+  },
+  [loras.The_Point]: {
+    name: "Soft Retro",
+    styleName: "Soft Retro Style",
   },
 };
 
