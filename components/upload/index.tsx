@@ -120,7 +120,6 @@ const FormUpload = (props: FormUploadProps) => {
             method: "PUT",
             headers: {
               "Content-Type": file.type,
-              "x-amz-acl": "public-read",
             },
           }),
         ]);

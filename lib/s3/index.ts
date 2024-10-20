@@ -199,7 +199,7 @@ export class S3Service {
     bucket = this.bucket,
   ) {
     let path = options && options.path ? options.path : "";
-    const acl = options && options.acl ? options.acl : "public-read";
+    // const acl = options && options.acl ? options.acl : "public-read";
 
     if (path) path = path.startsWith("/") ? path.replace("/", "") : `${path}`;
 
@@ -207,7 +207,7 @@ export class S3Service {
     const putParams: PutObjectCommandInput = {
       Bucket: bucket,
       Key: key,
-      ACL: acl,
+      // ACL: acl,
     };
     // const response = await this.s3Client.send(
     //   new PutBucketCorsCommand({
