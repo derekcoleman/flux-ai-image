@@ -139,34 +139,36 @@ export async function POST(req: NextRequest, { params }: Params) {
 
     const input = {
       prompt: finalPrompt,
-      ...(modelName === "black-forest-labs/flux-1.1-pro"
-        ? {
-            safety_tolerance: 2,
-            prompt_upsampling: true,
-          }
-        : {
-            hf_lora: loraName,
-            lora_scale: 0.8,
-            guidance_scale: 3,
-            num_inference_steps: 25,
-          }),
-      ...(modelName === "black-forest-labs/flux-dev"
-        ? {
-            image: inputImageUrl,
-            go_fast: true,
-            guidance: 3.5,
-            megapixels: "1",
-            num_inference_steps: 28,
-          }
-        : {}),
-
-      guidance: 4,
-      num_inference_steps: 25,
-      prompt_strength: 0.8,
-      num_outputs: 1,
       aspect_ratio: aspectRatio,
       output_format: "webp",
       output_quality: 80,
+      ...(modelName === "black-forest-labs/flux-1.1-pro" && {
+        safety_tolerance: 2,
+        prompt_upsampling: true,
+      }),
+      ...(modelName === "black-forest-labs/flux-schnell" && {
+        go_fast: true,
+        megapixels: "1",
+        num_outputs: 1,
+        num_inference_steps: 4,
+      }),
+      ...(modelName === "black-forest-labs/flux-dev" && {
+        image: inputImageUrl,
+        go_fast: true,
+        guidance: 3.5,
+        megapixels: "1",
+        num_outputs: 1,
+        prompt_strength: 0.8,
+        num_inference_steps: 28,
+      }),
+      ...(modelName === "lucataco/flux-dev-lora" && {
+        hf_lora: loraName,
+        lora_scale: 0.8,
+        num_outputs: 1,
+        guidance_scale: 3.5,
+        prompt_strength: 0.8,
+        num_inference_steps: 28,
+      }),
     };
 
     const replicateRes = await replicate.run(`${modelName}:${modelId}`, {

@@ -151,6 +151,7 @@ export default function Playground({
 
   useEffect(() => {
     if (!queryTask.data?.data?.id) {
+      setFluxData(undefined);
       return;
     }
 
@@ -222,6 +223,8 @@ export default function Playground({
     copy(prompt);
     toast.success(t("action.copySuccess"));
   };
+
+  console.log({ imageUrl: fluxData?.imageUrl });
 
   return (
     <div className="overflow-hidden rounded-[0.5rem] border bg-background shadow">
