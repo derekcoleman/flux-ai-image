@@ -7,7 +7,7 @@ import Replicate from "replicate";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
-import { Credits, model, Ratio } from "@/config/constants";
+import { Credits, loraTriggerWords, model, Ratio } from "@/config/constants";
 import { FluxHashids } from "@/db/dto/flux.dto";
 import { ReplicateHashids } from "@/db/dto/replicate.dto";
 import { prisma } from "@/db/prisma";
@@ -57,7 +57,7 @@ const CreateGenerateSchema = z.object({
 
 export async function POST(req: NextRequest, { params }: Params) {
   const { userId } = auth();
-
+  let triggerWord = "";
   const user = await currentUser();
   if (!userId || !user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -86,6 +86,14 @@ export async function POST(req: NextRequest, { params }: Params) {
       loraName,
       inputImageUrl,
     } = CreateGenerateSchema.parse(data);
+
+    if (loraTriggerWords.hasOwnProperty(loraName || "")) {
+      triggerWord = loraTriggerWords[loraName || ""];
+    }
+    const finalPrompt = triggerWord
+      ? `${inputPrompt} ${triggerWord}`
+      : inputPrompt;
+
     const modelId =
       "091495765fa5ef2725a175a57b276ec30dc9d39c22d30410f2ede68a3eab66b3";
     const headers = new Headers();
@@ -130,16 +138,37 @@ export async function POST(req: NextRequest, { params }: Params) {
     });
 
     const input = {
-      prompt: inputPrompt,
-      hf_lora: loraName,
-      lora_scale: 0.8,
-      num_outputs: 1,
+      prompt: finalPrompt,
       aspect_ratio: aspectRatio,
       output_format: "webp",
-      guidance_scale: 3,
       output_quality: 80,
-      prompt_strength: 0.8,
-      num_inference_steps: 25,
+      ...(modelName === "black-forest-labs/flux-1.1-pro" && {
+        safety_tolerance: 2,
+        prompt_upsampling: true,
+      }),
+      ...(modelName === "black-forest-labs/flux-schnell" && {
+        go_fast: true,
+        megapixels: "1",
+        num_outputs: 1,
+        num_inference_steps: 4,
+      }),
+      ...(modelName === "black-forest-labs/flux-dev" && {
+        image: inputImageUrl,
+        go_fast: true,
+        guidance: 3.5,
+        megapixels: "1",
+        num_outputs: 1,
+        prompt_strength: 0.8,
+        num_inference_steps: 28,
+      }),
+      ...(modelName === "lucataco/flux-dev-lora" && {
+        hf_lora: loraName,
+        lora_scale: 0.8,
+        num_outputs: 1,
+        guidance_scale: 3.5,
+        prompt_strength: 0.8,
+        num_inference_steps: 28,
+      }),
     };
 
     const replicateRes = await replicate.run(`${modelName}:${modelId}`, {
@@ -220,7 +249,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       data: {
         userId: userId, // Required field
         replicateId: replicateId, // Required field
-        inputPrompt: inputPrompt, // Optional
+        inputPrompt: finalPrompt, // Optional
         inputImageUrl: inputImageUrl, // Optional
         imageUrl: s3Response.completedUrl, // Optional
         model: `${modelName}:${modelId}`, // Required field
@@ -269,7 +298,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       id: FluxHashids.encode(fluxData.id),
       imageUrl: s3Response.completedUrl,
       aspectRatio: aspectRatio,
-      inputPrompt: inputPrompt,
+      inputPrompt: finalPrompt,
       model: modelName,
     });
   } catch (error) {

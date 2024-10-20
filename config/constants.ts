@@ -5,7 +5,7 @@ export const Prefix = "meme";
 export const IconPrefix = Prefix + "-icon";
 
 export enum model {
-  pro = "black-forest-labs/flux-pro",
+  pro = "black-forest-labs/flux-1.1-pro",
   schnell = "black-forest-labs/flux-schnell",
   dev = "black-forest-labs/flux-dev",
   general = "lucataco/flux-dev-lora",
@@ -28,6 +28,23 @@ export enum loras {
   Retro_Futurism = "https://huggingface.co/martintomov/retrofuturism-flux/blob/main/retrofuturism_flux_lora_martintomov_v1.safetensors",
   The_Point = "https://huggingface.co/alvdansen/the-point-flux/blob/main/thepoint_flux_araminta_k.safetensors",
 }
+
+export const loraTriggerWords = {
+  [loras.wukong]: "in the style of wukong",
+  [loras.alvdansen]: "in flmft style",
+  [loras.AWPortrait]: "in the style offace realism",
+  [loras.Boreal]: "in photo style",
+  [loras.Tarot]: "in the style of TOK a trtcrd tarot style",
+  [loras.Anime]: "in egmid style",
+  [loras.Logo]: "wablogo, logo, Minimalist",
+  [loras.Sketch]: "in sketched style",
+  [loras.Comic]: "in comic book panel style",
+  [loras.Illustration]: "in GHIBSKY style",
+  [loras.Cyberpunk]: "in 80s cyberpunk style",
+  [loras.Half_Illustration]: "in the style of TOK",
+  [loras.Retro_Futurism]: "in retrofuturism style",
+  [loras.The_Point]: "in pnt style",
+};
 
 export const LoraConfig = {
   [loras.wukong]: {
@@ -97,7 +114,7 @@ export const Credits = {
 };
 
 export const ModelName = {
-  [model.pro]: "FLUX.1 [pro]",
+  [model.pro]: "FLUX.1.1 [pro]",
   [model.schnell]: "FLUX.1 [schnell]",
   [model.dev]: "FLUX.1 [dev]",
   [model.general]: "FLUX.1 General",
