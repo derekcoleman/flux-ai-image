@@ -16,11 +16,17 @@ export enum loras {
   wukong = "https://huggingface.co/wanghaofan/Black-Myth-Wukong-FLUX-LoRA/resolve/main/pytorch_lora_weights.safetensors",
   alvdansen = "https://huggingface.co/alvdansen/flux-koda/resolve/main/araminta_k_flux_koda.safetensors",
   AWPortrait = "https://huggingface.co/prithivMLmods/Canopus-LoRA-Flux-FaceRealism/resolve/main/Canopus-LoRA-Flux-FaceRealism.safetensors",
-  Realism = "https://huggingface.co/XLabs-AI/flux-RealismLora/resolve/main/lora.safetensors",
   Boreal = "https://huggingface.co/kudzueye/Boreal/blob/main/boreal-flux-dev-lora-v04_1000_steps.safetensors",
   Tarot = "https://huggingface.co/multimodalart/flux-tarot-v1/blob/main/flux_tarot_v1_lora.safetensors",
   Anime = "https://huggingface.co/brushpenbob/flux-midjourney-anime/blob/main/FLUX_MidJourney_Anime.safetensors",
   Logo = "https://huggingface.co/Shakker-Labs/FLUX.1-dev-LoRA-Logo-Design/blob/main/FLUX-dev-lora-Logo-Design.safetensors",
+  Sketch = "https://huggingface.co/Shakker-Labs/FLUX.1-dev-LoRA-Children-Simple-Sketch/blob/main/FLUX-dev-lora-children-simple-sketch.safetensors",
+  Comic = "https://huggingface.co/renderartist/retrocomicflux/blob/main/Retro_Comic_Flux_v1_renderartist.safetensors",
+  Illustration = "https://huggingface.co/aleksa-codes/flux-ghibsky-illustration/blob/main/lora.safetensors",
+  Cyberpunk = "https://huggingface.co/fofr/flux-80s-cyberpunk/blob/main/lora.safetensors",
+  Half_Illustration = "https://huggingface.co/davisbro/half_illustration/blob/main/flux_train_replicate.safetensors",
+  Retro_Futurism = "https://huggingface.co/martintomov/retrofuturism-flux/blob/main/retrofuturism_flux_lora_martintomov_v1.safetensors",
+  The_Point = "https://huggingface.co/alvdansen/the-point-flux/blob/main/thepoint_flux_araminta_k.safetensors",
 }
 
 export const LoraConfig = {
@@ -35,10 +41,6 @@ export const LoraConfig = {
   [loras.AWPortrait]: {
     name: "Portrait Lora",
     styleName: "Portrait Style",
-  },
-  [loras.Realism]: {
-    name: "Realism Lora",
-    styleName: "Realism Style",
   },
   [loras.Boreal]: {
     name: "Boring Reality",
@@ -55,6 +57,34 @@ export const LoraConfig = {
   [loras.Logo]: {
     name: "Logo Design",
     styleName: "Logo Design Style",
+  },
+  [loras.Sketch]: {
+    name: "Children Sketch",
+    styleName: "Children Sketch Style",
+  },
+  [loras.Comic]: {
+    name: "Retro Comic",
+    styleName: "Retro Comic Style",
+  },
+  [loras.Illustration]: {
+    name: "Illustration",
+    styleName: "Illustration Style",
+  },
+  [loras.Cyberpunk]: {
+    name: "Cyberpunk",
+    styleName: "Cyberpunk Style",
+  },
+  [loras.Half_Illustration]: {
+    name: "Half Illustration",
+    styleName: "Half Illustration Style",
+  },
+  [loras.Retro_Futurism]: {
+    name: "Retro Futurism",
+    styleName: "Retro Futurism Style",
+  },
+  [loras.The_Point]: {
+    name: "Soft Retro",
+    styleName: "Soft Retro Style",
   },
 };
 
