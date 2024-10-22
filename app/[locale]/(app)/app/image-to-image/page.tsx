@@ -22,5 +22,11 @@ export default async function PlaygroundPage({
   unstable_setRequestLocale(locale);
   const { data: chargeProduct } = await getChargeProduct(locale);
 
-  return <Playground locale={locale} chargeProduct={chargeProduct} />;
+  return (
+    <Playground
+      locale={locale}
+      chargeProduct={chargeProduct}
+      tab="ImageToImage"
+    />
+  );
 }

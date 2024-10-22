@@ -25,8 +25,11 @@ import {
   MoreVertical,
   Plus,
   Puzzle,
+  RectangleHorizontal,
+  RectangleVertical,
   Search,
   Settings,
+  Square,
   SunMedium,
   Trash,
   User,
@@ -47,8 +50,12 @@ export const Icons = {
   copy: Copy,
   ellipsis: MoreVertical,
   lineChart: LineChart,
+  Image,
   Gift,
   Eraser,
+  Square,
+  RectangleHorizontal,
+  RectangleVertical,
   History,
   Languages,
   HomeIcon,
@@ -84,6 +91,38 @@ export const Icons = {
         d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
         fill="currentColor"
       />
+    </svg>
+  ),
+  TwoByThree: ({ ...props }: LucideProps) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      {...props}
+    >
+      <rect width="14" height="18" x="6" y="2" rx="2" />
+    </svg>
+  ),
+  ThreeByTwo: ({ ...props }: LucideProps) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      {...props}
+    >
+      <rect height="14" width="18" y="6" x="2" rx="2" />
     </svg>
   ),
   help: HelpCircle,
@@ -278,7 +317,11 @@ export const Icons = {
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="var(--stop-color)" />
-          <stop offset={0.5087} stopColor="var(--stop-color)" stopOpacity={0.42} />
+          <stop
+            offset={0.5087}
+            stopColor="var(--stop-color)"
+            stopOpacity={0.42}
+          />
           <stop offset={1} stopColor="var(--stop-color)" />
         </linearGradient>
       </defs>

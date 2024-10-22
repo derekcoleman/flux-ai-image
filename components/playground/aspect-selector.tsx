@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { useTranslations } from "next-intl";
 
+import { Icons } from "@/components/shared/icons";
 import {
   HoverCard,
   HoverCardContent,
@@ -12,9 +13,14 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Ratio } from "@/config/constants";
 
+interface AspectRatio {
+  Ratio: Ratio;
+  icon: string; // This will restrict it to valid keys in the Icons object
+}
+
 interface SelectorProps {
   ratio: Ratio;
-  aspectRatios: Ratio[];
+  aspectRatios: AspectRatio[];
   className?: string;
   onChange: (ratio: Ratio) => void;
 }
@@ -41,11 +47,17 @@ export function AspectRatioSelector({
         </HoverCard>
 
         <TabsList className="grid grid-cols-5">
-          {aspectRatios.map((ratio) => (
-            <TabsTrigger key={ratio} value={ratio}>
-              {ratio}
-            </TabsTrigger>
-          ))}
+          {aspectRatios.map((ratio) => {
+            const Icon = Icons[ratio.icon || "arrowRight"];
+            return (
+              <TabsTrigger key={ratio.Ratio} value={ratio.Ratio}>
+                <div className="flex flex-col items-center">
+                  <Icon className="size-5" />
+                  {ratio.Ratio}
+                </div>
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
       </div>
     </Tabs>

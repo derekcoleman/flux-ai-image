@@ -13,7 +13,12 @@ import { toast } from "sonner";
 import BlurFade from "@/components/magicui/blur-fade";
 import { AspectRatioSelector } from "@/components/playground/aspect-selector";
 import { ModelSelector } from "@/components/playground/model-selector";
-import { Model, models, types } from "@/components/playground/models";
+import {
+  ImageToImageModel,
+  Model,
+  TextToImageModel,
+  types,
+} from "@/components/playground/models";
 import { PrivateSwitch } from "@/components/playground/private-switch";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +30,14 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Locale } from "@/config";
-import { Credits, loras, model, ModelName, Ratio } from "@/config/constants";
+import {
+  Credits,
+  ImageToImageModelName,
+  loras,
+  model,
+  Ratio,
+  TextToImageModelName,
+} from "@/config/constants";
 import {
   ChargeProductSelectDto,
   FluxSelectDto,
@@ -42,7 +54,13 @@ import Upload from "../upload";
 import ComfortingMessages from "./comforting";
 import Loading from "./loading";
 
-const aspectRatios = [Ratio.r1, Ratio.r2, Ratio.r3, Ratio.r4, Ratio.r5];
+const aspectRatios = [
+  { Ratio: Ratio.r1, icon: "Square" },
+  { Ratio: Ratio.r2, icon: "RectangleHorizontal" },
+  { Ratio: Ratio.r3, icon: "RectangleVertical" },
+  { Ratio: Ratio.r4, icon: "ThreeByTwo" },
+  { Ratio: Ratio.r5, icon: "TwoByThree" },
+];
 
 const useCreateTaskMutation = (config?: {
   onSuccess: (result: any) => void;
@@ -79,10 +97,13 @@ export enum FluxTaskStatus {
 export default function Playground({
   locale,
   chargeProduct,
+  tab,
 }: {
   locale: string;
   chargeProduct?: ChargeProductSelectDto[];
+  tab: string;
 }) {
+  const models = tab === "ImageToImage" ? ImageToImageModel : TextToImageModel;
   const [isPublic, setIsPublic] = React.useState(true);
   const [selectedModel, setSelectedModel] = React.useState<Model>(models[0]);
   const [ratio, setRatio] = React.useState<Ratio>(Ratio.r1);
@@ -102,8 +123,11 @@ export default function Playground({
     setInputPrompt,
     generatedPrompt,
     handleGenerate,
-    loading: genrateLoading,
+    loading: isgenerateLoading,
   } = useGenerator();
+
+  const ModelName =
+    tab === "ImageToImage" ? ImageToImageModelName : TextToImageModelName;
 
   const queryTask = useQuery({
     queryKey: ["queryFluxTask", fluxId],
@@ -224,7 +248,7 @@ export default function Playground({
     toast.success(t("action.copySuccess"));
   };
 
-  console.log({ imageUrl: fluxData?.imageUrl });
+  console.log({ ModelName });
 
   return (
     <div className="overflow-hidden rounded-[0.5rem] border bg-background shadow">
@@ -427,7 +451,7 @@ export default function Playground({
                 <Button
                   className="w-40"
                   disabled={
-                    genrateLoading ||
+                    isgenerateLoading ||
                     !inputPrompt.length ||
                     loading ||
                     (generateLoading && !!fluxId)
@@ -451,9 +475,9 @@ export default function Playground({
                 {Boolean(inputPrompt.length) && (
                   <Button
                     onClick={handleGenerate}
-                    disabled={loading || genrateLoading}
+                    disabled={loading || isgenerateLoading}
                   >
-                    {genrateLoading ? (
+                    {isgenerateLoading ? (
                       <>
                         <Icons.spinner className="mr-2 size-4 animate-spin" />{" "}
                         Enhancing...

@@ -11,9 +11,7 @@ interface PageProps {
   params: { locale: string };
 }
 
-export async function generateMetadata({
-  params: { locale },
-}: PageProps) {
+export async function generateMetadata({ params: { locale } }: PageProps) {
   const t = await getTranslations({ locale, namespace: "GiftCode" });
 
   return {
@@ -21,7 +19,6 @@ export async function generateMetadata({
     description: t("text"),
   };
 }
-
 
 export default async function SettingsPage({ params: { locale } }: PageProps) {
   unstable_setRequestLocale(locale);

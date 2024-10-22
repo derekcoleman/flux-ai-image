@@ -398,7 +398,8 @@
   },
   "AppNavigation": {
     "Index": "首页",
-    "Generate": "AI 生图",
+    "TextToImage": "文本到图像",
+    "ImageToImage": "s",
     "History": "历史记录",
     "GiftCode": "兑换",
     "ChargeOrder": "充值订单"

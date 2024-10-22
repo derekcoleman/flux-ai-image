@@ -2,9 +2,8 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { SidebarNavItem } from "@/types";
 
-import { cn } from "@/lib/utils";
+import { Icons } from "@/components/shared/icons";
 import { Button } from "@/components/ui/button";
 import {
   CommandDialog,
@@ -14,7 +13,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Icons } from "@/components/shared/icons";
+import { cn } from "@/lib/utils";
+import { SidebarNavItem } from "@/types";
 
 export function SearchCommand({ links }: { links: SidebarNavItem[] }) {
   const [open, setOpen] = React.useState(false);
@@ -56,10 +56,7 @@ export function SearchCommand({ links }: { links: SidebarNavItem[] }) {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           {links.map((section) => (
-            <CommandGroup
-              key={section.title}
-              heading={section.title}
-            >
+            <CommandGroup key={section.title} heading={section.title}>
               {section?.items?.map((item) => {
                 const Icon = Icons[item.icon || "arrowRight"];
                 return (

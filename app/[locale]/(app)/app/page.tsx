@@ -6,9 +6,7 @@ interface PageProps {
   params: { locale: string };
 }
 
-export async function generateMetadata({
-  params: { locale },
-}: PageProps) {
+export async function generateMetadata({ params: { locale } }: PageProps) {
   const t = await getTranslations({ locale, namespace: "Billings" });
 
   return {

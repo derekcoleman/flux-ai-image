@@ -381,7 +381,8 @@
   },
   "AppNavigation": {
     "Index": "Accueil",
-    "Generate": "Générer",
+    "TextToImage": "texte en image",
+    "ImageToImage": "s",
     "History": "Historique",
     "GiftCode": "Code cadeau",
     "ChargeOrder": "Recharger"
