@@ -12,7 +12,12 @@ import { toast } from "sonner";
 
 import BlurFade from "@/components/magicui/blur-fade";
 import { AspectRatioSelector } from "@/components/playground/aspect-selector";
-import { Model, models, types } from "@/components/playground/models";
+import {
+  ImageToImageModel,
+  Model,
+  TextToImageModel,
+  types,
+} from "@/components/playground/models";
 import { PrivateSwitch } from "@/components/playground/private-switch";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,8 +54,13 @@ import Upload from "../upload";
 import ComfortingMessages from "./comforting";
 import Loading from "./loading";
 
-const aspectRatios = [Ratio.r1, Ratio.r4, Ratio.r7, Ratio.r2, Ratio.r3];
-
+const aspectRatios = [
+  { Ratio: Ratio.r1, icon: "Square" },
+  { Ratio: Ratio.r2, icon: "RectangleHorizontal" },
+  { Ratio: Ratio.r3, icon: "RectangleVertical" },
+  { Ratio: Ratio.r4, icon: "ThreeByTwo" },
+  { Ratio: Ratio.r5, icon: "TwoByThree" },
+];
 const useCreateTaskMutation = (config?: {
   onSuccess: (result: any) => void;
 }) => {
@@ -90,6 +100,8 @@ export default function Playground({
   locale: string;
   chargeProduct?: ChargeProductSelectDto[];
 }) {
+  const models = [...TextToImageModel, ...ImageToImageModel];
+
   const [isPublic, setIsPublic] = React.useState(true);
   const [selectedModel, setSelectedModel] = React.useState<Model>(models[0]);
   const [ratio, setRatio] = React.useState<Ratio>(Ratio.r1);

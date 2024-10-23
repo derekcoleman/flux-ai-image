@@ -113,13 +113,18 @@ export const Credits = {
   [model.freeSchnell]: 0,
 };
 
-export const ModelName = {
+export const TextToImageModelName = {
   [model.pro]: "FLUX.1.1 [pro]",
   [model.schnell]: "FLUX.1 [schnell]",
-  [model.dev]: "FLUX.1 [dev]",
   [model.general]: "FLUX.1 General",
   [model.freeSchnell]: "FLUX.1 [schnell]",
 };
+
+export const ImageToImageModelName = {
+  [model.dev]: "FLUX.1 [dev]",
+};
+
+export const ModelName = { ...ImageToImageModelName, ...TextToImageModelName };
 
 export enum Ratio {
   r1 = "1:1",

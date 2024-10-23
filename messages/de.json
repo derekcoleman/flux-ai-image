@@ -381,7 +381,8 @@
   },
   "AppNavigation": {
     "Index": "Startseite",
-    "Generate": "Generieren",
+    "TextToImage": "Text zu Bild",
+    "ImageToImage": "s",
     "History": "Geschichte",
     "GiftCode": "Geschenkgutschein",
     "ChargeOrder": "Aufladungsbestellung"

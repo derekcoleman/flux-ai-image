@@ -381,7 +381,8 @@
   },
   "AppNavigation": {
     "Index": "الرئيسية",
-    "Generate": "توليد",
+    "TextToImage": "متن به تصویر",
+    "ImageToImage": "s",
     "History": "السجل",
     "GiftCode": "كود الهدية",
     "ChargeOrder": "طلب الشحن"

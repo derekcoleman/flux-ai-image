@@ -74,7 +74,7 @@ export default async function ExplorePage({
           > */}
           <div className="masonry-grid columns-1 md:columns-2 lg:columns-3 xl:columns-4">
             {fluxData.data?.data?.map((item, idx) => {
-              // console.log(item.imageUrl, item.inputPrompt.slice(0, 10));
+              console.log(item.imageUrl, item.inputPrompt.slice(0, 10));
 
               return (
                 <div
@@ -107,7 +107,7 @@ export default async function ExplorePage({
                   <Link
                     className="absolute right-1 top-1 !m-0"
                     target="_blank"
-                    href={`https://pinterest.com/pin/create/button/?url=https://pinterest.com/pin/create/button/?description=${encodeURIComponent(item.inputPrompt!)}&url=${encodeURIComponent(item.imageUrl!)}`}
+                    href={`https://pinterest.com/pin/create/button/?url=https://pinterest.com/pin/create/button/?description=${encodeURIComponent(item.inputPrompt!)}&url=${`vizyai.com/d/${item.id}`}`}
                   >
                     <span className="[&>svg]:h-7 [&>svg]:w-7 [&>svg]:fill-[#e60023]">
                       <svg

@@ -12,7 +12,7 @@ export interface Model<Type = string> {
   type: Type;
 }
 
-export const models: Model<ModelType>[] = [
+export const TextToImageModel: Model<ModelType>[] = [
   {
     id: model.pro,
     name: ModelName[model.pro],
@@ -32,16 +32,19 @@ export const models: Model<ModelType>[] = [
     //   "Language translation, complex classification, sentiment, summarization",
   },
   {
+    id: model.general,
+    name: ModelName[model.general],
+    description: "For LoRA use. Choose to see LoRAs.",
+    type: "Flux AI",
+  },
+];
+
+export const ImageToImageModel: Model<ModelType>[] = [
+  {
     id: model.dev,
     name: ModelName[model.dev],
     description:
       "FLUX.1, a 12B parameters text-to-image model with outstanding aesthetics. text-to-imageinference",
-    type: "Flux AI",
-  },
-  {
-    id: model.general,
-    name: ModelName[model.general],
-    description: "For LoRA use. Choose to see LoRAs.",
     type: "Flux AI",
   },
 ];

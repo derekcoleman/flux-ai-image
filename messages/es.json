@@ -381,7 +381,8 @@
   },
   "AppNavigation": {
     "Index": "Inicio",
-    "Generate": "Generar",
+    "TextToImage": "texto a imagen",
+    "ImageToImage": "s",
     "History": "Historial",
     "GiftCode": "Código de Regalo",
     "ChargeOrder": "Orden de Carga"

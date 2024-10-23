@@ -381,7 +381,8 @@
   },
   "AppNavigation": {
     "Index": "홈",
-    "Generate": "생성",
+    "TextToImage": "텍스트를 이미지로",
+    "ImageToImage": "s",
     "History": "역사",
     "GiftCode": "선물 코드",
     "ChargeOrder": "충전 주문"

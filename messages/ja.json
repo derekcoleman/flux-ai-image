@@ -381,7 +381,8 @@
   },
   "AppNavigation": {
     "Index": "ホーム",
-    "Generate": "生成",
+    "TextToImage": "文本到图像",
+    "ImageToImage": "s",
     "History": "履歴",
     "GiftCode": "ギフトコード",
     "ChargeOrder": "チャージオーダー"

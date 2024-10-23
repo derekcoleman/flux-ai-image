@@ -388,7 +388,8 @@
   },
   "AppNavigation": {
     "Index": "Home",
-    "Generate": "Generate",
+    "TextToImage": "Text to Image",
+    "ImageToImage": "Image to Image",
     "History": "Images",
     "GiftCode": "Gift Code",
     "ChargeOrder": "Billing"
