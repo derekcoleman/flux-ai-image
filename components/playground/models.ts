@@ -31,7 +31,6 @@ export const TextToImageModel: Model<ModelType>[] = [
     // strengths:
     //   "Language translation, complex classification, sentiment, summarization",
   },
-
   {
     id: model.general,
     name: ModelName[model.general],
