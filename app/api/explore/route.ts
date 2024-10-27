@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import { model } from "@/config/constants";
@@ -7,7 +8,6 @@ import { FluxHashids } from "@/db/dto/flux.dto";
 import { prisma } from "@/db/prisma";
 import { FluxTaskStatus } from "@/db/type";
 import { getErrorMessage } from "@/lib/handle-error";
-import { Prisma } from "@prisma/client";
 
 const searchParamsSchema = z.object({
   page: z.coerce.number().default(1),
@@ -17,7 +17,6 @@ const searchParamsSchema = z.object({
 });
 
 export async function GET(req: NextRequest) {
-
   try {
     const url = new URL(req.url);
     const values = searchParamsSchema.parse(

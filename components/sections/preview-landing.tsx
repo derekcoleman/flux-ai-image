@@ -1,4 +1,3 @@
-import { use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -13,8 +12,8 @@ export default async function PreviewLanding() {
         role="list"
         className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4"
       >
-        {data?.map((item) => (
-          <div className="mt-6" data-id={item.id} key={item.id}>
+        {data?.map((item, i) => (
+          <div className="mt-6" data-id={item.id} key={i}>
             <div className="checkerboard relative flex items-start justify-center rounded-xl">
               <I18nLink href={`/face/${item.id}`} className="cursor-pointer">
                 {item.imageUrl && (

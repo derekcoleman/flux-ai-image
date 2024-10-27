@@ -12,10 +12,12 @@ import { getErrorMessage } from "@/lib/handle-error";
 
 export function DownloadAction({
   id,
+  fluxImageIds,
   disabled,
   showText,
 }: {
   id: string;
+  fluxImageIds?: string[];
   disabled?: boolean;
   showText?: boolean;
 }) {
@@ -28,23 +30,34 @@ export function DownloadAction({
     if (isDownloading || isPending) {
       return;
     }
+
     startDownloadTransition(() => {
       toast.promise(
         async () => {
           setIsPending(true);
-          const blob = await fetch(`/api/download?fluxId=${id}`, {
-            headers: {
-              Authorization: `Bearer ${await getToken()}`,
-            },
-          }).then((response) => response.blob());
-          console.log("blob-->", blob);
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = `${id}_fluxaipro.art.${blob.type.split("/")?.[1]}`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          const blobs = await Promise.all(
+            fluxImageIds?.map(async (fluxImageId) => {
+              const response = await fetch(
+                `/api/download?fluxId=${id}&fluxImageId=${fluxImageId}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${await getToken()}`,
+                  },
+                },
+              );
+              return response.blob();
+            }) || [],
+          );
+
+          blobs.forEach((blob, index) => {
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `${id}_fluxaipro_${index + 1}.art.${blob.type.split("/")?.[1]}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          });
         },
         {
           loading: t("action.downloadLoading"),
@@ -60,6 +73,7 @@ export function DownloadAction({
       );
     });
   };
+  console.log({ fluxImageIds });
 
   return (
     <SignBox>

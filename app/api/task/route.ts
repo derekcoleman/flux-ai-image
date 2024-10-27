@@ -57,10 +57,18 @@ export async function POST(req: NextRequest) {
         status: 404,
       });
     }
+
+    const fluxImages = await prisma.fluxAiImages.findMany({
+      where: {
+        fluxId: id as number,
+      },
+    });
+
     const { executeEndTime, executeStartTime, loraUrl, ...rest } = fluxData;
     return NextResponse.json({
       data: {
         ...rest,
+        imageUrl: fluxImages,
         executeTime:
           executeEndTime && executeStartTime
             ? `${executeEndTime - executeStartTime}`

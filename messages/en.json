@@ -273,6 +273,8 @@
       "enhance": "Enhance Prompt",
       "aspectRatio": "AspectRatio",
       "aspectRatioTooltip": "Aspect ratio for the generated image.",
+      "NumberOfImages": "NumberOfImages",
+      "NumberOfImagesToolTip": "Defines how many images will be generated in a single request.",
       "inputImage": "Image",
       "inputImageTooltip": "Input image for image to image mode. The aspect ratio of your output will match this image",
       "inputImagePlaceholder": "Upload input image"

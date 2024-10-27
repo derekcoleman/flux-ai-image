@@ -6,10 +6,8 @@ import {
   DashboardSidebar,
   MobileSheetSidebar,
 } from "@/components/layout/dashboard-sidebar";
-import { DashboardNav } from "@/components/layout/dashboard-sidenav";
 import { ModeToggle } from "@/components/layout/mode-toggle";
-import { NavBar, NavbarUserInfo } from "@/components/layout/navbar";
-import { SiteFooter } from "@/components/layout/site-footer";
+import { NavbarUserInfo } from "@/components/layout/navbar";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 import { dashboardConfig } from "@/config/dashboard";
 import { getChargeProduct } from "@/db/queries/charge-product";
@@ -54,7 +52,6 @@ export default async function DashboardLayout({
     <MaxWidthWrapper className="max-w-[1650px] px-0">
       <div className="relative flex min-h-screen w-full">
         <DashboardSidebar links={filteredLinks} />
-
         <div className="flex flex-1 flex-col">
           <header className="sticky top-0 z-50 flex h-14 items-center gap-3 bg-background px-4 lg:h-[60px] xl:px-10">
             <MobileSheetSidebar links={filteredLinks} />

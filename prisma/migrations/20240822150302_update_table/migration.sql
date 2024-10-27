@@ -95,3 +95,8 @@ CREATE TABLE "claimed_activity_order" (
 
     CONSTRAINT "claimed_activity_order_pkey" PRIMARY KEY ("id")
 );
+
+-- AlterTable
+ALTER TABLE "charge_product" ADD COLUMN     "maximum_images" TEXT,
+ADD COLUMN     "per_image" TEXT,
+ADD COLUMN     "type" TEXT;

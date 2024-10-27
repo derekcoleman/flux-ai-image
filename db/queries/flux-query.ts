@@ -27,20 +27,31 @@ export async function getFluxDataBySeed({ limit = 18 }: { limit?: number }) {
   //   .from(face)
   //   .execute();
   const data = await prisma.$queryRaw`
-    SELECT * FROM flux_data
+    SELECT fd.*, json_agg(fai.image_url) AS image_urls
+    FROM flux_data fd
+    JOIN flux_ai_images fai ON fd.id = fai.flux_id
+    GROUP BY fd.id
     ORDER BY RANDOM()
     LIMIT ${limit}
   `;
-  const transformedResults = data
-    ? ((data as any[]).map(convertKeysToCamelCase) ?? [])
+
+  const expandedData = (data as any[]).flatMap((item) =>
+    item.image_urls.map((imageUrl: string) => ({
+      ...item,
+      image_urls: imageUrl,
+    })),
+  );
+
+  const transformedResults = expandedData
+    ? ((expandedData as any[]).map(convertKeysToCamelCase) ?? [])
     : [];
   // const data = await db.execute(sql`SELECT * FROM face_data ORDER BY RANDOM() LIMIT 20;`);
 
   return {
-    data: transformedResults?.map(({ id, imageUrl, ...rest }) => ({
+    data: transformedResults?.map(({ id, imageUrls, ...rest }) => ({
       ...rest,
-      imageUrl: `https://img.douni.one/?url=${encodeURIComponent(imageUrl!)}&action=resize!520,520,2|draw_text!s.douni.one/a,10,400`,
+      imageUrl: `https://img.douni.one/?url=${encodeURIComponent(imageUrls!)}&action=resize!520,520,2|draw_text!s.douni.one/a,10,400`,
       id: FluxHashids.encode(id),
-    })) as unknown as FluxSelectDto[],
+    })) as unknown as Array<FluxSelectDto & { imageUrl: string }>,
   };
 }

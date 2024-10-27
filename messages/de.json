@@ -266,6 +266,8 @@
       "enhance": "Eingabeaufforderung verbessern",
       "aspectRatio": "Seitenverhältnis",
       "aspectRatioTooltip": "Seitenverhältnis für das generierte Bild.",
+      "NumberOfImages": "Anzahl der Bilder",
+      "NumberOfImagesToolTip": "Definiert, wie viele Bilder in einer einzigen Anfrage generiert werden.",
       "inputImage": "Bild",
       "inputImageTooltip": "Eingabebild für den Bild-zu-Bild-Modus. Das Seitenverhältnis Ihrer Ausgabe entspricht diesem Bild",
       "inputImagePlaceholder": "Eingabebild hochladen"

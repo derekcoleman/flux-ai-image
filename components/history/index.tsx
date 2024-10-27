@@ -80,7 +80,17 @@ export default function History({
     pageSize: 12,
   });
   const [hasMore, setHasMore] = useState(true);
-  const [dataSource, setDataSource] = useState<FluxSelectDto[]>([]);
+  const [dataSource, setDataSource] = useState<
+    (FluxSelectDto & {
+      imageUrl: {
+        id: number;
+        fluxId: number;
+        imageUrl: string;
+        createdAt: string;
+        updatedAt: string;
+      };
+    })[]
+  >([]);
   const useQueryMineFlux = useQueryMineFluxMutation({
     explore,
     onSuccess(result) {
@@ -176,12 +186,12 @@ export default function History({
                     </div>
                   ) : (
                     <BlurFade
-                      key={item?.imageUrl!}
+                      key={idx}
                       delay={0.25 + (idx % pageParams.pageSize) * 0.05}
                       inView
                     >
                       <img
-                        src={item.imageUrl!}
+                        src={item.imageUrl.imageUrl!}
                         alt={item.inputPrompt!}
                         title={item.inputPrompt!}
                         className={`w-full rounded-xl object-cover ${createRatio(item.aspectRatio as Ratio)} pointer-events-none`}
@@ -191,7 +201,7 @@ export default function History({
                   <Link
                     className="absolute right-1 top-1 !m-0"
                     target="_blank"
-                    href={`https://pinterest.com/pin/create/button/?url=https://pinterest.com/pin/create/button/?description=${encodeURIComponent(item.inputPrompt!)}&url=${encodeURIComponent(item.imageUrl!)}`}
+                    href={`https://pinterest.com/pin/create/button/?url=https://pinterest.com/pin/create/button/?description=${encodeURIComponent(item.inputPrompt!)}&url=${`${process.env.NEXT_PUBLIC_SITE_URL}/d/${item.id}/${item.imageUrl.id}`}`}
                   >
                     <span className="[&>svg]:h-7 [&>svg]:w-7 [&>svg]:fill-[#e60023]">
                       <svg

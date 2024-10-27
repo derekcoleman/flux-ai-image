@@ -266,6 +266,8 @@
       "enhance": "增强提示",
       "aspectRatio": "アスペクト比",
       "aspectRatioTooltip": "生成される画像のアスペクト比。",
+      "NumberOfImages": "生成される画像の数",
+      "NumberOfImagesToolTip": "1回のリクエストで生成される画像の数を定義します。",
       "inputImage": "画像",
       "inputImageTooltip": "画像から画像へのモード用の入力画像。出力のアスペクト比はこの画像に合わせられます。",
       "inputImagePlaceholder": "入力画像をアップロード"

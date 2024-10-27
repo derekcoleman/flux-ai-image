@@ -46,6 +46,7 @@ import { Link } from "@/lib/navigation";
 import { cn, createRatio } from "@/lib/utils";
 
 import { DownloadAction } from "../history/download-action";
+import GeneratedImages from "../images/generatedImages";
 import { PricingCardDialog } from "../pricing-cards";
 import { EmptyPlaceholder } from "../shared/empty-placeholder";
 import { Icons } from "../shared/icons";
@@ -108,7 +109,17 @@ export default function Playground({
   const [inputPrompt, setInputPrompt] = React.useState<string>("");
   const [loading, setLoading] = useState(false);
   const [fluxId, setFluxId] = useState("");
-  const [fluxData, setFluxData] = useState<FluxSelectDto>();
+  const [fluxData, setFluxData] = useState<
+    FluxSelectDto & {
+      imageUrl: {
+        id: number;
+        fluxId: number;
+        imageUrl: string;
+        createdAt: string;
+        updatedAt: string;
+      }[];
+    }
+  >();
   const useCreateTask = useCreateTaskMutation();
   const [uploadInputImage, setUploadInputImage] = useState<any[]>([]);
   const t = useTranslations("Playground");
@@ -190,6 +201,7 @@ export default function Playground({
         model: model.freeSchnell,
         inputPrompt,
         aspectRatio: ratio,
+        numberOfImages: 1,
         inputImageUrl,
         isPrivate: isPublic ? 0 : 1,
         locale,
@@ -385,7 +397,7 @@ export default function Playground({
                     <div
                       className={`w-full rounded-md ${createRatio(fluxData?.aspectRatio as Ratio)}`}
                     >
-                      {fluxData?.imageUrl && fluxId && (
+                      {/* {fluxData?.imageUrl && fluxId && (
                         <BlurFade
                           key={fluxData?.imageUrl}
                           inView
@@ -397,6 +409,13 @@ export default function Playground({
                             className={`pointer-events-none w-full rounded-md ${createRatio(fluxData?.aspectRatio as Ratio)}`}
                           />
                         </BlurFade>
+                      )} */}
+                      {fluxData?.imageUrl && fluxData.imageUrl.length > 0 && (
+                        <GeneratedImages
+                          fluxData={fluxData}
+                          className={`pointer-events-none w-full rounded-md ${createRatio(fluxData?.aspectRatio as Ratio)}`}
+                          key={fluxData?.id}
+                        />
                       )}
                     </div>
                     <div className="text-content-light inline-block px-4 py-2 text-sm">
@@ -424,7 +443,15 @@ export default function Playground({
                         >
                           <Icons.twitter className="icon-xs" />
                         </button>
-                        <DownloadAction id={fluxData.id} />
+                        {fluxData?.imageUrl.length && (
+                          <DownloadAction
+                            fluxImageIds={fluxData?.imageUrl?.map((image) => {
+                              return image.id.toString();
+                            })}
+                            disabled={!fluxData?.id}
+                            id={fluxData?.id ?? ""}
+                          />
+                        )}
                       </div>
                     </div>
                   </div>

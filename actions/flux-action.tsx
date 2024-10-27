@@ -16,15 +16,26 @@ export const searchParamsSchema = z.object({
   model: z.enum([model.dev, model.pro, model.schnell]).optional(),
 });
 
-export async function getFluxById(fluxId: string) {
+export async function getFluxById(fluxId: string, imageUrlId: string) {
   const [id] = FluxHashids.decode(fluxId);
+
   const fluxData = await prisma.fluxData.findUnique({
     where: { id: id as number },
   });
+
   if (!fluxData) {
     return null;
   }
-  return { ...fluxData, id: fluxId };
+  const imageUrl = await prisma.fluxAiImages.findUnique({
+    where: {
+      id: Number(imageUrlId),
+      fluxId: id as number,
+    },
+  });
+
+  if (!imageUrl) return null;
+
+  return { ...fluxData, id: fluxId, imageUrl: imageUrl.imageUrl };
 }
 
 export async function getFluxDataByPage(params: {
@@ -55,21 +66,41 @@ export async function getFluxDataByPage(params: {
       prisma.fluxData.count({ where: whereConditions }),
     ]);
 
+    const fluxDataWithImages = (
+      await Promise.all(
+        fluxData.map(async (data) => {
+          const imageUrls = await prisma.fluxAiImages.findMany({
+            where: { fluxId: data.id },
+          });
+          return imageUrls.map((image) => ({
+            ...data,
+            imageUrl: image,
+            executeTime:
+              data.executeEndTime && data.executeStartTime
+                ? Number(`${data.executeEndTime - data.executeStartTime}`)
+                : 0,
+            id: FluxHashids.encode(data.id),
+          }));
+        }),
+      )
+    ).flat();
+
     return {
       data: {
         total,
         page,
         pageSize,
-        data: fluxData.map(
-          ({ id, executeEndTime, executeStartTime, loraUrl, ...rest }) => ({
-            ...rest,
-            executeTime:
-              executeEndTime && executeStartTime
-                ? Number(`${executeEndTime - executeStartTime}`)
-                : 0,
-            id: FluxHashids.encode(id),
-          }),
-        ),
+        // data: fluxData.map(
+        //   ({ id, executeEndTime, executeStartTime, loraUrl, ...rest }) => ({
+        //     ...rest,
+        //     executeTime:
+        //       executeEndTime && executeStartTime
+        //         ? Number(`${executeEndTime - executeStartTime}`)
+        //         : 0,
+        //     id: FluxHashids.encode(id),
+        //   }),
+        // ),
+        data: fluxDataWithImages,
       },
     };
   } catch (error) {

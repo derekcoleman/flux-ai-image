@@ -266,6 +266,8 @@
       "enhance": "프롬프트 향상",
       "aspectRatio": "화면비",
       "aspectRatioTooltip": "생성된 이미지의 화면비.",
+      "NumberOfImages": "생성 이미지 수",
+      "NumberOfImagesToolTip": "단일 요청에서 생성될 이미지 수를 정의합니다.",
       "inputImage": "이미지",
       "inputImageTooltip": "이미지 대 이미지 모드를 위한 입력 이미지. 출력의 화면비는 이 이미지와 일치합니다",
       "inputImagePlaceholder": "입력 이미지 업로드"

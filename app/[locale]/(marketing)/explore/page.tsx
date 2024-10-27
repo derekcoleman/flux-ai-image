@@ -74,14 +74,12 @@ export default async function ExplorePage({
           > */}
           <div className="masonry-grid columns-1 md:columns-2 lg:columns-3 xl:columns-4">
             {fluxData.data?.data?.map((item, idx) => {
-              console.log(item.imageUrl, item.inputPrompt.slice(0, 10));
-
               return (
                 <div
-                  key={item.id}
+                  key={idx}
                   className="masonry-grid-item border-stroke-light bg-surface-300 hover:border-stroke-strong relative mb-4 flex w-full break-inside-avoid flex-col space-y-4 overflow-hidden rounded-xl border"
                 >
-                  <Link href={`/d/${item.id}`}>
+                  <Link href={`/d/${item.id}/${item.imageUrl.id}`}>
                     {item.taskStatus === FluxTaskStatus.Processing ? (
                       <div
                         className={`bg-pattern flx h-full w-full items-center justify-center rounded-xl ${createRatio(item.aspectRatio as Ratio)} pointer-events-none`}
@@ -90,12 +88,12 @@ export default async function ExplorePage({
                       </div>
                     ) : (
                       <BlurFade
-                        key={item?.imageUrl!}
+                        key={item?.imageUrl.imageUrl!}
                         delay={0.25 + (idx % pageSize) * 0.05}
                         inView
                       >
                         <img
-                          src={item.imageUrl!}
+                          src={item.imageUrl.imageUrl!}
                           alt={item.inputPrompt!}
                           title={item.inputPrompt!}
                           className={`w-full rounded-xl object-cover ${createRatio(item.aspectRatio as Ratio)} pointer-events-none`}
@@ -107,7 +105,7 @@ export default async function ExplorePage({
                   <Link
                     className="absolute right-1 top-1 !m-0"
                     target="_blank"
-                    href={`https://pinterest.com/pin/create/button/?url=https://pinterest.com/pin/create/button/?description=${encodeURIComponent(item.inputPrompt!)}&url=${`vizyai.com/d/${item.id}`}`}
+                    href={`https://pinterest.com/pin/create/button/?url=https://pinterest.com/pin/create/button/?description=${encodeURIComponent(item.inputPrompt!)}&url=${`${process.env.NEXT_PUBLIC_SITE_URL}/d/${item.id}/${item.imageUrl.id}`}`}
                   >
                     <span className="[&>svg]:h-7 [&>svg]:w-7 [&>svg]:fill-[#e60023]">
                       <svg

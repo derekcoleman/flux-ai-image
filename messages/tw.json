@@ -266,6 +266,8 @@
       "enhance": "增强提示",
       "aspectRatio": "解析度",
       "aspectRatioTooltip": "生成圖像的解析度",
+      "NumberOfImages": "生成圖像數量",
+      "NumberOfImagesToolTip": "定義在一次請求中將生成多少圖像。",
       "inputImage": "圖像",
       "inputImageTooltip": "圖像轉圖像模式的輸入圖像。您的輸出縱橫比將與此圖像相符",
       "inputImagePlaceholder": "上傳輸入圖像"

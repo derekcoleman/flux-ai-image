@@ -47,9 +47,10 @@ import { useGenerator } from "@/hooks/use-genrator";
 import { cn, createRatio } from "@/lib/utils";
 
 import { DownloadAction } from "../history/download-action";
+import GeneratedImages from "../images/generatedImages";
 import { PricingCardDialog } from "../pricing-cards";
-import { EmptyPlaceholder } from "../shared/empty-placeholder";
 import { Icons } from "../shared/icons";
+import { Slider } from "../ui/slider";
 import Upload from "../upload";
 import ComfortingMessages from "./comforting";
 import Loading from "./loading";
@@ -106,10 +107,21 @@ export default function Playground({
   const models = tab === "ImageToImage" ? ImageToImageModel : TextToImageModel;
   const [isPublic, setIsPublic] = React.useState(true);
   const [selectedModel, setSelectedModel] = React.useState<Model>(models[0]);
+  const [numberOfImages, setNumberOfImages] = React.useState<number>(1);
   const [ratio, setRatio] = React.useState<Ratio>(Ratio.r1);
   const [loading, setLoading] = useState(false);
   const [fluxId, setFluxId] = useState("");
-  const [fluxData, setFluxData] = useState<FluxSelectDto>();
+  const [fluxData, setFluxData] = useState<
+    FluxSelectDto & {
+      imageUrl: {
+        id: number;
+        fluxId: number;
+        imageUrl: string;
+        createdAt: string;
+        updatedAt: string;
+      }[];
+    }
+  >();
   const useCreateTask = useCreateTaskMutation();
   const [uploadInputImage, setUploadInputImage] = useState<any[]>([]);
   const t = useTranslations("Playground");
@@ -207,6 +219,7 @@ export default function Playground({
         model: selectedModel.id,
         inputPrompt,
         aspectRatio: ratio,
+        numberOfImages: numberOfImages,
         inputImageUrl,
         isPrivate: isPublic ? 0 : 1,
         loraName,
@@ -248,8 +261,6 @@ export default function Playground({
     toast.success(t("action.copySuccess"));
   };
 
-  console.log({ ModelName });
-
   return (
     <div className="overflow-hidden rounded-[0.5rem] border bg-background shadow">
       <div className="container h-full p-6">
@@ -268,6 +279,29 @@ export default function Playground({
               ratio={ratio}
               onChange={setRatio}
             />
+            {selectedModel.id !== model.pro && (
+              <div className="grid gap-2">
+                <HoverCard openDelay={200}>
+                  <HoverCardTrigger asChild>
+                    <span className="text-left text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      {t("form.NumberOfImages")}: {numberOfImages}
+                    </span>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-[320px] text-sm" side="left">
+                    {t("form.NumberOfImagesToolTip")}
+                  </HoverCardContent>
+                </HoverCard>
+                <Slider
+                  defaultValue={[numberOfImages]}
+                  max={4}
+                  min={1}
+                  step={1}
+                  className={cn("mt-2 w-full")}
+                  onValueChange={(value) => setNumberOfImages(value[0])}
+                />
+              </div>
+            )}
+
             {selectedModel.id === model.dev && (
               <div className="flx flex-col gap-4">
                 <HoverCard openDelay={200}>
@@ -333,15 +367,14 @@ export default function Playground({
                         <div
                           className={`w-full rounded-md ${createRatio(fluxData?.aspectRatio as Ratio)}`}
                         >
-                          {fluxData?.imageUrl && (
-                            <BlurFade key={fluxData?.imageUrl} inView>
-                              <img
-                                src={fluxData?.imageUrl}
-                                alt="Generated Image"
+                          {fluxData?.imageUrl &&
+                            fluxData.imageUrl.length > 0 && (
+                              <GeneratedImages
+                                fluxData={fluxData}
                                 className={`pointer-events-none w-full rounded-md ${createRatio(fluxData?.aspectRatio as Ratio)}`}
+                                key={fluxData?.id}
                               />
-                            </BlurFade>
-                          )}
+                            )}
                         </div>
                         <div className="text-content-light inline-block px-4 py-2 text-sm">
                           <p className="line-clamp-4 italic md:line-clamp-6 lg:line-clamp-[8]">
@@ -366,10 +399,13 @@ export default function Playground({
                             </button>
                           )}
 
-                          {fluxData?.imageUrl && (
+                          {fluxData?.imageUrl.length && (
                             <DownloadAction
+                              fluxImageIds={fluxData?.imageUrl?.map((image) => {
+                                return image.id.toString();
+                              })}
                               disabled={!fluxData?.id}
-                              id={fluxData?.id || ""}
+                              id={fluxData?.id ?? ""}
                             />
                           )}
                         </div>
