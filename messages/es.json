@@ -266,6 +266,8 @@
       "enhance": "Mejorar Solicitud",
       "aspectRatio": "Relación de Aspecto",
       "aspectRatioTooltip": "Relación de aspecto para la imagen generada.",
+      "NumberOfImages": "Número de Imágenes",
+      "NumberOfImagesToolTip": "Define cuántas imágenes se generarán en una sola solicitud.",
       "inputImage": "Imagen",
       "inputImageTooltip": "Imagen de entrada para el modo de imagen a imagen. La relación de aspecto de tu salida coincidirá con esta imagen",
       "inputImagePlaceholder": "Subir imagen de entrada"

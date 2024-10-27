@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DIRECT_URL")
 }
 
 model ChargeOrder {
@@ -67,7 +67,6 @@ model FluxData {
   guidance         Int?
   interval         Int?
   inputImageUrl    String?  @map(name: "input_image_url") @db.VarChar
-  imageUrl         String?  @map(name: "image_url") @db.VarChar
   model            String   @db.VarChar(255)
   executeStartTime BigInt?  @map(name: "execute_start_time")
   executeEndTime   BigInt?  @map(name: "execute_end_time")
@@ -85,6 +84,8 @@ model FluxData {
   loraUrl          String?  @map("lora_url") @db.VarChar(255)
   loraName         String?  @map("lora_name") @db.VarChar(255)
   loraScale        Float?   @map("lora_scale") @db.DoublePrecision
+    images           FluxAiImages[] @relation("FluxDataToImages")
+  
 
   @@map(name: "flux_data")
 }
@@ -107,6 +108,18 @@ model FluxViews {
   updatedAt DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
 
   @@map(name: "flux_views")
+}
+
+
+model FluxAiImages {
+  id        Int      @id @default(autoincrement())
+  fluxId    Int      @map(name: "flux_id")
+  fluxData  FluxData @relation("FluxDataToImages", fields: [fluxId], references: [id], onDelete: Cascade)
+  imageUrl  String   @map(name: "image_url") @db.VarChar
+  createdAt DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+
+  @@map(name: "flux_ai_images")
 }
 
 model GiftCode {

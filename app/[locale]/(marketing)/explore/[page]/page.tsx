@@ -92,7 +92,7 @@ export default async function ExplorePage({
                       inView
                     >
                       <img
-                        src={item.imageUrl!}
+                        src={item.imageUrl.imageUrl!}
                         alt={item.inputPrompt!}
                         title={item.inputPrompt!}
                         className={`w-full rounded-xl object-cover ${createRatio(item.aspectRatio as Ratio)} pointer-events-none`}

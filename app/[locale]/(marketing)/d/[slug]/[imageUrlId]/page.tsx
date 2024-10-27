@@ -17,7 +17,7 @@ import { Link } from "@/lib/navigation";
 import { cn, createRatio, formatDate } from "@/lib/utils";
 
 interface RootPageProps {
-  params: { locale: string; slug: string };
+  params: { locale: string; slug: string; imageUrlId: string };
 }
 
 export async function generateStaticParams() {
@@ -38,13 +38,15 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({
-  params: { locale, slug },
+  params: { locale, slug, imageUrlId },
 }: Omit<RootPageProps, "children">) {
   const t = await getTranslations({ locale, namespace: "ExplorePage" });
-  const flux = await getFluxById(slug);
+  const flux = await getFluxById(slug, imageUrlId);
+
   if (!flux) {
     return notFound();
   }
+
   return {
     title: t("layout.title"),
     description: flux.inputPrompt,
@@ -69,11 +71,12 @@ const breakpointColumnsObj = {
 };
 export default async function FluxPage({ params }: RootPageProps) {
   unstable_setRequestLocale(params.locale);
-  const t = await getTranslations({ namespace: "ExplorePage" });
-  const flux = await getFluxById(params.slug);
-  if (!flux) {
-    return notFound();
-  }
+  const t = await getTranslations({
+    locale: params.locale,
+    namespace: "ExplorePage",
+  });
+  const flux = await getFluxById(params.slug, params.imageUrlId);
+  if (!flux) return notFound();
   const { userId } = auth();
 
   if (env.VERCEL_ENV === "production") {
@@ -178,7 +181,11 @@ export default async function FluxPage({ params }: RootPageProps) {
                   </p>
                 </div>
                 <div className="flex flex-row justify-between space-x-2 pt-0">
-                  <DownloadAction showText id={flux.id} />
+                  <DownloadAction
+                    showText
+                    id={flux.id}
+                    fluxImageIds={[params.imageUrlId]}
+                  />
                 </div>
               </CardContent>
             </Card>

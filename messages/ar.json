@@ -266,6 +266,8 @@
       "enhance": "تعزيز موجه",
       "aspectRatio": "نسبة الأبعاد",
       "aspectRatioTooltip": "نسبة الأبعاد للصورة المولدة.",
+      "NumberOfImages": "عدد الصور",
+      "NumberOfImagesToolTip": "يحدد عدد الصور التي سيتم توليدها في طلب واحد.",
       "inputImage": "الصورة",
       "inputImageTooltip": "صورة الإدخال لوضع الصورة إلى صورة. ستتطابق نسبة الأبعاد للإخراج مع هذه الصورة",
       "inputImagePlaceholder": "تحميل صورة الإدخال"

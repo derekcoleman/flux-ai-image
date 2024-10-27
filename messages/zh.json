@@ -266,6 +266,8 @@
       "enhance": "增强提示",
       "aspectRatio": "分辨率",
       "aspectRatioTooltip": "生成图像的分辨率",
+      "NumberOfImages": "生成图像数量",
+      "NumberOfImagesToolTip": "定义在单个请求中生成的图像数量。",
       "inputImage": "图像",
       "inputImageTooltip": "图像到图像模式的输入图像。您的输出纵横比将与此图像匹配",
       "inputImagePlaceholder": "上传输入图像"

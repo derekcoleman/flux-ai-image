@@ -266,6 +266,8 @@
       "enhance": "Melhorar Prompt",
       "aspectRatio": "Proporção de Aspecto",
       "aspectRatioTooltip": "Proporção de aspecto para a imagem gerada.",
+      "NumberOfImages": "Número de Imagens",
+      "NumberOfImagesToolTip": "Define quantas imagens serão geradas em uma única solicitação.",
       "inputImage": "Imagem",
       "inputImageTooltip": "Imagem de entrada para o modo de imagem para imagem. A proporção de aspecto da sua saída corresponderá a esta imagem",
       "inputImagePlaceholder": "Carregar imagem de entrada"

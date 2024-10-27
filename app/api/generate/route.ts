@@ -49,6 +49,7 @@ const CreateGenerateSchema = z.object({
     Ratio.r6,
     Ratio.r7,
   ]),
+  numberOfImages: z.number(),
   isPrivate: z.number().default(0),
   locale: z.string().default("en"),
   loraName: z.string().optional(),
@@ -81,6 +82,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       model: modelName,
       inputPrompt,
       aspectRatio,
+      numberOfImages = 1,
       isPrivate,
       locale,
       loraName,
@@ -149,7 +151,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       ...(modelName === "black-forest-labs/flux-schnell" && {
         go_fast: true,
         megapixels: "1",
-        num_outputs: 1,
+        num_outputs: numberOfImages,
         num_inference_steps: 4,
       }),
       ...(modelName === "black-forest-labs/flux-dev" && {
@@ -157,14 +159,14 @@ export async function POST(req: NextRequest, { params }: Params) {
         go_fast: true,
         guidance: 3.5,
         megapixels: "1",
-        num_outputs: 1,
+        num_outputs: numberOfImages,
         prompt_strength: 0.8,
         num_inference_steps: 28,
       }),
       ...(modelName === "lucataco/flux-dev-lora" && {
         hf_lora: loraName,
         lora_scale: 0.8,
-        num_outputs: 1,
+        num_outputs: numberOfImages,
         guidance_scale: 3.5,
         prompt_strength: 0.8,
         num_inference_steps: 28,
@@ -212,18 +214,6 @@ export async function POST(req: NextRequest, { params }: Params) {
     //   return NextResponse.json({ error: "Create Task Error" }, { status: 400 });
     // }
 
-    let replicateImageUrl = replicateRes[0];
-
-    const response = await fetch(replicateImageUrl);
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch image: ${response.statusText}`);
-    }
-
-    const imageBuffer = Buffer.from(await response.arrayBuffer());
-
-    let replicateId = uuidv4();
-
     const s3Service = new S3Service({
       endpoint: env.S3_ENDPOINT,
       region: env.S3_REGION,
@@ -232,18 +222,29 @@ export async function POST(req: NextRequest, { params }: Params) {
       url: env.S3_URL_BASE,
     });
 
-    const fileName = `${uuidv4()}.webp`;
+    const replicateId = uuidv4();
+    const imageUrls: string[] = [];
 
-    const s3Response = await s3Service.putItemInBucket(
-      fileName,
-      imageBuffer,
-      {
-        path: `generated-images`,
-        ContentType: "image/webp",
-        // acl: "public-read-write",
-      },
-      env.S3_BUCKET,
-    );
+    for (const replicateImageUrl of replicateRes as string[]) {
+      const response = await fetch(replicateImageUrl);
+
+      if (!response.ok)
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      const imageBuffer = Buffer.from(await response.arrayBuffer());
+      const fileName = `${uuidv4()}.webp`;
+
+      const s3Response = await s3Service.putItemInBucket(
+        fileName,
+        imageBuffer,
+        {
+          path: `generated-images`,
+          ContentType: "image/webp",
+        },
+        env.S3_BUCKET,
+      );
+
+      imageUrls.push(s3Response.completedUrl);
+    }
 
     const fluxData = await prisma.fluxData.create({
       data: {
@@ -251,7 +252,6 @@ export async function POST(req: NextRequest, { params }: Params) {
         replicateId: replicateId, // Required field
         inputPrompt: finalPrompt, // Optional
         inputImageUrl: inputImageUrl, // Optional
-        imageUrl: s3Response.completedUrl, // Optional
         model: `${modelName}:${modelId}`, // Required field
         locale: locale, // Optional
         aspectRatio: aspectRatio, // Required field
@@ -262,6 +262,18 @@ export async function POST(req: NextRequest, { params }: Params) {
 
     if (!fluxData) {
       return NextResponse.json({ error: "Create Task Error" }, { status: 400 });
+    }
+
+    if (imageUrls && imageUrls.length > 0) {
+      const imagesData = imageUrls.map((url) => ({
+        fluxId: fluxData.id, // Reference the FluxData id
+        imageUrl: url, // The image URL
+      }));
+
+      // Insert the images into the FluxAiImages table
+      await prisma.fluxAiImages.createMany({
+        data: imagesData,
+      });
     }
 
     await prisma.$transaction(async (tx) => {
@@ -296,7 +308,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     });
     return NextResponse.json({
       id: FluxHashids.encode(fluxData.id),
-      imageUrl: s3Response.completedUrl,
+      imageUrl: imageUrls,
       aspectRatio: aspectRatio,
       inputPrompt: finalPrompt,
       model: modelName,

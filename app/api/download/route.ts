@@ -12,6 +12,7 @@ import { redis } from "@/lib/redis";
 
 const searchParamsSchema = z.object({
   fluxId: z.string(),
+  fluxImageId: z.string(),
 });
 
 const getMime = (filename: string) =>
@@ -28,6 +29,7 @@ export async function GET(req: NextRequest) {
   const { success } = await ratelimit.limit(
     "download:image" + `_${req.ip ?? ""}`,
   );
+
   if (!success) {
     return new Response("Too Many Requests", {
       status: 429,
@@ -45,10 +47,12 @@ export async function GET(req: NextRequest) {
 
   try {
     const url = new URL(req.url);
+
     const values = searchParamsSchema.parse(
       Object.fromEntries(url.searchParams),
     );
-    const { fluxId } = values;
+
+    const { fluxId, fluxImageId } = values;
     const [id] = FluxHashids.decode(fluxId);
     if (!id) {
       return new Response("not found", {
@@ -61,7 +65,14 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    if (!fluxData || !fluxData?.id) {
+    const fluxImage = await prisma.fluxAiImages.findUnique({
+      where: {
+        id: Number(fluxImageId),
+        fluxId: id as number,
+      },
+    });
+
+    if (!fluxData || !fluxData?.id || !fluxImage?.imageUrl) {
       return new Response("not found", {
         status: 404,
       });
@@ -92,7 +103,7 @@ export async function GET(req: NextRequest) {
 
     // headers.set('Content-Type', 'image/*');// 默认动作是下载
     // headers.set("content-Type", "text/plain"); // 默认动作是浏览器展示
-    const blob = await fetch(fluxData.imageUrl!).then((response) =>
+    const blob = await fetch(fluxImage.imageUrl!).then((response) =>
       response.blob(),
     );
     console.log("blob.type-->", blob.type);
@@ -100,7 +111,7 @@ export async function GET(req: NextRequest) {
     headers.set("Content-Type", blob.type); // 设置为文件的MIME类型
     headers.set(
       "Content-Disposition",
-      `attachment; filename="${encodeURIComponent(fluxId + `.${getMime(fluxData.imageUrl!)}`)}"`,
+      `attachment; filename="${encodeURIComponent(fluxId + `.${getMime(fluxImage.imageUrl!)}`)}"`,
     );
     return new NextResponse(blob, { status: 200, statusText: "OK", headers });
   } catch (error) {

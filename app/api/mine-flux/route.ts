@@ -52,21 +52,31 @@ export async function GET(req: NextRequest) {
       prisma.fluxData.count({ where: whereConditions }),
     ]);
 
+    const fluxDataWithImages = (
+      await Promise.all(
+        fluxData.map(async (data) => {
+          const imageUrls = await prisma.fluxAiImages.findMany({
+            where: { fluxId: data.id },
+          });
+          return imageUrls.map((image) => ({
+            ...data,
+            imageUrl: image,
+            executeTime:
+              data.executeEndTime && data.executeStartTime
+                ? Number(`${data.executeEndTime - data.executeStartTime}`)
+                : 0,
+            id: FluxHashids.encode(data.id),
+          }));
+        }),
+      )
+    ).flat();
+
     return NextResponse.json({
       data: {
         total,
         page,
         pageSize,
-        data: fluxData.map(
-          ({ id, executeEndTime, executeStartTime, loraUrl, ...rest }) => ({
-            ...rest,
-            executeTime:
-              executeEndTime && executeStartTime
-                ? Number(`${executeEndTime - executeStartTime}`)
-                : 0,
-            id: FluxHashids.encode(id),
-          }),
-        ),
+        data: fluxDataWithImages,
       },
     });
   } catch (error) {

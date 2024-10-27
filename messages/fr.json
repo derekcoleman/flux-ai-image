@@ -266,6 +266,8 @@
       "enhance": "Améliorer la demande",
       "aspectRatio": "Format",
       "aspectRatioTooltip": "Format de l'image générée.",
+      "NumberOfImages": "Nombre d'images",
+      "NumberOfImagesToolTip": "Définit combien d'images seront générées en une seule demande.",
       "inputImage": "Image",
       "inputImageTooltip": "Image d'entrée pour le mode image vers image. Le format de sortie correspondra à cette image.",
       "inputImagePlaceholder": "Télécharger une image d'entrée"
