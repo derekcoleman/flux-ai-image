@@ -58,15 +58,18 @@ export async function GET(req: NextRequest) {
           const imageUrls = await prisma.fluxAiImages.findMany({
             where: { fluxId: data.id },
           });
-          return imageUrls.map((image) => ({
-            ...data,
-            imageUrl: image,
-            executeTime:
-              data.executeEndTime && data.executeStartTime
-                ? Number(`${data.executeEndTime - data.executeStartTime}`)
-                : 0,
-            id: FluxHashids.encode(data.id),
-          }));
+
+          return imageUrls.map((image) => {
+            return {
+              ...data,
+              imageUrl: image,
+              executeTime:
+                data.executeEndTime && data.executeStartTime
+                  ? Number(`${data.executeEndTime - data.executeStartTime}`)
+                  : 0,
+              id: FluxHashids.encode(data.id),
+            };
+          });
         }),
       )
     ).flat();
@@ -80,6 +83,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
+    console.log("--->", error);
     return NextResponse.json(
       { error: getErrorMessage(error) },
       { status: 400 },
