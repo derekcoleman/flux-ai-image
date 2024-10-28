@@ -59,17 +59,15 @@ export async function GET(req: NextRequest) {
             where: { fluxId: data.id },
           });
 
-          return imageUrls.map((image) => {
-            return {
-              ...data,
-              imageUrl: image,
-              executeTime:
-                data.executeEndTime && data.executeStartTime
-                  ? Number(`${data.executeEndTime - data.executeStartTime}`)
-                  : 0,
-              id: FluxHashids.encode(data.id),
-            };
-          });
+          return imageUrls.map((image) => ({
+            ...data,
+            imageUrl: image,
+            executeTime:
+              data.executeEndTime && data.executeStartTime
+                ? Number(`${data.executeEndTime - data.executeStartTime}`)
+                : 0,
+            id: FluxHashids.encode(data.id),
+          }));
         }),
       )
     ).flat();
