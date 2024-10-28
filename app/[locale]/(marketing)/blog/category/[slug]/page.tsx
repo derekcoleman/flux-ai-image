@@ -52,7 +52,11 @@ export default async function BlogCategory({
 
   const articles = await Promise.all(
     allPosts
-      .filter((post) => post.categories.includes(category.slug) && post.language === params.locale)
+      .filter(
+        (post) =>
+          post.categories.includes(category.slug) &&
+          post.language === params.locale,
+      )
       .sort((a, b) => b.date.localeCompare(a.date))
       .map(async (post) => ({
         ...post,

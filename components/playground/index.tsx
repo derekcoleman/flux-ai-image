@@ -503,7 +503,10 @@ export default function Playground({
                     <>
                       {t("form.submit")}
                       <Icons.PointIcon className="size-[14px]" />
-                      <span>{Credits[selectedModel.id]}</span>
+                      <span>
+                        {Number(Credits[selectedModel.id]) *
+                          Number(numberOfImages)}
+                      </span>
                     </>
                   )}
                 </Button>

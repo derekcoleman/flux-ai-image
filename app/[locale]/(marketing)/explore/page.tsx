@@ -49,6 +49,7 @@ export default async function ExplorePage({
   const page = 1;
   const pageSize = 24;
   const fluxData = await getFluxDataByPage({ page, pageSize });
+  // console.log({fluxData});
 
   return (
     <section className="space-y-6 py-10 sm:py-10 lg:py-10">

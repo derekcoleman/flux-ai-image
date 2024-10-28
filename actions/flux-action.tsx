@@ -26,6 +26,7 @@ export async function getFluxById(fluxId: string, imageUrlId: string) {
   if (!fluxData) {
     return null;
   }
+
   const imageUrl = await prisma.fluxAiImages.findUnique({
     where: {
       id: Number(imageUrlId),
@@ -66,21 +67,52 @@ export async function getFluxDataByPage(params: {
       prisma.fluxData.count({ where: whereConditions }),
     ]);
 
+    // const fluxDataWithImages = (
+    //   await Promise.all(
+    //     fluxData.map(async (data) => {
+    //       const imageUrls = await prisma.fluxAiImages.findMany({
+    //         where: { fluxId: data.id },
+    //       });
+
+    //       return imageUrls.map((image) => ({
+    //         ...data,
+    //         imageUrl: image,
+    //         executeTime:
+    //           data.executeEndTime && data.executeStartTime
+    //             ? Number(`${data.executeEndTime - data.executeStartTime}`)
+    //             : 0,
+    //         id: FluxHashids.encode(data.id),
+    //       }));
+    //     }),
+    //   )
+    // ).flat();
+
+    // console.log({ data: fluxDataWithImages?.[0] });
+
     const fluxDataWithImages = (
       await Promise.all(
         fluxData.map(async (data) => {
-          const imageUrls = await prisma.fluxAiImages.findMany({
-            where: { fluxId: data.id },
-          });
-          return imageUrls.map((image) => ({
-            ...data,
-            imageUrl: image,
-            executeTime:
-              data.executeEndTime && data.executeStartTime
-                ? Number(`${data.executeEndTime - data.executeStartTime}`)
-                : 0,
-            id: FluxHashids.encode(data.id),
-          }));
+          try {
+            const imageUrls = await prisma.fluxAiImages.findMany({
+              where: { fluxId: data.id },
+            });
+
+            return imageUrls.map((image) => ({
+              ...data,
+              imageUrl: image,
+              executeTime:
+                data.executeEndTime && data.executeStartTime
+                  ? Number(`${data.executeEndTime - data.executeStartTime}`)
+                  : 0,
+              id: FluxHashids.encode(data.id),
+            }));
+          } catch (error) {
+            console.error(
+              `Error fetching images for fluxId ${data.id}:`,
+              error,
+            );
+            return [];
+          }
         }),
       )
     ).flat();

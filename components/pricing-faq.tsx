@@ -47,10 +47,7 @@ export function PricingFaq() {
 
   return (
     <section className="container max-w-4xl py-2">
-      <HeaderSection
-        title={t("faq.title")}
-        subtitle={t("faq.subtitle")}
-      />
+      <HeaderSection title={t("faq.title")} subtitle={t("faq.subtitle")} />
 
       <Accordion type="single" collapsible className="my-12 w-full">
         {pricingFaqData.map((faqItem) => (
