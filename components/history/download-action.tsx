@@ -73,7 +73,6 @@ export function DownloadAction({
       );
     });
   };
-  console.log({ fluxImageIds });
 
   return (
     <SignBox>
