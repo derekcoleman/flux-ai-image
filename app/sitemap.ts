@@ -1,11 +1,11 @@
 import { MetadataRoute } from "next";
-import { prisma } from "@/db/prisma";
-import { FluxTaskStatus } from "@/db/type";
-import { FluxHashids } from "@/db/dto/flux.dto";
 
 import { allPosts } from "contentlayer/generated";
 
 import { defaultLocale, locales, pathnames } from "@/config";
+import { FluxHashids } from "@/db/dto/flux.dto";
+import { prisma } from "@/db/prisma";
+import { FluxTaskStatus } from "@/db/type";
 import { env } from "@/env.mjs";
 import { getPathname } from "@/lib/navigation";
 
@@ -18,11 +18,11 @@ const getFluxUrl = async () => {
       },
     },
     select: {
-      id: true
-    }
+      id: true,
+    },
   });
-  return fluxs.map((flux) => `/d/${FluxHashids.encode(flux.id)}`)
-}
+  return fluxs.map((flux) => `/d/${FluxHashids.encode(flux.id)}`);
+};
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const keys = Object.keys(pathnames) as Array<keyof typeof pathnames>;
   const posts = await Promise.all(
@@ -37,10 +37,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       taskStatus: {
         in: [FluxTaskStatus.Succeeded],
       },
-    }
+    },
   });
   const pageCount = Math.ceil(fluxDataCount / 24);
-  const explorePages = Array.from({ length: pageCount }, (_, i) => i === 0 ? `/explore` : `/explore/${i + 1}`);
+  const explorePages = Array.from({ length: pageCount }, (_, i) =>
+    i === 0 ? `/explore` : `/explore/${i + 1}`,
+  );
 
   function getUrl(
     key: keyof typeof pathnames,

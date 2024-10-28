@@ -91,6 +91,7 @@ export default function History({
       };
     })[]
   >([]);
+
   const useQueryMineFlux = useQueryMineFluxMutation({
     explore,
     onSuccess(result) {

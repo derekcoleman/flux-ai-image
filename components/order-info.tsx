@@ -126,9 +126,7 @@ export function OrderInfo() {
                     <TableRow>
                       <TableHead>{t("table.customer")}</TableHead>
                       <TableHead>{t("table.status")}</TableHead>
-                      <TableHead>
-                        {t("table.amount")}
-                      </TableHead>
+                      <TableHead>{t("table.amount")}</TableHead>
                       <TableHead className="hidden md:table-cell">
                         {t("table.credit")}
                       </TableHead>

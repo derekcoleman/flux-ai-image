@@ -21,20 +21,25 @@ interface RootPageProps {
 }
 
 export async function generateStaticParams() {
-  const fluxs = await prisma.fluxData.findMany({
-    where: {
-      isPrivate: false,
-      taskStatus: {
-        in: [FluxTaskStatus.Succeeded],
+  try {
+    const fluxs = await prisma.fluxData.findMany({
+      where: {
+        isPrivate: false,
+        taskStatus: {
+          in: [FluxTaskStatus.Succeeded],
+        },
       },
-    },
-    select: {
-      id: true,
-    },
-  });
-  return fluxs.map((flux) => ({
-    slug: FluxHashids.encode(flux.id),
-  }));
+      select: {
+        id: true,
+      },
+    });
+    return fluxs.map((flux) => ({
+      slug: FluxHashids.encode(flux.id),
+    }));
+  } catch (error) {
+    console.error("Error generating static params:", error);
+    return [];
+  }
 }
 
 export async function generateMetadata({
@@ -75,6 +80,7 @@ export default async function FluxPage({ params }: RootPageProps) {
     locale: params.locale,
     namespace: "ExplorePage",
   });
+
   const flux = await getFluxById(params.slug, params.imageUrlId);
   if (!flux) return notFound();
   const { userId } = auth();

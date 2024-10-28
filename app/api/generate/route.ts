@@ -82,7 +82,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       model: modelName,
       inputPrompt,
       aspectRatio,
-      numberOfImages = 1,
+      numberOfImages,
       isPrivate,
       locale,
       loraName,
@@ -121,7 +121,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       }
     }
     const account = await getUserCredit(userId);
-    const needCredit = Credits[modelName];
+    const needCredit = Number(Credits[modelName]) * Number(numberOfImages);
     if (
       (!account.credit && modelName !== model.freeSchnell) ||
       account.credit < needCredit

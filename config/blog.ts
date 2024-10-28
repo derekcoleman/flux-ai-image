@@ -20,5 +20,5 @@ export const BLOG_AUTHORS = {
     name: "koyaguo",
     image: "https://meme-static.douni.one/avatar.png",
     twitter: "koyaguo",
-  }
+  },
 };
