@@ -19,10 +19,12 @@ export const searchParamsSchema = z.object({
 export async function getFluxById(fluxId: string, imageUrlId: string) {
   try {
     const [id] = FluxHashids.decode(fluxId);
+    console.log({ id });
 
     const fluxData = await prisma.fluxData.findUnique({
       where: { id: id as number },
     });
+    console.log({ fluxData1: fluxData });
 
     if (!fluxData) {
       return null;
@@ -34,6 +36,7 @@ export async function getFluxById(fluxId: string, imageUrlId: string) {
         fluxId: id as number,
       },
     });
+    console.log({ imageUrl });
 
     if (!imageUrl) return null;
 
