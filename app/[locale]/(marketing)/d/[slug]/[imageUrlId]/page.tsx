@@ -42,6 +42,32 @@ export async function generateStaticParams() {
   }
 }
 
+// export async function generateMetadata({
+//   params: { locale, slug, imageUrlId },
+// }: Omit<RootPageProps, "children">) {
+//   const t = await getTranslations({ locale, namespace: "ExplorePage" });
+//   const flux = await getFluxById(slug, imageUrlId);
+
+//   if (!flux) {
+//     return notFound();
+//   }
+
+//   return {
+//     title: t("layout.title"),
+//     description: flux.inputPrompt,
+//     openGraph: {
+//       title: "Flux AI Image Generator",
+//       description: flux.inputPrompt,
+//       images: [
+//         {
+//           url: flux.imageUrl!,
+//         },
+//       ],
+//       type: "article",
+//     },
+//     image: flux.imageUrl,
+//   };
+// }
 export async function generateMetadata({
   params: { locale, slug, imageUrlId },
 }: Omit<RootPageProps, "children">) {
@@ -55,6 +81,9 @@ export async function generateMetadata({
   return {
     title: t("layout.title"),
     description: flux.inputPrompt,
+    metadataBase: process.env.NEXT_PUBLIC_APP_URL
+      ? new URL(process.env.NEXT_PUBLIC_APP_URL)
+      : undefined,
     openGraph: {
       title: "Flux AI Image Generator",
       description: flux.inputPrompt,
@@ -68,6 +97,7 @@ export async function generateMetadata({
     image: flux.imageUrl,
   };
 }
+
 const breakpointColumnsObj = {
   default: 4,
   1024: 3,
@@ -81,7 +111,11 @@ export default async function FluxPage({ params }: RootPageProps) {
     namespace: "ExplorePage",
   });
 
+  console.log("Slug:", params.slug, "ImageUrlId:", params.imageUrlId);
+
   const flux = await getFluxById(params.slug, params.imageUrlId);
+  console.log({ flux });
+
   if (!flux) return notFound();
   const { userId } = auth();
 
