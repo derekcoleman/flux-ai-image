@@ -47,7 +47,7 @@ import { useGenerator } from "@/hooks/use-genrator";
 import { cn, createRatio } from "@/lib/utils";
 
 import { DownloadAction } from "../history/download-action";
-import GeneratedImages from "../images/generatedImages";
+import { GeneratedImages } from "../images/generatedImages";
 import { PricingCardDialog } from "../pricing-cards";
 import { Icons } from "../shared/icons";
 import { Slider } from "../ui/slider";
@@ -372,7 +372,6 @@ export default function Playground({
                               <GeneratedImages
                                 fluxData={fluxData}
                                 className={`pointer-events-none w-full rounded-md ${createRatio(fluxData?.aspectRatio as Ratio)}`}
-                                key={fluxData?.id}
                               />
                             )}
                         </div>
