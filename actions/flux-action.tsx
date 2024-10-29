@@ -84,8 +84,35 @@ export async function getFluxById(fluxId: string, imageUrlId: string) {
 
     console.log("Returning final result with fluxData and imageUrl");
     return { ...fluxData, id: fluxId, imageUrl: imageUrl.imageUrl };
-  } catch (error) {
+  } catch (error: any) {
+    // Enhanced logging for different types of errors
     console.error("Error occurred in getFluxById function:", error);
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      // Known Prisma errors
+      console.error(
+        "Prisma Client Known Request Error:",
+        error.message,
+        "Code:",
+        error.code,
+      );
+    } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+      // Unknown Prisma errors
+      console.error("Prisma Client Unknown Request Error:", error.message);
+    } else if (error instanceof Prisma.PrismaClientRustPanicError) {
+      // Prisma Rust panic
+      console.error("Prisma Client Rust Panic Error:", error.message);
+    } else if (error instanceof Prisma.PrismaClientInitializationError) {
+      // Errors during Prisma Client initialization
+      console.error("Prisma Client Initialization Error:", error.message);
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      // Validation errors in Prisma
+      console.error("Prisma Client Validation Error:", error.message);
+    } else {
+      // Any other error
+      console.error("Unknown error:", error.message);
+    }
+
     return null;
   }
 }
