@@ -111,6 +111,8 @@ export default async function FluxPage({ params }: RootPageProps) {
     namespace: "ExplorePage",
   });
 
+  console.log("Slug:", params.slug, "ImageUrlId:", params.imageUrlId);
+
   const flux = await getFluxById(params.slug, params.imageUrlId);
   console.log({ flux });
 
