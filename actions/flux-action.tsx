@@ -16,105 +16,27 @@ export const searchParamsSchema = z.object({
   model: z.enum([model.dev, model.pro, model.schnell]).optional(),
 });
 
-// export async function getFluxById(fluxId: string, imageUrlId: string) {
-//   const [id] = FluxHashids.decode(fluxId);
-
-//   const fluxData = await prisma.fluxData.findUnique({
-//     where: { id: id as number },
-//   });
-
-//   if (!fluxData) {
-//     return null;
-//   }
-
-//   const imageUrl = await prisma.fluxAiImages.findUnique({
-//     where: {
-//       id: Number(imageUrlId),
-//       fluxId: id as number,
-//     },
-//   });
-
-//   if (!imageUrl) return null;
-
-//   return { ...fluxData, id: fluxId, imageUrl: imageUrl.imageUrl };
-// }
 export async function getFluxById(fluxId: string, imageUrlId: string) {
-  console.log("Entering getFluxById function...");
-  console.log("Received fluxId:", fluxId, "Received imageUrlId:", imageUrlId);
+  const [id] = FluxHashids.decode(fluxId);
 
-  try {
-    console.log("Decoding fluxId using FluxHashids...");
-    const [id] = FluxHashids.decode(fluxId);
-    console.log("Decoded fluxId:", id);
+  const fluxData = await prisma.fluxData.findUnique({
+    where: { id: id as number },
+  });
 
-    console.log("Fetching flux data from prisma for id:", id);
-    const fluxData = await prisma.fluxData.findUnique({
-      where: { id: id as number },
-    });
-    console.log("Prisma response for fluxData:", fluxData);
-
-    if (!fluxData) {
-      console.warn("No fluxData found for id:", id);
-      return null;
-    }
-
-    console.log(
-      "Fetching image URL from prisma for imageUrlId:",
-      imageUrlId,
-      "and fluxId:",
-      id,
-    );
-    const imageUrl = await prisma.fluxAiImages.findUnique({
-      where: {
-        id: Number(imageUrlId),
-        fluxId: id as number,
-      },
-    });
-    console.log("Prisma response for imageUrl:", imageUrl);
-
-    if (!imageUrl) {
-      console.warn(
-        "No imageUrl found for imageUrlId:",
-        imageUrlId,
-        "and fluxId:",
-        id,
-      );
-      return null;
-    }
-
-    console.log("Returning final result with fluxData and imageUrl");
-    return { ...fluxData, id: fluxId, imageUrl: imageUrl.imageUrl };
-  } catch (error: any) {
-    // Enhanced logging for different types of errors
-    console.error("Error occurred in getFluxById function:", error);
-
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      // Known Prisma errors
-      console.error(
-        "Prisma Client Known Request Error:",
-        error.message,
-        "Code:",
-        error.code,
-      );
-    } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
-      // Unknown Prisma errors
-      console.error("Prisma Client Unknown Request Error:", error.message);
-    } else if (error instanceof Prisma.PrismaClientRustPanicError) {
-      // Prisma Rust panic
-      console.error("Prisma Client Rust Panic Error:", error.message);
-    } else if (error instanceof Prisma.PrismaClientInitializationError) {
-      // Errors during Prisma Client initialization
-      console.error("Prisma Client Initialization Error:", error.message);
-    } else if (error instanceof Prisma.PrismaClientValidationError) {
-      // Validation errors in Prisma
-      console.error("Prisma Client Validation Error:", error.message);
-    } else {
-      // Any other error
-      console.error("Unknown error:", error.message);
-    }
-
+  if (!fluxData) {
     return null;
   }
+
+  const imageUrl = await prisma.fluxAiImages.findUnique({
+    where: {
+      id: Number(imageUrlId),
+      fluxId: id as number,
+    },
+  });
+
+  if (!imageUrl) return null;
+
+  return { ...fluxData, id: fluxId, imageUrl: imageUrl.imageUrl };
 }
 
 export async function getFluxDataByPage(params: {
