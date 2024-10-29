@@ -16,35 +16,76 @@ export const searchParamsSchema = z.object({
   model: z.enum([model.dev, model.pro, model.schnell]).optional(),
 });
 
+// export async function getFluxById(fluxId: string, imageUrlId: string) {
+//   const [id] = FluxHashids.decode(fluxId);
+
+//   const fluxData = await prisma.fluxData.findUnique({
+//     where: { id: id as number },
+//   });
+
+//   if (!fluxData) {
+//     return null;
+//   }
+
+//   const imageUrl = await prisma.fluxAiImages.findUnique({
+//     where: {
+//       id: Number(imageUrlId),
+//       fluxId: id as number,
+//     },
+//   });
+
+//   if (!imageUrl) return null;
+
+//   return { ...fluxData, id: fluxId, imageUrl: imageUrl.imageUrl };
+// }
 export async function getFluxById(fluxId: string, imageUrlId: string) {
-  console.log("hello");
+  console.log("Entering getFluxById function...");
+  console.log("Received fluxId:", fluxId, "Received imageUrlId:", imageUrlId);
+
   try {
-    console.log("inside the try block");
-
+    console.log("Decoding fluxId using FluxHashids...");
     const [id] = FluxHashids.decode(fluxId);
+    console.log("Decoded fluxId:", id);
 
+    console.log("Fetching flux data from prisma for id:", id);
     const fluxData = await prisma.fluxData.findUnique({
       where: { id: id as number },
     });
-    console.log({ fluxData1: fluxData });
+    console.log("Prisma response for fluxData:", fluxData);
 
     if (!fluxData) {
+      console.warn("No fluxData found for id:", id);
       return null;
     }
 
+    console.log(
+      "Fetching image URL from prisma for imageUrlId:",
+      imageUrlId,
+      "and fluxId:",
+      id,
+    );
     const imageUrl = await prisma.fluxAiImages.findUnique({
       where: {
         id: Number(imageUrlId),
         fluxId: id as number,
       },
     });
-    console.log({ imageUrl });
+    console.log("Prisma response for imageUrl:", imageUrl);
 
-    if (!imageUrl) return null;
+    if (!imageUrl) {
+      console.warn(
+        "No imageUrl found for imageUrlId:",
+        imageUrlId,
+        "and fluxId:",
+        id,
+      );
+      return null;
+    }
 
+    console.log("Returning final result with fluxData and imageUrl");
     return { ...fluxData, id: fluxId, imageUrl: imageUrl.imageUrl };
   } catch (error) {
-    console.log("Error fetching flux by ID:", error);
+    console.error("Error occurred in getFluxById function:", error);
     return null;
   }
 }
