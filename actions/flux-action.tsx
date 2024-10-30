@@ -17,36 +17,26 @@ export const searchParamsSchema = z.object({
 });
 
 export async function getFluxById(fluxId: string, imageUrlId: string) {
-  console.log("hello");
-  try {
-    console.log("inside the try block");
+  const [id] = FluxHashids.decode(fluxId);
 
-    const [id] = FluxHashids.decode(fluxId);
+  const fluxData = await prisma.fluxData.findUnique({
+    where: { id: id as number },
+  });
 
-    const fluxData = await prisma.fluxData.findUnique({
-      where: { id: id as number },
-    });
-    console.log({ fluxData1: fluxData });
-
-    if (!fluxData) {
-      return null;
-    }
-
-    const imageUrl = await prisma.fluxAiImages.findUnique({
-      where: {
-        id: Number(imageUrlId),
-        fluxId: id as number,
-      },
-    });
-    console.log({ imageUrl });
-
-    if (!imageUrl) return null;
-
-    return { ...fluxData, id: fluxId, imageUrl: imageUrl.imageUrl };
-  } catch (error) {
-    console.log("Error fetching flux by ID:", error);
+  if (!fluxData) {
     return null;
   }
+
+  const imageUrl = await prisma.fluxAiImages.findUnique({
+    where: {
+      id: Number(imageUrlId),
+      fluxId: id as number,
+    },
+  });
+
+  if (!imageUrl) return null;
+
+  return { ...fluxData, id: fluxId, imageUrl: imageUrl.imageUrl };
 }
 
 export async function getFluxDataByPage(params: {
