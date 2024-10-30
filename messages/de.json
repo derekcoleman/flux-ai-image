@@ -257,7 +257,7 @@
       "input": "Eingabe",
       "result": "Ergebnis",
       "placeholder": "Geben Sie einen Prompt ein, um ein Bild zu generieren...",
-      "model": "Modell",
+      "model": "Generierungsmodus",
       "lora": "Lora",
       "loraTooltip": "Eine Lora auswählen",
       "loraLabel": "Lora Name",

@@ -70,7 +70,10 @@ export default async function HeroLanding() {
           </SignedIn>
 
           <SignedOut>
-            <SignInButton mode="redirect">
+            <SignInButton
+              mode="redirect"
+              forceRedirectUrl={process.env.REDIRECT_ROUTE}
+            >
               <Button
                 className={cn(
                   buttonVariants({ size: "lg" }),

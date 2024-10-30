@@ -257,7 +257,7 @@
       "input": "입력",
       "result": "결과",
       "placeholder": "이미지를 생성할 프롬프트를 입력하세요...",
-      "model": "모델",
+      "model": "생성 모드",
       "lora": "Lora",
       "loraTooltip": "Lora 선택",
       "loraLabel": "Lora 이름",

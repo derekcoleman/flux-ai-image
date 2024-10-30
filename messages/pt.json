@@ -257,7 +257,7 @@
       "input": "Entrada",
       "result": "Resultado",
       "placeholder": "Digite o prompt para gerar a imagem...",
-      "model": "Modelo",
+      "model": "Modo de Geração",
       "lora": "Lora",
       "loraTooltip": "Selecionar uma Lora",
       "loraLabel": "Nome da Lora",

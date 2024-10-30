@@ -257,7 +257,7 @@
       "input": "Entrée",
       "result": "Résultat",
       "placeholder": "Entrez une description pour générer une image...",
-      "model": "Modèle",
+      "model": "Mode de génération",
       "lora": "Lora",
       "loraTooltip": "Sélectionner une Lora",
       "loraLabel": "Nom de la Lora",
