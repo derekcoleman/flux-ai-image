@@ -20,7 +20,12 @@ interface RootPageProps {
   params: { locale: string; slug: string; imageUrlId: string };
 }
 
-export async function generateStaticParams() {
+interface StaticParams {
+  slug: string;
+  imageUrlId: string;
+}
+
+export async function generateStaticParams(): Promise<StaticParams[]> {
   try {
     const fluxs = await prisma.fluxData.findMany({
       where: {
@@ -33,9 +38,31 @@ export async function generateStaticParams() {
         id: true,
       },
     });
-    return fluxs.map((flux) => ({
-      slug: FluxHashids.encode(flux.id),
-    }));
+
+    const staticParams: StaticParams[] = [];
+
+    for (const flux of fluxs) {
+      const fluxId = FluxHashids.encode(flux.id);
+
+      // Fetch associated images from fluxAiImages model
+      const images = await prisma.fluxAiImages.findMany({
+        where: {
+          fluxId: flux.id,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      images.forEach((image) => {
+        staticParams.push({
+          slug: fluxId, // Slug for the flux
+          imageUrlId: FluxHashids.encode(image.id), // Encoded ImageUrlId
+        });
+      });
+    }
+
+    return staticParams;
   } catch (error) {
     console.error("Error generating static params:", error);
     return [];
