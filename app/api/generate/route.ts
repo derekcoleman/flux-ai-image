@@ -308,7 +308,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     });
     return NextResponse.json({
       id: FluxHashids.encode(fluxData.id),
-      imageUrl: imageUrls,
+      images: imageUrls,
       aspectRatio: aspectRatio,
       inputPrompt: finalPrompt,
       model: modelName,
