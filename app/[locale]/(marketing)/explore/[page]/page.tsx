@@ -78,7 +78,7 @@ export default async function ExplorePage({
                 key={item.id}
                 className="masonry-grid-item border-stroke-light bg-surface-300 hover:border-stroke-strong relative mb-4 flex w-full break-inside-avoid flex-col space-y-4 overflow-hidden rounded-xl border"
               >
-                <Link href={`/d/${item.id}`}>
+                <Link href={`/d/${item.id}/${item.images.id}`}>
                   {item.taskStatus === FluxTaskStatus.Processing ? (
                     <div
                       className={`bg-pattern flx h-full w-full items-center justify-center rounded-xl ${createRatio(item.aspectRatio as Ratio)} pointer-events-none`}
