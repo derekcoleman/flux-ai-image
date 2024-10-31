@@ -478,7 +478,7 @@ export default function Playground({
           </CardContent>
           <CardFooter>
             <div className="text-center">
-              <Link href="/app/generate">{t("action.upgrade")}</Link>
+              <Link href="/app/text-to-image">{t("action.upgrade")}</Link>
             </div>
           </CardFooter>
         </Card>

@@ -247,7 +247,8 @@ export default function History({
                           disabled={
                             item.taskStatus === FluxTaskStatus.Processing
                           }
-                          id={item.id}
+                          id={item.id.toString()}
+                          fluxImageIds={[item.images.id.toString()]}
                         />
                       </div>
                     </>
