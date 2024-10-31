@@ -257,7 +257,7 @@
       "input": "入力",
       "result": "結果",
       "placeholder": "画像を生成するプロンプトを入力...",
-      "model": "モデル",
+      "model": "生成モード",
       "lora": "Lora",
       "loraTooltip": "Lora を選択",
       "loraLabel": "Lora 名",

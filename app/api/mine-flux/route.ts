@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
+
   try {
     const url = new URL(req.url);
     const values = searchParamsSchema.parse(
@@ -32,6 +33,7 @@ export async function GET(req: NextRequest) {
     );
     const { page, pageSize, model } = values;
     const offset = (page - 1) * pageSize;
+
     const whereConditions: any = {
       userId,
       taskStatus: {
@@ -42,35 +44,33 @@ export async function GET(req: NextRequest) {
       whereConditions.model = model;
     }
 
+    // Retrieve flux data and total count in parallel
     const [fluxData, total] = await Promise.all([
       prisma.fluxData.findMany({
         where: whereConditions,
         take: pageSize,
         skip: offset,
         orderBy: { createdAt: "desc" },
+        include: {
+          images: true,
+        },
       }),
       prisma.fluxData.count({ where: whereConditions }),
     ]);
 
-    const fluxDataWithImages = (
-      await Promise.all(
-        fluxData.map(async (data) => {
-          const imageUrls = await prisma.fluxAiImages.findMany({
-            where: { fluxId: data.id },
-          });
+    // Map data and attach associated images
 
-          return imageUrls.map((image) => ({
-            ...data,
-            imageUrl: image,
-            executeTime:
-              data.executeEndTime && data.executeStartTime
-                ? Number(`${data.executeEndTime - data.executeStartTime}`)
-                : 0,
-            id: FluxHashids.encode(data.id),
-          }));
-        }),
-      )
-    ).flat();
+    const fluxDataWithImages = fluxData.flatMap((data) => {
+      return data.images.map((image) => ({
+        ...data,
+        images: image,
+        executeTime:
+          data.executeEndTime && data.executeStartTime
+            ? Number(`${data.executeEndTime - data.executeStartTime}`)
+            : 0,
+        id: FluxHashids.encode(data.id),
+      }));
+    });
 
     return NextResponse.json({
       data: {
@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.log("--->", error);
+    console.error("--->", error);
     return NextResponse.json(
       { error: getErrorMessage(error) },
       { status: 400 },

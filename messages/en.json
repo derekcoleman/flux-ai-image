@@ -264,7 +264,7 @@
       "input": "Input",
       "result": "Result",
       "placeholder": "Enter prompt to generate image...",
-      "model": "Model",
+      "model": "Generation Mode",
       "lora": "Lora",
       "loraTooltip": "Select a Lora",
       "loraLabel": "Lora Name",

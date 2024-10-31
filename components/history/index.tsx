@@ -82,7 +82,7 @@ export default function History({
   const [hasMore, setHasMore] = useState(true);
   const [dataSource, setDataSource] = useState<
     (FluxSelectDto & {
-      imageUrl: {
+      images: {
         id: number;
         fluxId: number;
         imageUrl: string;
@@ -103,6 +103,8 @@ export default function History({
         data = [],
       } = result.data ?? {};
       const safeData = Array.isArray(data) ? data : [];
+      console.log({ safeData });
+
       setDataSource(page === 1 ? safeData : [...dataSource, ...safeData]);
       setPageParams({ page, pageSize });
       setHasMore(page * pageSize < total);
@@ -192,7 +194,7 @@ export default function History({
                       inView
                     >
                       <img
-                        src={item.imageUrl.imageUrl!}
+                        src={item.images.imageUrl!}
                         alt={item.inputPrompt!}
                         title={item.inputPrompt!}
                         className={`w-full rounded-xl object-cover ${createRatio(item.aspectRatio as Ratio)} pointer-events-none`}
@@ -202,7 +204,7 @@ export default function History({
                   <Link
                     className="absolute right-1 top-1 !m-0"
                     target="_blank"
-                    href={`https://pinterest.com/pin/create/button/?url=https://pinterest.com/pin/create/button/?description=${encodeURIComponent(item.inputPrompt!)}&url=${`${process.env.NEXT_PUBLIC_SITE_URL}/d/${item.id}/${item.imageUrl.id}`}`}
+                    href={`https://pinterest.com/pin/create/button/?url=https://pinterest.com/pin/create/button/?description=${encodeURIComponent(item.inputPrompt!)}&url=${`${process.env.NEXT_PUBLIC_SITE_URL}/d/${item.id}/${item.images.id}`}`}
                   >
                     <span className="[&>svg]:h-7 [&>svg]:w-7 [&>svg]:fill-[#e60023]">
                       <svg

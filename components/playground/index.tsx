@@ -113,7 +113,7 @@ export default function Playground({
   const [fluxId, setFluxId] = useState("");
   const [fluxData, setFluxData] = useState<
     FluxSelectDto & {
-      imageUrl: {
+      images: {
         id: number;
         fluxId: number;
         imageUrl: string;
@@ -361,19 +361,18 @@ export default function Playground({
                     ) : (
                       <div
                         className={cn("size-full", {
-                          "bg-muted": !fluxData?.imageUrl,
+                          "bg-muted": !fluxData?.images,
                         })}
                       >
                         <div
                           className={`w-full rounded-md ${createRatio(fluxData?.aspectRatio as Ratio)}`}
                         >
-                          {fluxData?.imageUrl &&
-                            fluxData.imageUrl.length > 0 && (
-                              <GeneratedImages
-                                fluxData={fluxData}
-                                className={`pointer-events-none w-full rounded-md ${createRatio(fluxData?.aspectRatio as Ratio)}`}
-                              />
-                            )}
+                          {fluxData?.images && fluxData.images.length > 0 && (
+                            <GeneratedImages
+                              fluxData={fluxData}
+                              className={`pointer-events-none w-full rounded-md ${createRatio(fluxData?.aspectRatio as Ratio)}`}
+                            />
+                          )}
                         </div>
                         <div className="text-content-light inline-block px-4 py-2 text-sm">
                           <p className="line-clamp-4 italic md:line-clamp-6 lg:line-clamp-[8]">
@@ -398,9 +397,9 @@ export default function Playground({
                             </button>
                           )}
 
-                          {fluxData?.imageUrl.length && (
+                          {fluxData?.images.length && (
                             <DownloadAction
-                              fluxImageIds={fluxData?.imageUrl?.map((image) => {
+                              fluxImageIds={fluxData?.images?.map((image) => {
                                 return image.id.toString();
                               })}
                               disabled={!fluxData?.id}

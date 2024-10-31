@@ -257,7 +257,7 @@
       "input": "輸入",
       "result": "結果",
       "placeholder": "輸入提示以生成圖像...",
-      "model": "模型",
+      "model": "生成模式",
       "lora": "Lora",
       "loraTooltip": "選擇一個 Lora",
       "loraLabel": "Lora 名稱",

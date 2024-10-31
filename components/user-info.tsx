@@ -110,7 +110,7 @@ export function UserInfo() {
               <Tooltip>
                 <SignInButton
                   mode="modal"
-                  forceRedirectUrl={url(pathname).href}
+                  forceRedirectUrl={process.env.REDIRECT_ROUTE}
                 >
                   <TooltipTrigger asChild>
                     <button

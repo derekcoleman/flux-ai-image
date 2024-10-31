@@ -21,21 +21,20 @@ export async function getFluxById(fluxId: string, imageUrlId: string) {
 
   const fluxData = await prisma.fluxData.findUnique({
     where: { id: id as number },
-  });
-
-  if (!fluxData) {
-    return null;
-  }
-
-  const imageUrl = await prisma.fluxAiImages.findUnique({
-    where: {
-      id: Number(imageUrlId),
-      fluxId: id as number,
+    include: {
+      images: {
+        where: {
+          id: Number(imageUrlId),
+        },
+      },
     },
   });
 
-  if (!imageUrl) return null;
+  if (!fluxData || !fluxData.images.length) {
+    return null;
+  }
 
+  const imageUrl = fluxData.images[0];
   return { ...fluxData, id: fluxId, imageUrl: imageUrl.imageUrl };
 }
 
@@ -47,91 +46,58 @@ export async function getFluxDataByPage(params: {
   try {
     const { page, pageSize, model } = params;
     const offset = (page - 1) * pageSize;
+
+    // Define the filtering conditions
     const whereConditions: Prisma.FluxDataWhereInput = {
       isPrivate: false,
-      taskStatus: {
-        in: [FluxTaskStatus.Succeeded],
-      },
+      taskStatus: FluxTaskStatus.Succeeded,
+      ...(model ? { model } : {}),
     };
-    if (model) {
-      whereConditions.model = model;
-    }
 
     const [fluxData, total] = await Promise.all([
       prisma.fluxData.findMany({
         where: whereConditions,
         take: pageSize,
         skip: offset,
+        include: {
+          images: true,
+        },
         orderBy: { createdAt: "desc" },
       }),
       prisma.fluxData.count({ where: whereConditions }),
     ]);
 
-    // const fluxDataWithImages = (
-    //   await Promise.all(
-    //     fluxData.map(async (data) => {
-    //       const imageUrls = await prisma.fluxAiImages.findMany({
-    //         where: { fluxId: data.id },
-    //       });
-
-    //       return imageUrls.map((image) => ({
-    //         ...data,
-    //         imageUrl: image,
-    //         executeTime:
-    //           data.executeEndTime && data.executeStartTime
-    //             ? Number(`${data.executeEndTime - data.executeStartTime}`)
-    //             : 0,
-    //         id: FluxHashids.encode(data.id),
-    //       }));
-    //     }),
-    //   )
-    // ).flat();
-
-    // console.log({ data: fluxDataWithImages?.[0] });
-
-    const fluxDataWithImages = (
-      await Promise.all(
-        fluxData.map(async (data) => {
-          try {
-            const imageUrls = await prisma.fluxAiImages.findMany({
-              where: { fluxId: data.id },
-            });
-
-            return imageUrls.map((image) => ({
-              ...data,
-              imageUrl: image,
-              executeTime:
-                data.executeEndTime && data.executeStartTime
-                  ? Number(`${data.executeEndTime - data.executeStartTime}`)
-                  : 0,
-              id: FluxHashids.encode(data.id),
-            }));
-          } catch (error) {
-            console.error(
-              `Error fetching images for fluxId ${data.id}:`,
-              error,
-            );
-            return [];
-          }
-        }),
-      )
-    ).flat();
+    // Map FluxData with associated images and necessary transformations
+    // const fluxDataWithImages = fluxData.map((data) => {
+    //   return {
+    //     ...data,
+    //     images: data.images.map((image) => ({
+    //       ...image,
+    //     })),
+    //     executeTime:
+    //       data.executeEndTime && data.executeStartTime
+    //         ? Number(`${data.executeEndTime - data.executeStartTime}`)
+    //         : 0,
+    //     id: FluxHashids.encode(data.id),
+    //   };
+    // });
+    const fluxDataWithImages = fluxData.flatMap((data) => {
+      return data.images.map((image) => ({
+        ...data,
+        images: image,
+        executeTime:
+          data.executeEndTime && data.executeStartTime
+            ? Number(`${data.executeEndTime - data.executeStartTime}`)
+            : 0,
+        id: FluxHashids.encode(data.id),
+      }));
+    });
 
     return {
       data: {
         total,
         page,
         pageSize,
-        // data: fluxData.map(
-        //   ({ id, executeEndTime, executeStartTime, loraUrl, ...rest }) => ({
-        //     ...rest,
-        //     executeTime:
-        //       executeEndTime && executeStartTime
-        //         ? Number(`${executeEndTime - executeStartTime}`)
-        //         : 0,
-        //     id: FluxHashids.encode(id),
-        //   }),
-        // ),
         data: fluxDataWithImages,
       },
     };

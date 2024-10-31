@@ -57,9 +57,9 @@ export default async function DashboardLayout({
             <MobileSheetSidebar links={filteredLinks} />
 
             <div className="w-full flex-1">
-              <div className="hidden md:block">
+              {/* <div className="hidden md:block">
                 <SearchCommand links={filteredLinks} />
-              </div>
+              </div> */}
             </div>
 
             {/* <Notifications /> */}

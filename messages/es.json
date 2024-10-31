@@ -257,7 +257,7 @@
       "input": "Entrada",
       "result": "Resultado",
       "placeholder": "Ingresa el aviso para generar la imagen...",
-      "model": "Modelo",
+      "model": "Modo de Generación",
       "lora": "Lora",
       "loraTooltip": "Seleccionar una Lora",
       "loraLabel": "Nombre de la Lora",

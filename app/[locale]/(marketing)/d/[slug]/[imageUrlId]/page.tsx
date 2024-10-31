@@ -20,27 +20,65 @@ interface RootPageProps {
   params: { locale: string; slug: string; imageUrlId: string };
 }
 
-export async function generateStaticParams() {
-  try {
-    const fluxs = await prisma.fluxData.findMany({
-      where: {
-        isPrivate: false,
-        taskStatus: {
-          in: [FluxTaskStatus.Succeeded],
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
-    return fluxs.map((flux) => ({
-      slug: FluxHashids.encode(flux.id),
-    }));
-  } catch (error) {
-    console.error("Error generating static params:", error);
-    return [];
-  }
-}
+// export async function generateStaticParams() {
+//   try {
+//     const fluxs = await prisma.fluxData.findMany({
+//       where: {
+//         isPrivate: false,
+//         taskStatus: {
+//           in: [FluxTaskStatus.Succeeded],
+//         },
+//       },
+//       select: {
+//         id: true,
+//       },
+//     });
+
+//     return fluxs.map((flux) => ({
+//       slug: FluxHashids.encode(flux.id),
+//     }));
+//   } catch (error) {
+//     console.error("Error generating static params:", error);
+//     return [];
+//   }
+// }
+
+// export async function generateStaticParams() {
+//   try {
+//     // Step 1: Get all public, succeeded flux entries
+//     const fluxs = await prisma.fluxData.findMany({
+//       where: {
+//         isPrivate: false,
+//         taskStatus: {
+//           in: [FluxTaskStatus.Succeeded],
+//         },
+//       },
+//       select: {
+//         id: true,
+//       },
+//     });
+
+//     // Step 2: Extract all flux IDs into an array
+//     const fluxIds = fluxs.map((flux) => flux.id);
+
+//     // Step 3: Find all images associated with these flux IDs in a single query
+//     const images = await prisma.fluxAiImages.findMany({
+//       where: { fluxId: { in: fluxIds } },
+//       select: { id: true, fluxId: true },
+//     });
+
+//     // Step 4: Map images to the corresponding slug-imageUrlId pairs
+//     const params = images.map((image) => ({
+//       slug: FluxHashids.encode(image.fluxId),
+//       imageUrlId: image.id.toString(),
+//     }));
+
+//     return params;
+//   } catch (error) {
+//     console.error("Error generating static params:", error);
+//     return [];
+//   }
+// }
 
 export async function generateMetadata({
   params: { locale, slug, imageUrlId },
