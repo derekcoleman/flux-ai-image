@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       data: {
         ...rest,
-        imageUrl: fluxImages,
+        images: fluxImages,
         executeTime:
           executeEndTime && executeStartTime
             ? `${executeEndTime - executeStartTime}`

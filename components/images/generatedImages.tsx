@@ -20,7 +20,7 @@ export function GeneratedImages({
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const autoScrollRef = useRef<NodeJS.Timeout | null>(null);
 
-  const totalSlides = fluxData.imageUrl.length;
+  const totalSlides = fluxData.images.length;
 
   const startAutoScroll = () => {
     if (autoScrollRef.current) {
@@ -121,12 +121,12 @@ export function GeneratedImages({
             >
               <div className="min-w-full">
                 <img
-                  src={fluxData.imageUrl[totalSlides - 1].imageUrl}
+                  src={fluxData.images[totalSlides - 1].imageUrl}
                   alt="Generated Image"
                   className={className}
                 />
               </div>
-              {fluxData.imageUrl.map((image: any, index: number) => (
+              {fluxData.images.map((image: any, index: number) => (
                 <div key={index} className="min-w-full">
                   <img
                     src={image.imageUrl}
@@ -137,7 +137,7 @@ export function GeneratedImages({
               ))}
               <div className="min-w-full">
                 <img
-                  src={fluxData.imageUrl[0].imageUrl}
+                  src={fluxData.images[0].imageUrl}
                   alt="Generated Image"
                   className={className}
                 />
@@ -153,7 +153,7 @@ export function GeneratedImages({
         </div>
       ) : (
         <img
-          src={fluxData.imageUrl[0].imageUrl}
+          src={fluxData.images[0].imageUrl}
           alt="Generated Image"
           className={className}
         />
