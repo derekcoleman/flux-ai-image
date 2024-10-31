@@ -111,7 +111,7 @@ export default function Playground({
   const [fluxId, setFluxId] = useState("");
   const [fluxData, setFluxData] = useState<
     FluxSelectDto & {
-      imageUrl: {
+      images: {
         id: number;
         fluxId: number;
         imageUrl: string;
@@ -120,6 +120,7 @@ export default function Playground({
       }[];
     }
   >();
+
   const useCreateTask = useCreateTaskMutation();
   const [uploadInputImage, setUploadInputImage] = useState<any[]>([]);
   const t = useTranslations("Playground");
@@ -391,7 +392,7 @@ export default function Playground({
                   fluxData.taskStatus === FluxTaskStatus.Succeeded ? (
                   <div
                     className={cn("size-full", {
-                      "bg-muted": !fluxData?.imageUrl || !fluxId,
+                      "bg-muted": !fluxData?.images || !fluxId,
                     })}
                   >
                     <div
@@ -410,7 +411,7 @@ export default function Playground({
                           />
                         </BlurFade>
                       )} */}
-                      {fluxData?.imageUrl && fluxData.imageUrl.length > 0 && (
+                      {fluxData?.images && fluxData.images.length > 0 && (
                         <GeneratedImages
                           fluxData={fluxData}
                           className={`pointer-events-none w-full rounded-md ${createRatio(fluxData?.aspectRatio as Ratio)}`}
@@ -442,9 +443,9 @@ export default function Playground({
                         >
                           <Icons.twitter className="icon-xs" />
                         </button>
-                        {fluxData?.imageUrl.length && (
+                        {fluxData?.images.length && (
                           <DownloadAction
-                            fluxImageIds={fluxData?.imageUrl?.map((image) => {
+                            fluxImageIds={fluxData?.images?.map((image) => {
                               return image.id.toString();
                             })}
                             disabled={!fluxData?.id}

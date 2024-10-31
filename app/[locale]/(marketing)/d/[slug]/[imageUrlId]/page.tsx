@@ -20,54 +20,65 @@ interface RootPageProps {
   params: { locale: string; slug: string; imageUrlId: string };
 }
 
-interface StaticParams {
-  slug: string;
-  imageUrlId: string;
-}
+// export async function generateStaticParams() {
+//   try {
+//     const fluxs = await prisma.fluxData.findMany({
+//       where: {
+//         isPrivate: false,
+//         taskStatus: {
+//           in: [FluxTaskStatus.Succeeded],
+//         },
+//       },
+//       select: {
+//         id: true,
+//       },
+//     });
 
-export async function generateStaticParams(): Promise<StaticParams[]> {
-  try {
-    const fluxs = await prisma.fluxData.findMany({
-      where: {
-        isPrivate: false,
-        taskStatus: {
-          in: [FluxTaskStatus.Succeeded],
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
+//     return fluxs.map((flux) => ({
+//       slug: FluxHashids.encode(flux.id),
+//     }));
+//   } catch (error) {
+//     console.error("Error generating static params:", error);
+//     return [];
+//   }
+// }
 
-    const staticParams: StaticParams[] = [];
+// export async function generateStaticParams() {
+//   try {
+//     // Step 1: Get all public, succeeded flux entries
+//     const fluxs = await prisma.fluxData.findMany({
+//       where: {
+//         isPrivate: false,
+//         taskStatus: {
+//           in: [FluxTaskStatus.Succeeded],
+//         },
+//       },
+//       select: {
+//         id: true,
+//       },
+//     });
 
-    for (const flux of fluxs) {
-      const fluxId = FluxHashids.encode(flux.id);
+//     // Step 2: Extract all flux IDs into an array
+//     const fluxIds = fluxs.map((flux) => flux.id);
 
-      // Fetch associated images from fluxAiImages model
-      const images = await prisma.fluxAiImages.findMany({
-        where: {
-          fluxId: flux.id,
-        },
-        select: {
-          id: true,
-        },
-      });
+//     // Step 3: Find all images associated with these flux IDs in a single query
+//     const images = await prisma.fluxAiImages.findMany({
+//       where: { fluxId: { in: fluxIds } },
+//       select: { id: true, fluxId: true },
+//     });
 
-      images.forEach((image) => {
-        staticParams.push({
-          slug: fluxId, // Slug for the flux
-          imageUrlId: FluxHashids.encode(image.id), // Encoded ImageUrlId
-        });
-      });
-    }
+//     // Step 4: Map images to the corresponding slug-imageUrlId pairs
+//     const params = images.map((image) => ({
+//       slug: FluxHashids.encode(image.fluxId),
+//       imageUrlId: image.id.toString(),
+//     }));
 
-    return staticParams;
-  } catch (error) {
-    console.error("Error generating static params:", error);
-    return [];
-  }
-}
+//     return params;
+//   } catch (error) {
+//     console.error("Error generating static params:", error);
+//     return [];
+//   }
+// }
 
 export async function generateMetadata({
   params: { locale, slug, imageUrlId },
