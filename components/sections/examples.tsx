@@ -10,11 +10,11 @@ export default function Examples() {
 
   return (
     <section>
-      <div className="container flex max-w-7xl flex-col gap-10 py-4 sm:gap-y-4 mb-4">
-        <HeaderSection
+      <div className="container mb-4 flex max-w-7xl flex-col gap-10 py-4 sm:gap-y-4">
+        {/* <HeaderSection
           title={t("examples.title")}
           subtitle={t("examples.subtitle")}
-        />
+        /> */}
 
         <div className="w-full">
           <MarqueeList />

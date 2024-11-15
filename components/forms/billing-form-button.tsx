@@ -15,11 +15,13 @@ import { SubscriptionPlan, UserSubscriptionPlan } from "@/types";
 interface BillingFormButtonProps {
   offer: ChargeProductSelectDto;
   btnText?: string;
+  isHomeScreen?: boolean;
 }
 
 export function BillingFormButton({
   offer,
   btnText = "Buy Plan",
+  isHomeScreen,
 }: BillingFormButtonProps) {
   let [isPending, startTransition] = useTransition();
   const { getToken } = useAuth();
@@ -40,11 +42,12 @@ export function BillingFormButton({
       }).then((res) => res.json());
       window.location.href = data.url;
     });
+
   const userOffer = offer.amount === 1990;
   return (
     <Button
       variant={userOffer ? "default" : "outline"}
-      className="w-full"
+      className={`w-full ${isHomeScreen && "bg-white text-black"}`}
       disabled={isPending}
       onClick={stripeSessionAction}
     >

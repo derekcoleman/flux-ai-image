@@ -150,7 +150,7 @@ export default async function FluxPage({ params }: RootPageProps) {
   return (
     <section className="container mx-auto py-20">
       <div className="flex min-h-screen flex-col md:flex-row">
-        <div className="checkerboard flex h-full w-full items-center justify-center bg-gray-100 dark:bg-gray-900 md:w-1/2">
+        <div className="checkerboard flex h-full w-full items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-900 md:w-1/2">
           <img
             src={flux.imageUrl!}
             alt={flux.inputPrompt!}

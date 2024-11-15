@@ -34,16 +34,19 @@ interface PricingCardsProps {
   userId?: string;
   locale?: string;
   chargeProduct?: ChargeProductSelectDto[];
+  isHomeScreen?: boolean;
 }
 
 const PricingCard = ({
   userId,
   offer,
   activeType,
+  isHomeScreen,
 }: {
   userId?: string;
   activeType?: string;
   offer: ChargeProductSelectDto;
+  isHomeScreen?: boolean;
 }) => {
   const pathname = usePathname();
   const t = useTranslations("PricingPage");
@@ -56,8 +59,12 @@ const PricingCard = ({
       )}
       key={offer.title}
     >
-      <div className="min-h-[150px] items-start space-y-4 bg-muted/50 p-6">
-        <p className="flex font-urban text-sm font-bold uppercase tracking-wider text-muted-foreground">
+      <div
+        className={`min-h-[150px] items-start space-y-4 p-6 ${isHomeScreen ? "bg-[#F5F5F5] text-black" : "bg-muted/50"}`}
+      >
+        <p
+          className={`flex font-urban text-sm font-bold uppercase tracking-wider ${isHomeScreen ? "text-[#737373]" : "text-muted-foreground"}`}
+        >
           {offer.title}
         </p>
 
@@ -66,7 +73,9 @@ const PricingCard = ({
             <div className="flex text-left text-3xl font-semibold leading-6">
               {offer.originalAmount && offer.originalAmount > 0 ? (
                 <>
-                  <span className="mr-2 text-base text-muted-foreground/80 line-through">
+                  <span
+                    className={`mr-2 text-base ${isHomeScreen ? "text-[#737373]" : "text-muted-foreground/80"} line-through`}
+                  >
                     {formatPrice(offer.originalAmount, "$")}
                   </span>
                   <span>{formatPrice(offer.amount, "$")}</span>
@@ -75,14 +84,18 @@ const PricingCard = ({
                 `${formatPrice(offer.amount, "$")}`
               )}
             </div>
-            <div className="-mb-1 ml-2 text-left text-sm font-medium text-muted-foreground">
+            <div
+              className={`-mb-1 ml-2 text-left text-sm font-medium ${isHomeScreen ? "text-[#737373]" : "text-muted-foreground"}`}
+            >
               <div>
                 {offer.credit} {t("worth")}
               </div>
             </div>
           </div>
         </div>
-        <div className="text-left text-sm text-muted-foreground">
+        <div
+          className={`text-left text-sm ${isHomeScreen ? "text-[#737373]" : "text-muted-foreground"}`}
+        >
           <div>{t("description")}</div>
         </div>
       </div>
@@ -143,6 +156,7 @@ const PricingCard = ({
                   ? t("action.yearly")
                   : t("action.monthly")
             }
+            isHomeScreen={isHomeScreen}
           />
         </SignedIn>
 
@@ -223,6 +237,7 @@ export function PricingCards({
   userId,
   chargeProduct,
   locale,
+  isHomeScreen,
 }: PricingCardsProps) {
   const t = useTranslations("PricingPage");
   const [activeType, setActiveType] = useState<string>("monthly");
@@ -276,18 +291,26 @@ export function PricingCards({
     }
   }, [searchParams]);
 
+  const commonClasses =
+    "mb-7 inline-flex items-center justify-between rounded-xl px-2 py-2 pe-4 text-sm md:rounded-full md:px-1 md:py-1";
+  const lightModeClasses = "bg-blue-100 text-blue-700 hover:bg-blue-200";
+  const darkModeClasses =
+    "dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800";
+
   return (
     <MaxWidthWrapper>
       <section className="flex flex-col items-center text-center">
         <HeaderSection label={t("label")} title={t("title")} />
         <div className="mt-4">
-          <p className="mb-7 inline-flex items-center justify-between rounded-xl bg-blue-100 px-2 py-2 pe-4 text-sm text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800 md:rounded-full md:px-1 md:py-1">
+          <p
+            className={`${commonClasses} ${isHomeScreen ? lightModeClasses : `${lightModeClasses} ${darkModeClasses}`}`}
+          >
             <span className="text-sm font-medium">
               {t("tip.title")}&nbsp;(
               {t("tip.subtitle")}&nbsp;
               <a
                 href="mailto:hello@vizyai.com"
-                className="font-semibold text-blue-700 underline decoration-blue-500 dark:text-white dark:decoration-white"
+                className={`font-semibold underline decoration-blue-500 ${isHomeScreen ? "text-blue-700" : "text-blue-700 dark:text-white dark:decoration-white"}`}
               >
                 {t("tip.contact")}
               </a>
@@ -330,25 +353,28 @@ export function PricingCards({
 
         <div className="grid gap-5 bg-inherit py-5 md:grid-cols-3">
           {filteredChargeProduct?.map((offer) => (
-            <PricingCard offer={offer} key={offer.id} activeType={activeType} />
+            <PricingCard
+              offer={offer}
+              key={offer.id}
+              activeType={activeType}
+              isHomeScreen={isHomeScreen}
+            />
           ))}
         </div>
 
-        <p className="mt-3 text-balance text-center text-base text-muted-foreground">
-          {t("contact.title")}
-          <br />
-          <a
-            className="font-medium text-primary hover:underline"
-            href="mailto:hello@vizyai.com"
-          >
-            hello@vizyai.com
-          </a>{" "}
-          {t("contact.description")}
-          <br />
-          {/* <strong>
-            You can test the subscriptions and won&apos;t be charged.
-          </strong> */}
-        </p>
+        {!isHomeScreen && (
+          <p className="mt-3 text-balance text-center text-base text-muted-foreground">
+            {t("contact.title")}
+            <br />
+            <a
+              className="font-medium text-primary hover:underline"
+              href="mailto:hello@vizyai.com"
+            >
+              hello@vizyai.com
+            </a>{" "}
+            {t("contact.description")}
+          </p>
+        )}
       </section>
       <div
         className="pointer-events-none fixed bottom-10 left-[50%] translate-x-[-50%]"

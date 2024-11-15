@@ -2,7 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .btn {
+    @apply rounded-lg px-6 py-2 font-medium transition-all duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90;
+  }
+}
+
 @layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
@@ -34,7 +59,7 @@
 
     --radius: 0.5rem;
 
-    --surface-alpha-strong: rgba(97,97,97,.1);
+    --surface-alpha-strong: rgba(97, 97, 97, 0.1);
     --stop-color: white;
   }
 
@@ -67,19 +92,8 @@
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
 
-    --surface-alpha-strong: hsla(0,0%,100%,.08);
+    --surface-alpha-strong: hsla(0, 0%, 100%, 0.08);
     --stop-color: black;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
@@ -89,9 +103,53 @@
   }
 
   .step:before {
-    @apply absolute w-9 h-9 bg-muted rounded-full font-mono font-medium text-center text-base inline-flex items-center justify-center -indent-px border-4 border-background;
+    @apply absolute inline-flex h-9 w-9 items-center justify-center rounded-full border-4 border-background bg-muted text-center -indent-px font-mono text-base font-medium;
     @apply ml-[-50px] mt-[-4px];
     content: counter(step);
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-main {
+    @apply bg-gradient-to-b from-gray-900 via-purple-900/20 to-gray-900;
+  }
+
+  .bg-gradient-secondary {
+    @apply bg-gradient-to-b from-gray-900 via-purple-900/10 to-gray-900;
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 15s ease infinite;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes slideUp {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .rotate-text {
+    animation: slideUp 0.5s ease-out forwards;
   }
 }
 
@@ -114,9 +172,19 @@
 }
 
 .checkerboard {
-  background-image: linear-gradient(45deg, #f0f0f0 25%, transparent 0, transparent 75%, #f0f0f0 0, #f0f0f0), linear-gradient(45deg, #f0f0f0 25%, #fff 0, #fff 75%, #f0f0f0 0, #f0f0f0);
+  background-image: linear-gradient(
+      45deg,
+      #f0f0f0 25%,
+      transparent 0,
+      transparent 75%,
+      #f0f0f0 0,
+      #f0f0f0
+    ),
+    linear-gradient(45deg, #f0f0f0 25%, #fff 0, #fff 75%, #f0f0f0 0, #f0f0f0);
   background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
+  background-position:
+    0 0,
+    10px 10px;
 }
 
 .apple-tag {
@@ -134,8 +202,8 @@
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -144,13 +212,30 @@
 }
 
 .bg-surface-alpha-strong {
-  background-color: var(--surface-alpha-strong)
+  background-color: var(--surface-alpha-strong);
 }
 
 .bg-pattern {
-  background-image: linear-gradient(45deg, hsla(0, 0%, 100%, .1) 25%, transparent 0, transparent 75%, hsla(0, 0%, 100%, .1) 0, hsla(0, 0%, 100%, .1)), linear-gradient(45deg, hsla(0, 0%, 100%, .1) 25%, transparent 0, transparent 75%, hsla(0, 0%, 100%, .1) 0, hsla(0, 0%, 100%, .1));
+  background-image: linear-gradient(
+      45deg,
+      hsla(0, 0%, 100%, 0.1) 25%,
+      transparent 0,
+      transparent 75%,
+      hsla(0, 0%, 100%, 0.1) 0,
+      hsla(0, 0%, 100%, 0.1)
+    ),
+    linear-gradient(
+      45deg,
+      hsla(0, 0%, 100%, 0.1) 25%,
+      transparent 0,
+      transparent 75%,
+      hsla(0, 0%, 100%, 0.1) 0,
+      hsla(0, 0%, 100%, 0.1)
+    );
   background-size: 30px 30px;
-  background-position: 0 0, 15px 15px;
+  background-position:
+    0 0,
+    15px 15px;
 }
 
 .masonry-grid {

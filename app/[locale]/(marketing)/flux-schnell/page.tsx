@@ -53,7 +53,7 @@ export default async function ConfirmPage({
           />
         </div>
       </div>
-      <PlaygroundFaq />
+      {/* <PlaygroundFaq /> */}
     </section>
   );
 }
