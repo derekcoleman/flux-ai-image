@@ -33,7 +33,7 @@ export default function IndexPage({ params: { locale } }: Props) {
       <FAQ />
       {/* <Community /> */}
       <CTA />
-      {process.env.NODE_ENV === "production" && <TwitterList />}
+      {/* {process.env.NODE_ENV === "production" && <TwitterList />} */}
     </div>
   );
 }

@@ -4,11 +4,13 @@ import { Github, Twitter } from "lucide-react";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t-2 py-12 text-white">
+    <footer className="py-12 text-white">
       <div className="mx-auto max-w-7xl px-4">
         <div className="grid gap-8 md:grid-cols-4">
           <div>
-            <h3 className="mb-4 text-xl font-bold">Create AI</h3>
+            <div className="mb-4 text-2xl font-bold text-white">
+              Vizy<span className="text-purple-400">AI</span>
+            </div>
             <p className="text-gray-400">
               Empowering creativity through artificial intelligence
             </p>
