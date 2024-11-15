@@ -1,73 +1,133 @@
-import { useTranslations } from "next-intl";
+"use client";
 
-import { HeaderSection } from "@/components/shared/header-section";
-import { Icons } from "@/components/shared/icons";
-import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
-import { Button } from "@/components/ui/button";
-import { features } from "@/config/landing";
-import { Link } from "@/lib/navigation";
+import React from "react";
+import { useRouter } from "next/navigation";
 
-export default function Features() {
-  const t = useTranslations("IndexPage");
+import {
+  ArrowRight,
+  Cpu,
+  Image as ImageIcon,
+  Layers,
+  Palette,
+  RefreshCcw,
+  Sparkles,
+  Video,
+  Wand2,
+} from "lucide-react";
+
+function FeatureCard({
+  icon,
+  title,
+  description,
+  benefit,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  benefit: string;
+}) {
   return (
-    <section>
-      <div className="pb-6 pt-4">
-        <MaxWidthWrapper>
-          <HeaderSection
-            title={t("features.title")}
-            subtitle={t("features.description")}
-          />
-
-          <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => (
-              <div
-                className="group relative overflow-hidden rounded-2xl border bg-background p-5 md:p-8"
-                key={t(`features.${feature.title}`)}
-              >
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0 aspect-video -translate-y-1/2 rounded-full border bg-gradient-to-b from-purple-500/80 to-white opacity-25 blur-2xl duration-300 group-hover:-translate-y-1/4 dark:from-white dark:to-white dark:opacity-5 dark:group-hover:opacity-10"
-                />
-                <div className="relative">
-                  <div className="relative flex size-12 rounded-2xl border border-border shadow-sm *:relative *:m-auto *:size-6">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="1em"
-                      height="1em"
-                      viewBox="0 0 15 15"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="m4.5 4.5l.405-.293A.5.5 0 0 0 4 4.5zm3 9.5A6.5 6.5 0 0 1 1 7.5H0A7.5 7.5 0 0 0 7.5 15zM14 7.5A6.5 6.5 0 0 1 7.5 14v1A7.5 7.5 0 0 0 15 7.5zM7.5 1A6.5 6.5 0 0 1 14 7.5h1A7.5 7.5 0 0 0 7.5 0zm0-1A7.5 7.5 0 0 0 0 7.5h1A6.5 6.5 0 0 1 7.5 1zM5 12V4.5H4V12zm-.905-7.207l6.5 9l.81-.586l-6.5-9zM10 4v6h1V4z"
-                      ></path>
-                    </svg>
-                  </div>
-
-                  <p className="mt-6 pb-6 text-muted-foreground">
-                    {t(`features.${feature.description}`)}
-                  </p>
-
-                  <div className="-mb-5 flex gap-3 border-t border-muted py-4 md:-mb-7">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="rounded-xl px-4"
-                    >
-                      <Link
-                        href="/app/text-to-image"
-                        className="flex items-center gap-2"
-                      >
-                        <span>{t("features.action.visit")}</span>
-                        <Icons.arrowUpRight className="size-4" />
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </MaxWidthWrapper>
+    <div className="group rounded-xl border border-gray-800 bg-gray-900/50 p-6 transition hover:border-purple-500">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gray-800/50 transition group-hover:scale-110">
+        {icon}
       </div>
-    </section>
+      <h3 className="mb-2 text-xl font-semibold text-white">{title}</h3>
+      <p className="mb-3 text-gray-400">{description}</p>
+      <p className="text-sm text-purple-400">{benefit}</p>
+    </div>
+  );
+}
+
+export function Features() {
+  const router = useRouter();
+  return (
+    <div className="relative bg-black py-24" id="features">
+      <div className="mx-auto max-w-7xl px-4">
+        {/* Attention & Interest */}
+        <div className="mb-16 text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-500/20 bg-purple-500/10 px-4 py-2">
+            <Sparkles className="h-5 w-5 text-purple-400" />
+            <span className="text-sm font-medium text-purple-400">
+              Industry-Leading AI Technology
+            </span>
+          </div>
+          <h2 className="mb-6 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
+            Every Tool You Need to Create
+            <br />
+            Professional Content
+          </h2>
+          <p className="mx-auto max-w-2xl text-lg text-gray-400">
+            Transform your creative workflow with our comprehensive suite of AI
+            tools. Generate, edit, and enhance content faster than ever before.
+          </p>
+        </div>
+
+        {/* Desire: Feature Grid */}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <FeatureCard
+            icon={<Sparkles className="h-6 w-6 text-blue-500" />}
+            title="Text to Image"
+            description="Transform descriptions into stunning visuals instantly"
+            benefit="Save 90% on design time"
+          />
+          <FeatureCard
+            icon={<RefreshCcw className="h-6 w-6 text-purple-500" />}
+            title="Image Variations"
+            description="Generate multiple versions of your designs"
+            benefit="Perfect your vision faster"
+          />
+          <FeatureCard
+            icon={<Video className="h-6 w-6 text-pink-500" />}
+            title="Video Generation"
+            description="Create dynamic video content from text"
+            benefit="Cut video production costs"
+          />
+          <FeatureCard
+            icon={<Wand2 className="h-6 w-6 text-green-500" />}
+            title="Smart Enhancement"
+            description="Automatically improve image quality"
+            benefit="Professional results instantly"
+          />
+          <FeatureCard
+            icon={<Palette className="h-6 w-6 text-yellow-500" />}
+            title="Style Library"
+            description="Access hundreds of premium art styles"
+            benefit="Stand out from competitors"
+          />
+          <FeatureCard
+            icon={<ImageIcon className="h-6 w-6 text-red-500" />}
+            title="Batch Processing"
+            description="Create multiple images simultaneously"
+            benefit="10x your productivity"
+          />
+          <FeatureCard
+            icon={<Layers className="h-6 w-6 text-indigo-500" />}
+            title="Custom Training"
+            description="Train AI on your brand's unique style"
+            benefit="Maintain brand consistency"
+          />
+          <FeatureCard
+            icon={<Cpu className="h-6 w-6 text-cyan-500" />}
+            title="API Access"
+            description="Integrate AI into your applications"
+            benefit="Scale your creativity"
+          />
+        </div>
+
+        {/* Action */}
+        <div className="mt-16 text-center">
+          <button
+            className="btn btn-primary group inline-flex items-center gap-2"
+            onClick={() => router.push("/app/image-to-image")}
+          >
+            Start Creating Now
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </button>
+          <p className="mt-4 text-gray-400">
+            Plans from $9.99/month • Cancel anytime
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }

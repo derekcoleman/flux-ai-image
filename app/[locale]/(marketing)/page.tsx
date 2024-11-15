@@ -1,33 +1,39 @@
 import { unstable_setRequestLocale } from "next-intl/server";
 
-import Examples from "@/components/sections/examples";
-import Features from "@/components/sections/features";
+import { ArtStyles } from "@/components/sections/art-styles";
+import { Community } from "@/components/sections/community";
+import CTA from "@/components/sections/cta";
+import { FAQ } from "@/components/sections/faq";
+import { Features } from "@/components/sections/features";
+import { Gallery } from "@/components/sections/gallery";
 import HeroLanding from "@/components/sections/hero-landing";
-import PricingCard from "@/components/sections/pricing-card";
-import SchnellIntro from "@/components/sections/schnell-intro";
+import { Ownership } from "@/components/sections/ownership";
+import { Pricing } from "@/components/sections/pricing";
+import { Ratings } from "@/components/sections/ratings";
 import TwitterList from "@/components/sections/twitter-list";
-import { infos } from "@/config/landing";
+import { UseCases } from "@/components/sections/use-cases";
 
 type Props = {
   params: { locale: string };
 };
 
 export default function IndexPage({ params: { locale } }: Props) {
-  // Enable static rendering
   unstable_setRequestLocale(locale);
 
   return (
-    <>
+    <div className="bg-black">
       <HeroLanding />
-      {/* <Powered /> */}
-      {/* <BentoGrid /> */}
-      {/* <InfoLanding data={infos[0]} reverse={true} /> */}
-      {/* <InfoLanding data={infos[1]} /> */}
+      <UseCases />
       <Features />
-      <Examples />
-      <SchnellIntro />
-      <PricingCard locale={locale} />
-      {process.env.NODE_ENV === "production" && <TwitterList />}
-    </>
+      <Ratings />
+      <ArtStyles />
+      <Gallery />
+      <Ownership />
+      <Pricing />
+      <FAQ />
+      {/* <Community /> */}
+      <CTA />
+      {/* {process.env.NODE_ENV === "production" && <TwitterList />} */}
+    </div>
   );
 }

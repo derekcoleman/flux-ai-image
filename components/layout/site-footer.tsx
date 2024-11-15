@@ -1,108 +1,64 @@
-import * as React from "react";
+import React from "react";
 
-import { useTranslations } from "next-intl";
+import { Github, Twitter } from "lucide-react";
 
-import { ModeToggle } from "@/components/layout/mode-toggle";
-import { Link } from "@/lib/navigation";
-import { cn } from "@/lib/utils";
-
-import NewsletterForm from "../forms/newsletter-form";
-import { Icons } from "../shared/icons";
-
-export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
-  const t = useTranslations("PageLayout");
+export function SiteFooter() {
   return (
-    <footer
-      className={cn(
-        "container border-t",
-        "w-full p-6 pb-4 md:py-12",
-        className,
-      )}
-    >
-      <div className="flex max-w-7xl flex-col items-center justify-end gap-4 text-sm md:flex-row">
-        <Link
-          href="/terms-of-use"
-          className="underline-offset-4 hover:underline"
-          prefetch={false}
-          title={t("footer.term")}
-        >
-          {t("footer.term")}
-        </Link>
-        <Link
-          href="/privacy-policy"
-          className="underline-offset-4 hover:underline"
-          prefetch={false}
-          title={t("footer.privacy")}
-        >
-          {t("footer.privacy")}
-        </Link>
-        <Link
-          href="mailto:hello@vizyai.com"
-          className="underline-offset-4 hover:underline"
-          prefetch={false}
-          title={t("footer.contact")}
-        >
-          {t("footer.contact")}
-        </Link>
-        <ModeToggle />
-      </div>
-      <div className="mt-4 flex max-w-7xl flex-col items-center justify-between gap-4 text-sm md:flex-row">
-        <div className="flex items-center gap-2">
-          <Icons.logo className="h-6 w-6" />
-          <span className="font-medium">Vizy AI</span>
+    <footer className="py-12 text-white">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="grid gap-8 md:grid-cols-4">
+          <div>
+            <div className="mb-4 text-2xl font-bold text-white">
+              Vizy<span className="text-purple-400">AI</span>
+            </div>
+            <p className="text-gray-400">
+              Empowering creativity through artificial intelligence
+            </p>
+          </div>
+          <div>
+            <h4 className="mb-4 font-semibold">Product</h4>
+            <ul className="space-y-2 text-gray-400">
+              <li>
+                <a href="/#features" className="cursor-pointer">
+                  Features
+                </a>
+              </li>
+              <li>
+                <a href="/#pricing" className="cursor-pointer">
+                  Pricing
+                </a>
+              </li>
+              <li>
+                <a href="/#gallery" className="cursor-pointer">
+                  Gallery
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="mb-4 font-semibold">Resources</h4>
+            <ul className="space-y-2 text-gray-400">
+              <li>Documentation</li>
+              <li>Tutorials</li>
+              <li>Blog</li>
+              <li>
+                <a href="/#support" className="cursor-pointer">
+                  Support
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="mb-4 font-semibold">Connect</h4>
+            <div className="flex gap-4">
+              <Github className="h-6 w-6 cursor-pointer text-gray-400 hover:text-white" />
+              <Twitter className="h-6 w-6 cursor-pointer text-gray-400 hover:text-white" />
+            </div>
+          </div>
         </div>
-        {/* 
-        <div className="flex flex-col items-center gap-4 md:flex-row">
-          <Link
-            href="https://tap4.ai/"
-            title="Tap4 AI Tools Directory"
-            className="underline-offset-4 hover:underline"
-            prefetch={false}
-            target="_blank"
-          >
-            Tap4 AI
-          </Link>
-          <Link
-            href="https://aiwith.me/"
-            title="Discover thousands of AI tools"
-            className="underline-offset-4 hover:underline"
-            prefetch={false}
-            target="_blank"
-          >
-            AIWITH.ME
-          </Link>
-          <Link
-            href="https://woy.ai/"
-            className="underline-offset-4 hover:underline"
-            title="Woy AI Tools Directory"
-            prefetch={false}
-            target="_blank"
-          >
-            Woy AI
-          </Link>
-          <Link
-            href="https://aipure.ai/"
-            prefetch={false}
-            target="_blank"
-            className="underline-offset-4 hover:underline"
-          >
-            AIPURE AI
-          </Link>
-          <Link
-            href="https://www.toolify.ai/"
-            prefetch={false}
-            target="_blank"
-            className="underline-offset-4 hover:underline"
-          >
-            Toolify AI
-          </Link>
+        <div className="mt-12 border-t border-gray-800 pt-8 text-center text-gray-400">
+          <p>© 2024 Create AI. All rights reserved.</p>
         </div>
-      */}
-      </div>
-      <div className="mt-4 flex max-w-7xl flex-col items-center justify-center gap-4 text-sm md:flex-row">
-        <p className="text-muted-foreground">
-          &copy; 2024 Vizy AI All rights reserved.
-        </p>
       </div>
     </footer>
   );

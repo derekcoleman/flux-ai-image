@@ -73,7 +73,7 @@ export function UserInfo() {
             exit={{ opacity: 0, x: 25 }}
           >
             <UserButton
-              afterSignOutUrl={url(pathname).href}
+              afterSignOutUrl="/"
               appearance={{
                 elements: {
                   avatarBox: "w-9 h-9 ring-2 ring-white/20",
