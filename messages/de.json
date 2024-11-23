@@ -384,7 +384,8 @@
   "AppNavigation": {
     "Index": "Startseite",
     "TextToImage": "Text zu Bild",
-    "ImageToImage": "s",
+    "ImageToImage": "Bild zu Bild",
+    "ImageToVideo": "Bild zu Video",
     "History": "Geschichte",
     "GiftCode": "Geschenkgutschein",
     "ChargeOrder": "Aufladungsbestellung"

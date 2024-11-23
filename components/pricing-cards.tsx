@@ -247,6 +247,8 @@ export function PricingCards({
   const searchParams = useSearchParams();
   const discount = 0.2;
 
+  console.log({ chargeProduct });
+
   useMemo(() => {
     if (activeType === "monthly" || activeType === "yearly") {
       let filters = chargeProduct?.filter((x) => x.type == "monthly");

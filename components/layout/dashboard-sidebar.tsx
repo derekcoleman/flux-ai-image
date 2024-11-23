@@ -1,8 +1,14 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, memo, useEffect, useState } from "react";
 
-import { Menu, PanelLeftClose, PanelRightClose } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Menu,
+  PanelLeftClose,
+  PanelRightClose,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Icons } from "@/components/shared/icons";
@@ -22,6 +28,7 @@ import { Link, usePathname } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { NavItem, SidebarNavItem } from "@/types";
 
+import UpgradePlan from "../upgrade-plan";
 import { NavBar, NavbarLogo } from "./navbar";
 
 interface DashboardSidebarProps {
@@ -49,6 +56,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
   //     );
   //   }
   // }, [isSidebarExpanded]);
+  const [expandedItem, setExpandedItem] = useState<string | null>("Company");
 
   const { isTablet } = useMediaQuery();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(!isTablet);
@@ -73,7 +81,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
           >
             <div className="flex h-full max-h-screen flex-1 flex-col gap-2">
               <div className="flex h-14 items-center p-4 lg:h-[60px]">
-                {isSidebarExpanded ? <NavbarLogo size="sm" /> : null}
+                {isSidebarExpanded ? <NavbarLogo size="2xl" /> : null}
 
                 <Button
                   variant="ghost"
@@ -97,9 +105,9 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
               </div>
 
               <nav className="flex flex-1 flex-col gap-8 px-4 pt-4">
-                {links.map((section) => (
+                {links.map((section, i) => (
                   <section
-                    key={section.title}
+                    key={`section-${i}`}
                     className="flex flex-col gap-0.5"
                   >
                     {isSidebarExpanded ? (
@@ -109,67 +117,141 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     ) : (
                       <div className="h-4" />
                     )}
-                    {section?.items?.map((item) => {
+                    {section?.items?.map((item, j) => {
                       const Icon = Icons[item.icon || "arrowRight"];
-                      return (
-                        item.href && (
-                          <Fragment key={`link-fragment-${item.title}`}>
-                            {isSidebarExpanded ? (
-                              <Link
-                                key={`link-${item.title}`}
-                                href={item.disabled ? "#" : item.href}
-                                className={cn(
-                                  "flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-muted",
-                                  path === item.href
-                                    ? "bg-muted"
-                                    : "text-muted-foreground hover:text-accent-foreground",
-                                  item.disabled &&
-                                    "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
-                                )}
-                              >
+                      return item.children ? (
+                        isSidebarExpanded ? (
+                          <div key={`item-${j}`}>
+                            <button
+                              onClick={() =>
+                                setExpandedItem(
+                                  expandedItem === item.name ? null : item.name,
+                                )
+                              }
+                              className="flex w-full items-center justify-between rounded-lg p-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-gray-700 hover:text-accent-foreground"
+                            >
+                              <div className="flex items-center gap-3 rounded-md text-sm font-medium hover:bg-gray-700">
                                 <Icon className="size-5" />
                                 {t(item.title)}
-                                {item.badge && (
-                                  <Badge className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full">
-                                    {item.badge}
-                                  </Badge>
-                                )}
-                              </Link>
-                            ) : (
-                              <Tooltip key={`tooltip-${item.title}`}>
-                                <TooltipTrigger asChild>
+                              </div>
+                              {expandedItem === item.name ? (
+                                <ChevronDown className="h-4 w-4" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4" />
+                              )}
+                            </button>
+                            {/* Child items */}
+                            {expandedItem === item.name && (
+                              <div className="ml-11 mt-1 space-y-1">
+                                {item.children.map((child) => (
                                   <Link
-                                    key={`link-tooltip-${item.title}`}
-                                    href={item.disabled ? "#" : item.href}
+                                    key={child.title}
+                                    href={child.href}
                                     className={cn(
-                                      "flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-muted",
-                                      path === item.href
-                                        ? "bg-muted"
+                                      "flex items-center gap-3 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-700",
+                                      path === child.href
+                                        ? "bg-purple-600 text-white"
                                         : "text-muted-foreground hover:text-accent-foreground",
                                       item.disabled &&
                                         "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
                                     )}
                                   >
-                                    <span className="flex size-full items-center justify-center">
-                                      <Icon className="size-5" />
-                                    </span>
+                                    {t(child.title)}
                                   </Link>
-                                </TooltipTrigger>
-                                <TooltipContent side="right">
-                                  {t(item.title)}
-                                </TooltipContent>
-                              </Tooltip>
+                                ))}
+                              </div>
                             )}
+                          </div>
+                        ) : (
+                          <Fragment key={`link-fragment-${j}`}>
+                            {item.children.map((child) => {
+                              const ChildIcon =
+                                Icons[child.icon || "arrowRight"];
+
+                              return (
+                                <Tooltip key={`tooltip-${child.title}`}>
+                                  <TooltipTrigger asChild>
+                                    <Link
+                                      href={child.href}
+                                      className={cn(
+                                        "flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-gray-700",
+                                        path === child.href
+                                          ? "bg-purple-600 text-white"
+                                          : "text-muted-foreground hover:text-accent-foreground",
+                                        item.disabled &&
+                                          "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
+                                      )}
+                                    >
+                                      <span className="flex size-full items-center justify-center">
+                                        <ChildIcon className="size-5" />
+                                      </span>
+                                    </Link>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="right" className="z-50">
+                                    {t(child.title)}
+                                  </TooltipContent>
+                                </Tooltip>
+                              );
+                            })}
                           </Fragment>
                         )
+                      ) : (
+                        <Fragment key={`link-fragment-${j}`}>
+                          {isSidebarExpanded ? (
+                            <Link
+                              key={`link-${item.title}`}
+                              href={item.disabled ? "#" : item.href}
+                              className={cn(
+                                "flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-gray-700",
+                                path === item.href
+                                  ? "bg-purple-600 text-white"
+                                  : "text-muted-foreground hover:text-accent-foreground",
+                                item.disabled &&
+                                  "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
+                              )}
+                            >
+                              <Icon className="size-5" />
+                              {t(item.title)}
+                              {item.badge && (
+                                <Badge className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full">
+                                  {item.badge}
+                                </Badge>
+                              )}
+                            </Link>
+                          ) : (
+                            <Tooltip key={`tooltip-${item.title}`}>
+                              <TooltipTrigger asChild>
+                                <Link
+                                  key={`link-tooltip-${item.title}`}
+                                  href={item.disabled ? "#" : item.href}
+                                  className={cn(
+                                    "flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-gray-700",
+                                    path === item.href
+                                      ? "bg-purple-600 text-white"
+                                      : "text-muted-foreground hover:text-accent-foreground",
+                                    item.disabled &&
+                                      "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
+                                  )}
+                                >
+                                  <span className="flex size-full items-center justify-center">
+                                    <Icon className="size-5" />
+                                  </span>
+                                </Link>
+                              </TooltipTrigger>
+                              <TooltipContent side="right" className="z-50">
+                                {t(item.title)}
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                        </Fragment>
                       );
                     })}
                   </section>
                 ))}
               </nav>
 
-              <div className="mt-auto xl:p-4">
-                {/* {isSidebarExpanded ? <UpgradeCard /> : null} */}
+              <div className="mt-auto xl:py-4">
+                {isSidebarExpanded && <UpgradePlan />}
               </div>
             </div>
           </aside>
@@ -179,7 +261,9 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
   );
 }
 
-export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
+export const MobileSheetSidebar = memo(function MobileSheetSidebar({
+  links,
+}: DashboardSidebarProps) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
   const { isSm, isMobile } = useMediaQuery();
@@ -260,4 +344,4 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
   return (
     <div className="flex size-9 animate-pulse rounded-lg bg-muted md:hidden" />
   );
-}
+});

@@ -1,6 +1,7 @@
+import { Images, Layers, Maximize, Palette, Video, Wand2 } from "lucide-react";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
-import BillingsInfo from "@/components/billing-info";
+import DashboardContent from "@/components/dashboard/dashboard-content";
 
 interface PageProps {
   params: { locale: string };
@@ -14,8 +15,9 @@ export async function generateMetadata({ params: { locale } }: PageProps) {
     description: t("page.description"),
   };
 }
-export default async function DashboardPage({ params: { locale } }: PageProps) {
+
+export default function DashboardPage({ params: { locale } }: PageProps) {
   unstable_setRequestLocale(locale);
 
-  return <BillingsInfo />;
+  return <DashboardContent />;
 }

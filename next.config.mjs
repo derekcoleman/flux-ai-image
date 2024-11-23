@@ -28,12 +28,17 @@ const nextConfig = {
         hostname: "img.douni.one",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "vizyai.s3.us-east-1.amazonaws.com",
+        port: "",
+      },
     ],
   },
 
-  experimental: {
-    taint: true,
-  },
+  // experimental: {
+  //   taint: true,
+  // },
 
   redirects() {
     return [

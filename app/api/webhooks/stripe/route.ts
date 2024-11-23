@@ -199,7 +199,7 @@ export async function POST(req: Request) {
         },
       });
     });
-    const price = formatPrice(product.amount)
+    const price = formatPrice(product.amount);
     await logsnag.track({
       channel: "payments",
       event: "Successful Payment",

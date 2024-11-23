@@ -85,7 +85,7 @@ export function ModelSelector({
               role="combobox"
               aria-expanded={open}
               aria-label="Select a model"
-              className="w-full justify-between"
+              className="w-full justify-between bg-transparent"
             >
               {selectedModel ? selectedModel.name : "Select a model..."}
 

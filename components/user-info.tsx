@@ -65,7 +65,7 @@ export function UserInfo() {
     <AnimatePresence>
       <SignedIn key="user-info">
         <div className="flex items-center space-x-3">
-          <LocaleSwitcher />
+          {/* <LocaleSwitcher /> */}
           <motion.div
             className="pointer-events-auto relative flex h-10 items-center"
             initial={{ opacity: 0, x: 25 }}
@@ -99,7 +99,7 @@ export function UserInfo() {
       </SignedIn>
       <SignedOut key="sign-in">
         <div className="flex items-center space-x-3">
-          <LocaleSwitcher />
+          {/* <LocaleSwitcher /> */}
           <motion.div
             className="pointer-events-auto"
             initial={{ opacity: 0, x: 25 }}

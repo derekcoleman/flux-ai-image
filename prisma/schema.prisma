@@ -221,3 +221,33 @@ model UserPaymentInfo {
 
   @@map(name: "user_payment_info")
 }
+
+model OnboardingAnswers {
+  id               Int       @id @default(autoincrement())
+  userId           String    @map(name: "user_id") @db.VarChar(200) @unique
+  role             String
+  interests        Json
+  designTypes      Json
+  experienceLevel  String
+  goals            Json
+  createdAt        DateTime  @default(now()) @map(name: "created_at") @db.Timestamp(6)
+  updatedAt        DateTime  @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+
+  @@map(name: "onboarding_answers")
+}
+
+
+model CompanyInformation {
+  id             Int      @id @default(autoincrement())
+  userId         String   @map(name: "user_id") @db.VarChar(200) @unique
+  companyName    String   @db.VarChar(255)
+  websiteUrl     String   @db.VarChar(255)
+  description    String   @db.Text
+  targetAudience String   @db.Text
+  companyLogo    String?  @db.VarChar(255)
+  industry       String   @db.VarChar(255)
+  createdAt      DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
+  updatedAt      DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+
+  @@map(name: "company_information")
+}

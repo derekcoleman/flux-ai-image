@@ -2,14 +2,16 @@ import React from "react";
 
 import { Github, Twitter } from "lucide-react";
 
+import { NavbarLogo } from "./navbar";
+
 export function SiteFooter() {
   return (
     <footer className="py-12 text-white">
       <div className="mx-auto max-w-7xl px-4">
         <div className="grid gap-8 md:grid-cols-4">
           <div>
-            <div className="mb-4 text-2xl font-bold text-white">
-              Vizy<span className="text-purple-400">AI</span>
+            <div className="mb-4">
+              <NavbarLogo size="2xl" />
             </div>
             <p className="text-gray-400">
               Empowering creativity through artificial intelligence

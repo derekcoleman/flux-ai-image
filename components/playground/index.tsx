@@ -262,7 +262,7 @@ export default function Playground({
   };
 
   return (
-    <div className="overflow-hidden rounded-[0.5rem] border bg-background shadow">
+    <div className="overflow-hidden rounded-[0.5rem] border bg-transparent shadow">
       <div className="container h-full p-6">
         <div className="grid h-full items-stretch gap-6 md:grid-cols-[1fr_240px]">
           <div className="flex-col space-y-4 sm:flex md:order-2">
@@ -342,7 +342,7 @@ export default function Playground({
                     <Textarea
                       id="input"
                       placeholder={t("form.placeholder")}
-                      className="flex-1 lg:min-h-[320px]"
+                      className="flex-1 bg-transparent lg:min-h-[320px]"
                       value={inputPrompt}
                       onChange={(e) => setInputPrompt(e.target.value)}
                     />

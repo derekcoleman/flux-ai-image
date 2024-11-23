@@ -383,8 +383,9 @@
   },
   "AppNavigation": {
     "Index": "الرئيسية",
-    "TextToImage": "متن به تصویر",
-    "ImageToImage": "s",
+    "TextToImage": "نص إلى صورة",
+    "ImageToImage": "صورة إلى صورة",
+    "ImageToVideo": "صورة إلى فيديو",
     "History": "السجل",
     "GiftCode": "كود الهدية",
     "ChargeOrder": "طلب الشحن"

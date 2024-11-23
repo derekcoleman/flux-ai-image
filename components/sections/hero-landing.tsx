@@ -18,6 +18,7 @@ import { GitHubBrandIcon, GoogleBrandIcon, MailIcon } from "@/assets";
 import { url } from "@/lib";
 
 import ShimmerButton from "../forms/shimmer-button";
+import { NavbarLogo } from "../layout/navbar";
 import { Tooltip, TooltipContent, TooltipProvider } from "../ui/tooltip";
 
 const rotatingTexts = ["Brand Assets", "Product Photos", "Stunning Visuals"];
@@ -73,8 +74,8 @@ export default function HeroLanding() {
       {/* Navigation */}
       <nav className="absolute left-0 right-0 top-0 z-50">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-6">
-          <div className="text-2xl font-bold text-white">
-            Vizy<span className="text-purple-400">AI</span>
+          <div className="mb-4">
+            <NavbarLogo size="2xl" />
           </div>
 
           <AnimatePresence>

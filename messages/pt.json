@@ -383,8 +383,9 @@
   },
   "AppNavigation": {
     "Index": "Início",
-    "TextToImage": "texto para gerar",
-    "ImageToImage": "s",
+    "TextToImage": "texto para imagem",
+    "ImageToImage": "imagem para imagem",
+    "ImageToVideo": "imagem para vídeo",
     "History": "Histórico",
     "GiftCode": "Código de Presente",
     "ChargeOrder": "Pedido de Recarga"

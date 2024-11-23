@@ -401,7 +401,8 @@
   "AppNavigation": {
     "Index": "首页",
     "TextToImage": "文本到图像",
-    "ImageToImage": "s",
+    "ImageToImage": "图像到图像",
+    "ImageToVideo": "图像到视频",
     "History": "历史记录",
     "GiftCode": "兑换",
     "ChargeOrder": "充值订单"
