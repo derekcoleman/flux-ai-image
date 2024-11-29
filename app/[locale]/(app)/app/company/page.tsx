@@ -86,8 +86,6 @@ export default function CompanyInformation() {
     setCompanyLogo(companyInfo?.companyLogo || null);
   };
 
-  console.log({ companyInfo });
-
   return (
     <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
       <div className="flex-1">
