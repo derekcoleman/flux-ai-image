@@ -59,8 +59,6 @@ export default function CompanyInformation() {
     }
   };
 
-  console.log({ isUpdating, companyInfo, isEditing });
-
   const onSubmit = (data: CompanyInfo) => {
     const urlPattern = /^https?:\/\//;
     const processedData = {
@@ -85,7 +83,7 @@ export default function CompanyInformation() {
     form.reset(companyInfo || {});
     setIsEditing(false);
     setIsLogoChanged(false);
-    setCompanyLogo(companyInfo?.companyLogo);
+    setCompanyLogo(companyInfo?.companyLogo || null);
   };
 
   return (
@@ -126,7 +124,7 @@ export default function CompanyInformation() {
                         accept="image/*"
                         className="absolute inset-0 cursor-pointer opacity-0"
                         onChange={handleLogoUpload}
-                        disabled={!isEditing && companyInfo}
+                        disabled={!isEditing && !!companyInfo}
                       />
                     </div>
                   )}
@@ -166,12 +164,12 @@ export default function CompanyInformation() {
                       <>
                         <CompanyNameField
                           control={form.control}
-                          isDisabled={!isEditing && companyInfo}
+                          isDisabled={!isEditing && !!companyInfo}
                           form={form}
                         />
                         <WebsiteUrlField
                           control={form.control}
-                          isDisabled={!isEditing && companyInfo}
+                          isDisabled={!isEditing && !!companyInfo}
                           form={form}
                         />
                       </>
@@ -187,7 +185,7 @@ export default function CompanyInformation() {
                     ) : (
                       <DescriptionField
                         control={form.control}
-                        isDisabled={!isEditing && companyInfo}
+                        isDisabled={!isEditing && !!companyInfo}
                         form={form}
                       />
                     )}
@@ -202,7 +200,7 @@ export default function CompanyInformation() {
                     ) : (
                       <TargetAudienceField
                         control={form.control}
-                        isDisabled={!isEditing && companyInfo}
+                        isDisabled={!isEditing && !!companyInfo}
                         form={form}
                       />
                     )}
@@ -217,7 +215,7 @@ export default function CompanyInformation() {
                     ) : (
                       <IndustryField
                         control={form.control}
-                        isDisabled={!isEditing && companyInfo}
+                        isDisabled={!isEditing && !!companyInfo}
                         form={form}
                       />
                     )}

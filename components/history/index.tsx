@@ -103,7 +103,6 @@ export default function History({
         data = [],
       } = result.data ?? {};
       const safeData = Array.isArray(data) ? data : [];
-      console.log({ safeData });
 
       setDataSource(page === 1 ? safeData : [...dataSource, ...safeData]);
       setPageParams({ page, pageSize });

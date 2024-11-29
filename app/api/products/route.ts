@@ -140,7 +140,6 @@ export async function PUT(req: NextRequest) {
   } catch (err) {
     return createResponse("Invalid input data", 400, err.errors);
   }
-  // console.log({ requestData });
 
   try {
     const existingProduct = await fetchExistingProduct(requestData.id, userId);
@@ -238,8 +237,6 @@ async function parseRequestData(req: NextRequest) {
 }
 
 async function fetchExistingProduct(productId: string, userId: string) {
-  // console.log({ id: productId, userId });
-
   return prisma.product.findUnique({
     where: { id: parseInt(productId), userId },
   });
