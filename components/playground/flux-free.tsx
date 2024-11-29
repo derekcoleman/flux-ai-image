@@ -10,13 +10,11 @@ import { Copy } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import BlurFade from "@/components/magicui/blur-fade";
 import { AspectRatioSelector } from "@/components/playground/aspect-selector";
 import {
   ImageToImageModel,
   Model,
   TextToImageModel,
-  types,
 } from "@/components/playground/models";
 import { PrivateSwitch } from "@/components/playground/private-switch";
 import { Button } from "@/components/ui/button";
@@ -33,10 +31,9 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Locale } from "@/config";
-import { Credits, loras, model, ModelName, Ratio } from "@/config/constants";
+import { model, ModelName, Ratio } from "@/config/constants";
 import {
   ChargeProductSelectDto,
   FluxSelectDto,
@@ -55,6 +52,11 @@ import Upload from "../upload";
 import ComfortingMessages from "./comforting";
 import Loading from "./loading";
 
+interface UploadedImage {
+  completedUrl: string;
+  url: string;
+}
+
 const aspectRatios = [
   { Ratio: Ratio.r1, icon: "Square" },
   { Ratio: Ratio.r2, icon: "RectangleHorizontal" },
@@ -63,12 +65,11 @@ const aspectRatios = [
   { Ratio: Ratio.r5, icon: "TwoByThree" },
 ];
 const useCreateTaskMutation = (config?: {
-  onSuccess: (result: any) => void;
+  onSuccess: (result: unknown) => void;
 }) => {
   const { getToken } = useAuth();
-
   return useMutation({
-    mutationFn: async (values: any) => {
+    mutationFn: async (values: Record<string, unknown>) => {
       const res = await fetch("/api/generate", {
         body: JSON.stringify(values),
         method: "POST",
@@ -104,7 +105,7 @@ export default function Playground({
   const models = [...TextToImageModel, ...ImageToImageModel];
 
   const [isPublic, setIsPublic] = React.useState(true);
-  const [selectedModel, setSelectedModel] = React.useState<Model>(models[0]);
+  const [selectedModel] = React.useState<Model>(models[0]);
   const [ratio, setRatio] = React.useState<Ratio>(Ratio.r1);
   const [inputPrompt, setInputPrompt] = React.useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -122,7 +123,7 @@ export default function Playground({
   >();
 
   const useCreateTask = useCreateTaskMutation();
-  const [uploadInputImage, setUploadInputImage] = useState<any[]>([]);
+  const [uploadInputImage, setUploadInputImage] = useState<UploadedImage[]>([]);
   const t = useTranslations("Playground");
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
@@ -187,8 +188,7 @@ export default function Playground({
       "queryUserPoints",
     ]) as UserCreditSelectDto;
     if (queryData?.credit < 0) {
-      t("error.insufficientCredits") &&
-        toast.error(t("error.insufficientCredits"));
+      toast.error(t("error.insufficientCredits"));
       setPricingCardOpen(true);
       return;
     }

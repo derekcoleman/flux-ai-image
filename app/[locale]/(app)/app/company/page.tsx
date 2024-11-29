@@ -59,6 +59,8 @@ export default function CompanyInformation() {
     }
   };
 
+  console.log({ isUpdating, companyInfo, isEditing });
+
   const onSubmit = (data: CompanyInfo) => {
     const urlPattern = /^https?:\/\//;
     const processedData = {
@@ -71,7 +73,7 @@ export default function CompanyInformation() {
     };
 
     if (isEditing) {
-      updateCompanyData(processedData);
+      updateCompanyData({ ...processedData, companyLogo: companyLogo });
       setIsEditing(false);
     } else {
       saveCompanyData({ ...processedData, companyLogo: companyLogo });
@@ -132,6 +134,18 @@ export default function CompanyInformation() {
                     <Label className="items-center text-sm text-gray-300">
                       Company Logo
                     </Label>
+                  )}
+                  {((companyLogo && isEditing) ||
+                    (!companyInfo && companyLogo && !isEditing)) && (
+                    <button
+                      className="mt-2 rounded-lg bg-red-600 px-3 py-1 text-sm font-bold text-white"
+                      onClick={() => {
+                        setCompanyLogo(null);
+                        setIsLogoChanged(true);
+                      }}
+                    >
+                      Remove Logo
+                    </button>
                   )}
                 </div>
 
@@ -227,24 +241,25 @@ export default function CompanyInformation() {
                           <>
                             <Button onClick={handleCancelEdit}>Cancel</Button>
                             <Button
-                              type="submit"
                               disabled={
                                 isUpdating ||
                                 (!form.formState.isDirty && !isLogoChanged)
                               }
+                              type="submit"
                               className="flex items-center gap-2 rounded-lg bg-purple-600 px-6 py-2 font-medium text-white transition-colors hover:bg-purple-700"
                             >
-                              {isUpdating ? "Updating..." : "Update Changes"}
+                              Update Changes
                             </Button>
                           </>
                         ) : (
                           companyInfo &&
                           !isEditing && (
                             <Button
+                              disabled={isUpdating}
                               onClick={() => setIsEditing(true)}
                               className="flex items-center gap-2 rounded-lg bg-purple-600 px-6 py-2 font-medium text-white transition-colors hover:bg-purple-700"
                             >
-                              Edit Information
+                              {isUpdating ? "Updating..." : " Edit Information"}
                             </Button>
                           )
                         )}

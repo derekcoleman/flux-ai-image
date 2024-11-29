@@ -1,4 +1,5 @@
-import { Images, Layers, Maximize, Palette, Video, Wand2 } from "lucide-react";
+import React from "react";
+
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
 import DashboardContent from "@/components/dashboard/dashboard-content";

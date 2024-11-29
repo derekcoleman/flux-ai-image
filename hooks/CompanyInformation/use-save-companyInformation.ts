@@ -9,7 +9,7 @@ export const useSaveCompanyInformation = (): {
   saveCompanyData: (data: CompanyInformation) => void;
   isSaving: boolean;
 } => {
-  const mutation = useMutation<any, Error, CompanyInformation>({
+  const mutation = useMutation<CompanyInformation, Error, CompanyInformation>({
     mutationFn: saveCompanyInformation,
     onSuccess: (data) => {
       console.log("Company information saved successfully:", data);

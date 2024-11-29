@@ -9,7 +9,6 @@ import { z } from "zod";
 
 import { Credits, loraTriggerWords, model, Ratio } from "@/config/constants";
 import { FluxHashids } from "@/db/dto/flux.dto";
-import { ReplicateHashids } from "@/db/dto/replicate.dto";
 import { prisma } from "@/db/prisma";
 import { getUserCredit } from "@/db/queries/account";
 import { BillingType } from "@/db/type";
@@ -30,7 +29,6 @@ function getKey(id: string) {
 
 export const maxDuration = 60;
 
-type Params = { params: { key: string } };
 const CreateGenerateSchema = z.object({
   model: z.enum([
     model.pro,
@@ -56,7 +54,7 @@ const CreateGenerateSchema = z.object({
   inputImageUrl: z.string().url().optional(),
 });
 
-export async function POST(req: NextRequest, { params }: Params) {
+export async function POST(req: NextRequest) {
   const { userId } = auth();
   let triggerWord = "";
   const user = await currentUser();
@@ -83,15 +81,21 @@ export async function POST(req: NextRequest, { params }: Params) {
       inputPrompt,
       aspectRatio,
       numberOfImages,
-      isPrivate,
       locale,
       loraName,
       inputImageUrl,
     } = CreateGenerateSchema.parse(data);
 
-    if (loraTriggerWords.hasOwnProperty(loraName || "")) {
+    if (
+      Object.prototype.hasOwnProperty.call(loraTriggerWords, loraName || "")
+    ) {
       triggerWord = loraTriggerWords[loraName || ""];
     }
+
+    // if (loraTriggerWords.hasOwnProperty(loraName || "")) {
+    //   triggerWord = loraTriggerWords[loraName || ""];
+    // }
+
     const finalPrompt = triggerWord
       ? `${inputPrompt} ${triggerWord}`
       : inputPrompt;
@@ -104,7 +108,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       const thisMonthEnd = dayjs().endOf("M");
       const freeSchnellCount = await prisma.fluxData.count({
         where: {
-          model: model.freeSchnell,
+          model: `${model.freeSchnell}:${modelId}`,
           userId,
           createdAt: {
             gte: thisMonthStart.toDate(),
@@ -112,7 +116,7 @@ export async function POST(req: NextRequest, { params }: Params) {
           },
         },
       });
-      // 5 free schnell generate per month
+
       if (freeSchnellCount >= 5 && !user.publicMetadata.siteOwner) {
         return NextResponse.json(
           { error: "Insufficient credit", code: 1000403 },
@@ -120,6 +124,7 @@ export async function POST(req: NextRequest, { params }: Params) {
         );
       }
     }
+
     const account = await getUserCredit(userId);
     const needCredit = Number(Credits[modelName]) * Number(numberOfImages);
     if (

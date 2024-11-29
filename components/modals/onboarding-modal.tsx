@@ -84,7 +84,7 @@ const goals = [
   "Generate More Ideas",
 ];
 
-export function OnboardingModal({ handleClose }) {
+export function OnboardingModal({ handleClose }: { handleClose: () => void }) {
   const { saveOnboardingData, isSaving } = useSaveOnboarding();
 
   const [step, setStep] = useState(0);

@@ -3,8 +3,12 @@ import React, { memo } from "react";
 
 import TextareaAutosize from "react-textarea-autosize";
 
-import { industries } from "@/app/[locale]/(app)/app/company/constants";
 import { FormFieldProps } from "@/app/[locale]/(app)/app/company/types";
+import {
+  categories,
+  currencies,
+  frequencies,
+} from "@/app/[locale]/(app)/app/products/constants";
 import {
   FormControl,
   FormField,
@@ -21,15 +25,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Memoized company name field
-export const CompanyNameField = memo(
+export const NameField = memo(
   ({ control, isDisabled, form }: FormFieldProps) => (
     <FormField
       control={control}
-      name="companyName"
+      name="name"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Company Name</FormLabel>
+          <FormLabel>Name</FormLabel>
           <FormControl>
             <Input
               className={`w-full rounded-lg border px-4 py-2 text-white ${
@@ -37,7 +40,7 @@ export const CompanyNameField = memo(
                   ? "border-red-500"
                   : "border-gray-600 bg-gray-700"
               }`}
-              placeholder="Enter company name"
+              placeholder="Enter name"
               {...field}
               disabled={isDisabled}
             />
@@ -49,18 +52,46 @@ export const CompanyNameField = memo(
   ),
 );
 
-// Memoized industry field
-export const IndustryField = memo(
+export const PriceField = memo(
   ({ control, isDisabled, form }: FormFieldProps) => (
     <FormField
       control={control}
-      name="industry"
-      render={({ field }) => {
-        console.log({ field: field.value });
+      name="price"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Price</FormLabel>
+          <FormControl>
+            <Input
+              className={`w-full rounded-lg border px-4 py-2 text-white ${
+                form.formState.errors.companyName
+                  ? "border-red-500"
+                  : "border-gray-600 bg-gray-700"
+              }`}
+              placeholder="Enter Amount"
+              {...field}
+              disabled={isDisabled}
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9.]/g, ""); // Allow only numbers and decimal point
+                field.onChange(value);
+              }}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  ),
+);
 
+export const CategoryField = memo(
+  ({ control, isDisabled, form }: FormFieldProps) => (
+    <FormField
+      control={control}
+      name="category"
+      render={({ field }) => {
         return (
           <FormItem>
-            <FormLabel>Industry</FormLabel>
+            <FormLabel>Category</FormLabel>
             <Select
               onValueChange={field.onChange}
               value={field.value}
@@ -74,15 +105,15 @@ export const IndustryField = memo(
                       : "border-gray-600 bg-gray-700"
                   }`}
                 >
-                  <SelectValue placeholder="Select an industry">
+                  <SelectValue placeholder="Select an category">
                     {field.value}
                   </SelectValue>
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {industries.map((industry) => (
-                  <SelectItem key={industry} value={industry}>
-                    {industry}
+                {categories.map((categoty) => (
+                  <SelectItem key={categoty.label} value={categoty.value}>
+                    {categoty.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -95,7 +126,92 @@ export const IndustryField = memo(
   ),
 );
 
-// Memoized website URL field
+export const FrequencyField = memo(
+  ({ control, isDisabled, form }: FormFieldProps) => (
+    <FormField
+      control={control}
+      name="frequency"
+      render={({ field }) => {
+        return (
+          <FormItem>
+            <FormLabel>Frequency</FormLabel>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}
+              disabled={isDisabled}
+            >
+              <FormControl>
+                <SelectTrigger
+                  className={`w-full rounded-lg border px-4 py-2 text-white ${
+                    form.formState.errors.companyName
+                      ? "border-red-500"
+                      : "border-gray-600 bg-gray-700"
+                  }`}
+                >
+                  <SelectValue placeholder="Select an Frequency">
+                    {field.value}
+                  </SelectValue>
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {frequencies.map((frequency) => (
+                  <SelectItem key={frequency.label} value={frequency.value}>
+                    {frequency.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
+    />
+  ),
+);
+
+export const CurrencyField = memo(
+  ({ control, isDisabled, form }: FormFieldProps) => (
+    <FormField
+      control={control}
+      name="currency"
+      render={({ field }) => {
+        return (
+          <FormItem>
+            <FormLabel>Currency</FormLabel>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}
+              disabled={isDisabled}
+            >
+              <FormControl>
+                <SelectTrigger
+                  className={`w-full rounded-lg border px-4 py-2 text-white ${
+                    form.formState.errors.companyName
+                      ? "border-red-500"
+                      : "border-gray-600 bg-gray-700"
+                  }`}
+                >
+                  <SelectValue placeholder="Select an Currency">
+                    {field.value}
+                  </SelectValue>
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {currencies.map((currency) => (
+                  <SelectItem key={currency.code} value={currency.code}>
+                    {currency.symbol} {currency.code} - {currency.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
+    />
+  ),
+);
+
 export const WebsiteUrlField = memo(
   ({ control, isDisabled, form }: FormFieldProps) => (
     <FormField
@@ -138,7 +254,7 @@ export const DescriptionField = memo(
                   ? "border-red-500"
                   : "border-gray-600 bg-gray-700"
               }`}
-              placeholder="Brief description of your company..."
+              placeholder="Brief description..."
               {...field}
               disabled={isDisabled}
               minRows={3}

@@ -12,19 +12,22 @@ export interface CompanyInformation {
 
 export const saveCompanyInformation = async (
   companyInfo: CompanyInformation,
-): Promise<any> => {
-  const { data } = await axios.post("/api/company", companyInfo);
+): Promise<CompanyInformation> => {
+  const { data } = await axios.post<CompanyInformation>(
+    "/api/company",
+    companyInfo,
+  );
   return data;
 };
 
-export const getCompanyInformation = async (): Promise<any> => {
+export const getCompanyInformation = async (): Promise<CompanyInformation> => {
   const { data } = await axios.get("/api/company");
   return data;
 };
 
 export const updateCompanyInformation = async (
   companyInfo: Partial<CompanyInformation>,
-): Promise<any> => {
+): Promise<CompanyInformation> => {
   const { data } = await axios.put("/api/company", companyInfo);
   return data;
 };

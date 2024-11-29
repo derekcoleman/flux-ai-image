@@ -1,9 +1,8 @@
-import { redirect } from "next/navigation";
+import React from "react";
 
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
 import FluxFreeGenerator from "@/components/playground/flux-free";
-import { PlaygroundFaq } from "@/components/playground/playground-faq";
 import { getChargeProduct } from "@/db/queries/charge-product";
 
 interface RootLayoutProps {

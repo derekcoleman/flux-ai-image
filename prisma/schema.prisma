@@ -251,3 +251,19 @@ model CompanyInformation {
 
   @@map(name: "company_information")
 }
+
+model Product {
+  id          Int      @id @default(autoincrement()) 
+  userId      String   @map(name: "user_id") @db.VarChar(200)
+  name        String
+  description String
+  price       String
+  currency    String
+  frequency   String?
+  category    String
+  images      Json
+  createdAt   DateTime @default(now()) 
+  updatedAt   DateTime @updatedAt
+
+  @@map("products")
+}
