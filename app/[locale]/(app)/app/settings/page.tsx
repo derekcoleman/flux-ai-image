@@ -105,7 +105,10 @@ export default function Settings() {
     goals: [],
   });
 
-  const handlePreferenceChange = (key: string, value: any) => {
+  const handlePreferenceChange = (
+    key: keyof Preferences,
+    value: Preferences[typeof key],
+  ) => {
     if (preferences[key] === value) return;
     const newPreferences = { ...preferences, [key]: value };
     setPreferences(newPreferences);
@@ -135,8 +138,6 @@ export default function Settings() {
     }
     setIsEditing(false);
   };
-
-  console.log({ isUpdating });
 
   const handleUpdate = () => {
     updateOnBoardingData(preferences);

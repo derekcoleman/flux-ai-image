@@ -1,8 +1,4 @@
-import {
-  useMutation,
-  UseMutationResult,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
   CompanyInformation,
@@ -15,11 +11,13 @@ export const useUpdateCompanyInformation = (): {
 } => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<any, Error, Partial<CompanyInformation>>({
+  const mutation = useMutation<
+    CompanyInformation,
+    Error,
+    Partial<CompanyInformation>
+  >({
     mutationFn: updateCompanyInformation,
     onSuccess: (data) => {
-      console.log("Company information updated successfully:", data);
-
       queryClient.setQueryData(["companyInformation"], data);
 
       queryClient.invalidateQueries({ queryKey: ["companyInformation"] });

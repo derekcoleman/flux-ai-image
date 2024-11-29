@@ -56,8 +56,6 @@ export const IndustryField = memo(
       control={control}
       name="industry"
       render={({ field }) => {
-        console.log({ field: field.value });
-
         return (
           <FormItem>
             <FormLabel>Industry</FormLabel>

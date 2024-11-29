@@ -1,6 +1,6 @@
 "use client";
 
-import { cloneElement, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
@@ -16,14 +16,11 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import type { ChargeProductSelectDto } from "@/db/type";
-import { useMediaQuery } from "@/hooks/use-media-query";
+// import { useMediaQuery } from "@/hooks/use-media-query";
 import { url } from "@/lib";
 import { usePathname } from "@/lib/navigation";
 import { cn, formatPrice } from "@/lib/utils";
@@ -38,7 +35,6 @@ interface PricingCardsProps {
 }
 
 const PricingCard = ({
-  userId,
   offer,
   activeType,
   isHomeScreen,
@@ -234,9 +230,7 @@ export function FreeCard() {
 }
 
 export function PricingCards({
-  userId,
   chargeProduct,
-  locale,
   isHomeScreen,
 }: PricingCardsProps) {
   const t = useTranslations("PricingPage");
@@ -247,13 +241,11 @@ export function PricingCards({
   const searchParams = useSearchParams();
   const discount = 0.2;
 
-  console.log({ chargeProduct });
-
   useMemo(() => {
     if (activeType === "monthly" || activeType === "yearly") {
-      let filters = chargeProduct?.filter((x) => x.type == "monthly");
+      const filters = chargeProduct?.filter((x) => x.type === "monthly");
       if (activeType === "yearly") {
-        let updatedPlans = filters?.map((plan) => ({
+        const updatedPlans = filters?.map((plan) => ({
           ...plan,
           amount: plan.amount - plan.amount * discount,
           originalAmount: plan.originalAmount - plan.originalAmount * discount,
@@ -263,7 +255,7 @@ export function PricingCards({
         setFilteredChargeProduct(filters || []);
       }
     } else if (activeType === "oneTime") {
-      let filters = chargeProduct?.filter((x) => x.type == "oneTime");
+      const filters = chargeProduct?.filter((x) => x.type == "oneTime");
       setFilteredChargeProduct(filters || []);
     }
   }, [activeType]);
@@ -396,19 +388,18 @@ export function PricingCardDialog({
   onClose: (isOpen: boolean) => void;
 }) {
   const t = useTranslations("PricingPage");
-  const { isSm, isMobile } = useMediaQuery();
+  // const { isSm, isMobile } = useMediaQuery();
   const [activeType, setActiveType] = useState<string>("monthly");
   const [filteredChargeProduct, setFilteredChargeProduct] = useState<
     ChargeProductSelectDto[]
   >([]);
-  const searchParams = useSearchParams();
   const discount = 0.2;
 
   useMemo(() => {
     if (activeType === "monthly" || activeType === "yearly") {
-      let filters = chargeProduct?.filter((x) => x.type == "monthly");
+      const filters = chargeProduct?.filter((x) => x.type == "monthly");
       if (activeType === "yearly") {
-        let updatedPlans = filters?.map((plan) => ({
+        const updatedPlans = filters?.map((plan) => ({
           ...plan,
           amount: plan.amount - plan.amount * discount,
           originalAmount: plan.originalAmount - plan.originalAmount * discount,
@@ -418,7 +409,7 @@ export function PricingCardDialog({
         setFilteredChargeProduct(filters || []);
       }
     } else if (activeType === "oneTime") {
-      let filters = chargeProduct?.filter((x) => x.type == "oneTime");
+      const filters = chargeProduct?.filter((x) => x.type == "oneTime");
       setFilteredChargeProduct(filters || []);
     }
   }, [activeType]);
@@ -427,12 +418,12 @@ export function PricingCardDialog({
     setActiveType(value);
   };
 
-  const product = useMemo(() => {
-    if (isSm || isMobile) {
-      return ([chargeProduct?.[1]] ?? []) as ChargeProductSelectDto[];
-    }
-    return chargeProduct ?? ([] as ChargeProductSelectDto[]);
-  }, [isSm, isMobile]);
+  // const product = useMemo(() => {
+  //   if (isSm || isMobile) {
+  //     return ([chargeProduct?.[1]] ?? []) as ChargeProductSelectDto[];
+  //   }
+  //   return chargeProduct ?? ([] as ChargeProductSelectDto[]);
+  // }, [isSm, isMobile]);
 
   return (
     <Dialog

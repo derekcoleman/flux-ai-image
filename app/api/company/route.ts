@@ -142,7 +142,6 @@ export async function PUT(req: NextRequest) {
   } catch (err) {
     return createResponse("Invalid input data", 400, err.errors);
   }
-  console.log({ requestData });
 
   try {
     const existingCompany = await fetchExistingCompany(userId);
@@ -177,7 +176,6 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-// Utility Functions
 function createResponse(
   message: string | undefined,
   status: number,
@@ -273,10 +271,7 @@ async function deleteExistingLogo(
   if (existingCompany.companyLogo) {
     const existingLogoKey = extractFileName(existingCompany.companyLogo);
     try {
-      const deletedLogo = await s3Service.deleteItemInBucket(
-        `company-logos/${existingLogoKey}`,
-      );
-      console.log({ deletedLogo });
+      await s3Service.deleteItemInBucket(`company-logos/${existingLogoKey}`);
     } catch (error) {
       console.error("Failed to delete existing logo from S3:", error);
       throw new Error("Failed to delete existing logo from S3");
