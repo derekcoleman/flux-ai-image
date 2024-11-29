@@ -21,6 +21,7 @@ export default async function AdminLayout({
   //   redirect('/')
   // }
   const user = await currentUser();
+
   if (!user || !user.publicMetadata.siteOwner) {
     redirect("/");
   }

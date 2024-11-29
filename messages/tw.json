@@ -400,7 +400,8 @@
   "AppNavigation": {
     "Index": "首頁",
     "TextToImage": "文字到圖像",
-    "ImageToImage": "s",
+    "ImageToImage": "圖像到圖像",
+    "ImageToVideo": "圖像到影片",
     "History": "歷史記錄",
     "GiftCode": "兌換",
     "ChargeOrder": "充值訂單"

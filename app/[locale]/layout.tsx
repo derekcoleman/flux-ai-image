@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 // import "../clerk.css";
 import "../prism.css";
 
+import React from "react";
 import Script from "next/script";
 
 import {

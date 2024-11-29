@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 
 import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
@@ -15,7 +15,7 @@ interface PageProps {
   chargeProduct?: ChargeProductSelectDto[];
 }
 
-export default function UserPoints({ chargeProduct }: PageProps) {
+export default memo(function UserPoints({ chargeProduct }: PageProps) {
   const { getToken } = useAuth();
   const [pricingCardOpen, setPricingCardOpen] = useState(false);
 
@@ -43,4 +43,4 @@ export default function UserPoints({ chargeProduct }: PageProps) {
       />
     </>
   );
-}
+});

@@ -20,7 +20,7 @@ export const dashboardConfig: DashboardConfig = {
         {
           title: "TextToImage",
           href: "/app/text-to-image",
-          icon: "Eraser",
+          icon: "Wand2",
         },
         {
           title: "ImageToImage",
@@ -28,21 +28,59 @@ export const dashboardConfig: DashboardConfig = {
           icon: "Image",
         },
         {
-          title: "History",
-          href: "/app/history",
-          icon: "History",
+          title: "ImageToVideo",
+          href: "/app/image-to-video",
+          icon: "Video",
         },
-        // {
-        //   title: "GiftCode",
-        //   href: "/app/giftcode",
-        //   icon: "Gift",
-        // },
+
+        {
+          title: "Images",
+          href: "/app/images",
+          icon: "Images",
+        },
+        {
+          title: "Company",
+          icon: "Building",
+          children: [
+            {
+              title: "CompanyInformation",
+              href: "/app/company",
+              icon: "Building2",
+            },
+            {
+              title: "BrandAssets",
+              href: "/app/brand",
+              icon: "Target",
+            },
+            {
+              title: "Products&Services",
+              href: "/app/products",
+              icon: "FolderKanban",
+            },
+          ],
+        },
         {
           title: "ChargeOrder",
           href: "/app/order",
           icon: "billing",
         },
+        {
+          title: "History",
+          href: "/app/history",
+          icon: "History",
+        },
+        {
+          title: "Settings",
+          href: "/app/settings",
+          icon: "Settings",
+        },
       ],
     },
   ],
 };
+
+// {
+//   title: "GiftCode",
+//   href: "/app/giftcode",
+//   icon: "Gift",
+// },

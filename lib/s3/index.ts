@@ -6,7 +6,6 @@ import {
   ListObjectsV2Command,
   ObjectCannedACL,
   ObjectIdentifier,
-  PutBucketCorsCommand,
   PutObjectCommand,
   PutObjectCommandInput,
   S3Client,
@@ -119,11 +118,7 @@ export class S3Service {
       Key: filename,
     });
 
-    try {
-      await this.s3Client.send(command);
-    } catch (e) {
-      throw e;
-    }
+    await this.s3Client.send(command);
   }
 
   async deleteItemsInBucket(
@@ -140,11 +135,7 @@ export class S3Service {
       },
     });
 
-    try {
-      await this.s3Client.send(command);
-    } catch (e) {
-      throw e;
-    }
+    await this.s3Client.send(command);
   }
 
   async deleteFolder(dir: string, bucket = this.bucket): Promise<void> {
@@ -154,31 +145,25 @@ export class S3Service {
     });
     const lists = await this.s3Client.send(commandList);
 
-    try {
-      const listItems = lists?.Contents?.map((val) => ({
-        Key: val.Key,
-      }));
-      const commandDeleteItems: DeleteObjectsCommand = new DeleteObjectsCommand(
-        {
-          Bucket: bucket,
-          Delete: {
-            Objects: listItems,
-          },
-        },
-      );
+    const listItems = lists?.Contents?.map((val) => ({
+      Key: val.Key,
+    }));
+    const commandDeleteItems: DeleteObjectsCommand = new DeleteObjectsCommand({
+      Bucket: bucket,
+      Delete: {
+        Objects: listItems,
+      },
+    });
 
-      await this.s3Client.send(commandDeleteItems);
+    await this.s3Client.send(commandDeleteItems);
 
-      const commandDelete: DeleteObjectCommand = new DeleteObjectCommand({
-        Bucket: bucket,
-        Key: dir,
-      });
-      await this.s3Client.send(commandDelete);
+    const commandDelete: DeleteObjectCommand = new DeleteObjectCommand({
+      Bucket: bucket,
+      Key: dir,
+    });
+    await this.s3Client.send(commandDelete);
 
-      return;
-    } catch (e) {
-      throw e;
-    }
+    return;
   }
 
   async getSignedUrl(key: string, bucket = this.bucket, expiresIn = 7200) {

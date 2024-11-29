@@ -383,8 +383,9 @@
   },
   "AppNavigation": {
     "Index": "ホーム",
-    "TextToImage": "文本到图像",
-    "ImageToImage": "s",
+    "TextToImage": "テキストから画像",
+    "ImageToImage": "画像から画像",
+    "ImageToVideo": "画像からビデオ",
     "History": "履歴",
     "GiftCode": "ギフトコード",
     "ChargeOrder": "チャージオーダー"

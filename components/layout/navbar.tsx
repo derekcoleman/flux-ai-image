@@ -23,15 +23,16 @@ interface NavBarProps {
   large?: boolean;
 }
 
-export function NavbarLogo(props: { size?: "sm" | "md" | "lg" | "xl" }) {
+export function NavbarLogo(props: {
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
+}) {
   const t = useTranslations("Navigation");
   const { size = "xl" } = props;
   return (
     <Link href="/" className="flex items-center space-x-2">
-      <Icons.logo className="hidden h-6 w-6 md:block" />
-      <span className={cn("font-urban font-bold", `text-xs md:text-${size}`)}>
-        {t("title")}
-      </span>
+      <div className={cn("font-urban font-bold", `text-${size}`)}>
+        Vizy<span className="text-purple-400">AI</span>
+      </div>
     </Link>
   );
 }

@@ -1,18 +1,20 @@
 import { headers } from "next/headers";
 
-import { WebhookEvent } from "@clerk/nextjs/server";
+import { clerkClient, WebhookEvent } from "@clerk/nextjs/server";
 import { Webhook } from "svix";
 
 import { getUserCredit } from "@/db/queries/account";
 import { env } from "@/env.mjs";
 
 export async function POST(req: Request) {
-  // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
-  const WEBHOOK_SECRET = env.WEBHOOK_SECRET;
+  console.log("hello webhook");
 
-  if (!WEBHOOK_SECRET) {
+  // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
+  const CLERK_WEBHOOK_SECRET = env.CLERK_WEBHOOK_SECRET;
+
+  if (!CLERK_WEBHOOK_SECRET) {
     throw new Error(
-      "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local",
+      "Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local",
     );
   }
 
@@ -31,10 +33,12 @@ export async function POST(req: Request) {
 
   // Get the body
   const payload = await req.json();
+  console.log({ payload });
   const body = JSON.stringify(payload);
 
   // Create a new Svix instance with your secret.
-  const wh = new Webhook(WEBHOOK_SECRET);
+
+  const wh = new Webhook(CLERK_WEBHOOK_SECRET);
 
   let evt: WebhookEvent;
 
@@ -47,6 +51,8 @@ export async function POST(req: Request) {
     }) as WebhookEvent;
   } catch (err) {
     console.error("Error verifying webhook:", err);
+    console.log({ err });
+
     return new Response("Error occured", {
       status: 400,
     });
@@ -61,7 +67,14 @@ export async function POST(req: Request) {
 
   if (evt.type === "user.created") {
     const userId = evt.data.id;
+    await clerkClient.users.updateUser(userId, {
+      publicMetadata: {
+        popupSeen: false,
+      },
+    });
+
     await getUserCredit(userId);
+    console.log(`Initialized popupSeen for user ${userId}`);
   }
 
   return new Response("", { status: 200 });

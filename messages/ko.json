@@ -383,8 +383,9 @@
   },
   "AppNavigation": {
     "Index": "홈",
-    "TextToImage": "텍스트를 이미지로",
-    "ImageToImage": "s",
+    "TextToImage": "텍스트를 이미지로 변환",
+    "ImageToImage": "이미지를 다른 이미지로 변환",
+    "ImageToVideo": "이미지를 비디오로 변환",
     "History": "역사",
     "GiftCode": "선물 코드",
     "ChargeOrder": "충전 주문"

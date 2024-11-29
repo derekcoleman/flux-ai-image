@@ -25,7 +25,7 @@ export const env = createEnv({
 
     STRIPE_API_KEY: z.string().min(1),
     STRIPE_WEBHOOK_SECRET: z.string().min(1),
-    WEBHOOK_SECRET: z.string().min(1),
+    CLERK_WEBHOOK_SECRET: z.string().min(1),
     CLERK_SECRET_KEY: z.string().min(1),
     LOG_SNAG_TOKEN: z.string().min(1),
     TASK_HEADER_KEY: z.string().min(1),
@@ -70,7 +70,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_SITE_LINK_PREVIEW_ENABLED == "true",
     LINK_PREVIEW_API_BASE_URL: process.env.LINK_PREVIEW_API_BASE_URL,
     SITE_NOTIFICATION_EMAIL_TO: process.env.SITE_NOTIFICATION_EMAIL_TO,
-    WEBHOOK_SECRET: process.env.WEBHOOK_SECRET,
+    CLERK_WEBHOOK_SECRET: process.env.CLERK_WEBHOOK_SECRET,
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,

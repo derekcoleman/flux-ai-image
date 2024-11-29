@@ -326,7 +326,7 @@
       "title": "App – Vizy AI Image Generator",
       "description": "View Your Recent predictions"
     },
-    "title": "Recent predictions",
+    "title": "History",
     "empty": {
       "title": "Recent Empty",
       "description": "There is no record yet."
@@ -392,9 +392,16 @@
     "Index": "Home",
     "TextToImage": "Text to Image",
     "ImageToImage": "Image to Image",
-    "History": "Images",
+    "ImageToVideo": "Image to Video",
+    "Company": "Company",
+    "CompanyInformation": "Company Information",
+    "BrandAssets": "Brand Assets",
+    "Products&Services": "Products & Services",
+    "History": "History",
+    "Images": "Images",
     "GiftCode": "Gift Code",
-    "ChargeOrder": "Billing"
+    "ChargeOrder": "Billing",
+    "Settings": "Settings"
   },
   "Navigation": {
     "pricing": "Pricing",

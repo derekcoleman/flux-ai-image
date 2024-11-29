@@ -78,7 +78,7 @@ export default function BillingInfo() {
   return (
     <main className="grid flex-1 items-start gap-4 py-4 sm:py-0 md:gap-8">
       <div className="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-        <Card x-chunk="dashboard-06-chunk-0">
+        <Card x-chunk="dashboard-06-chunk-0" className="bg-gray-900">
           <CardHeader>
             <CardTitle>{t("title")}</CardTitle>
           </CardHeader>

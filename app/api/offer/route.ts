@@ -101,7 +101,9 @@ export async function POST(req: NextRequest) {
         chargeOrderId: true,
       },
     });
-    const claimedChargeOrderIdIds = claimedOrderIds.map((row) => row.chargeOrderId);
+    const claimedChargeOrderIdIds = claimedOrderIds.map(
+      (row) => row.chargeOrderId,
+    );
     const charOrders = await prisma.chargeOrder.findMany({
       where: {
         phase: OrderPhase.Paid,
