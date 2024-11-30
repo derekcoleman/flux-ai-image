@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
     if (model) {
       whereConditions.model = model;
     }
+    console.log(whereConditions, "<<----<<<");
 
     const [fluxData, total] = await Promise.all([
       prisma.fluxData.findMany({
@@ -40,25 +41,31 @@ export async function GET(req: NextRequest) {
         take: pageSize,
         skip: offset,
         orderBy: { createdAt: "desc" },
+        include: {
+          images: true,
+        },
       }),
       prisma.fluxData.count({ where: whereConditions }),
     ]);
+
+    const fluxDataWithImages = fluxData.flatMap((data) => {
+      return data.images.map((image) => ({
+        ...data,
+        images: image,
+        executeTime:
+          data.executeEndTime && data.executeStartTime
+            ? Number(`${data.executeEndTime - data.executeStartTime}`)
+            : 0,
+        id: FluxHashids.encode(data.id),
+      }));
+    });
 
     return NextResponse.json({
       data: {
         total,
         page,
         pageSize,
-        data: fluxData.map(
-          ({ id, executeEndTime, executeStartTime, loraUrl, ...rest }) => ({
-            ...rest,
-            executeTime:
-              executeEndTime && executeStartTime
-                ? Number(`${executeEndTime - executeStartTime}`)
-                : 0,
-            id: FluxHashids.encode(id),
-          }),
-        ),
+        data: fluxDataWithImages,
       },
     });
   } catch (error) {

@@ -2,90 +2,97 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { useUser } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
 import { Images, Layers, Maximize, Palette, Video, Wand2 } from "lucide-react";
 
+import { useGetFluxData } from "@/hooks/fluxData/use-get-fluxData";
+
 import { OnboardingModal } from "../modals/onboarding-modal";
 import { Skeleton } from "../ui/skeleton";
+import { CommunityGallery } from "./community-gallery";
+
+const tools = [
+  {
+    name: "Text to Image",
+    description: "Transform text into visuals",
+    icon: Wand2,
+    to: "/app/text-to-image",
+    gradient: "from-purple-600 to-pink-600",
+  },
+  {
+    name: "Image to Image",
+    description: "Style transfer & variations",
+    icon: Images,
+    to: "/app/image-to-image",
+    gradient: "from-blue-600 to-purple-600",
+  },
+  {
+    name: "Image to Video",
+    description: "Animate your images",
+    icon: Video,
+    to: "/app/image-to-video",
+    gradient: "from-green-600 to-blue-600",
+  },
+  {
+    name: "Upscaler",
+    description: "Enhance image quality",
+    icon: Maximize,
+    to: "/app/upscaler",
+    gradient: "from-orange-600 to-red-600",
+  },
+  {
+    name: "Style Library",
+    description: "Browse art styles",
+    icon: Palette,
+    to: "/app/styles",
+    gradient: "from-pink-600 to-rose-600",
+  },
+  {
+    name: "Canvas Editor",
+    description: "Advanced editing tools",
+    icon: Layers,
+    to: "/app/editor",
+    gradient: "from-indigo-600 to-blue-600",
+  },
+];
+
+const guides = [
+  {
+    title: "Style Reference",
+    description: "Learn how to use style references effectively",
+    image:
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80",
+    tag: "How to Use",
+  },
+  {
+    title: "Content Reference",
+    description: "Master content-aware generation",
+    image:
+      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80",
+    tag: "Tutorial",
+  },
+  {
+    title: "Advanced Techniques",
+    description: "Pro tips for better results",
+    image:
+      "https://images.unsplash.com/photo-1633177317976-3f9bc45e1d1d?auto=format&fit=crop&q=80",
+    tag: "Advanced",
+  },
+];
 
 export default function DashboardContent() {
+  const router = useRouter();
   const { user, isLoaded } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const { data, isLoading } = useGetFluxData({
+    page: 1,
+    pageSize: 1,
+  });
 
-  console.log(user?.publicMetadata?.popupSeen);
-
-  const tools = [
-    {
-      name: "Text to Image",
-      description: "Transform text into visuals",
-      icon: Wand2,
-      to: "/app/text-to-image",
-      gradient: "from-purple-600 to-pink-600",
-    },
-    {
-      name: "Image to Image",
-      description: "Style transfer & variations",
-      icon: Images,
-      to: "/app/image-to-image",
-      gradient: "from-blue-600 to-purple-600",
-    },
-    {
-      name: "Image to Video",
-      description: "Animate your images",
-      icon: Video,
-      to: "/app/image-to-video",
-      gradient: "from-green-600 to-blue-600",
-    },
-    {
-      name: "Upscaler",
-      description: "Enhance image quality",
-      icon: Maximize,
-      to: "/app/upscaler",
-      gradient: "from-orange-600 to-red-600",
-    },
-    {
-      name: "Style Library",
-      description: "Browse art styles",
-      icon: Palette,
-      to: "/app/styles",
-      gradient: "from-pink-600 to-rose-600",
-    },
-    {
-      name: "Canvas Editor",
-      description: "Advanced editing tools",
-      icon: Layers,
-      to: "/app/editor",
-      gradient: "from-indigo-600 to-blue-600",
-    },
-  ];
-
-  const guides = [
-    {
-      title: "Style Reference",
-      description: "Learn how to use style references effectively",
-      image:
-        "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80",
-      tag: "How to Use",
-    },
-    {
-      title: "Content Reference",
-      description: "Master content-aware generation",
-      image:
-        "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80",
-      tag: "Tutorial",
-    },
-    {
-      title: "Advanced Techniques",
-      description: "Pro tips for better results",
-      image:
-        "https://images.unsplash.com/photo-1633177317976-3f9bc45e1d1d?auto=format&fit=crop&q=80",
-      tag: "Advanced",
-    },
-  ];
-
-  if (!isLoaded) {
+  if (!isLoaded || isLoading) {
     return (
       <div className="space-y-12 p-8">
         <Skeleton className="h-64 w-full rounded-2xl bg-gray-700" />
@@ -199,6 +206,25 @@ export default function DashboardContent() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div>
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-white">
+              Community Creations
+            </h2>
+            <div className="flex gap-4">
+              <button
+                className="flex items-center gap-2 text-purple-400 hover:text-purple-300"
+                onClick={() => {
+                  router.push("/explore");
+                }}
+              >
+                See More {"->"}
+              </button>
+            </div>
+          </div>
+          <CommunityGallery data={data?.data ?? []} />
         </div>
       </div>
 

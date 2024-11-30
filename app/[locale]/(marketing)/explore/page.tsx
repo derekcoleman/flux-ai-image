@@ -1,9 +1,8 @@
-import { redirect } from "next/navigation";
+import React from "react";
 
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
 import { getFluxDataByPage } from "@/actions/flux-action";
-import History from "@/components/history";
 import BlurFade from "@/components/magicui/blur-fade";
 import { FluxTaskStatus } from "@/components/playground";
 import PlaygroundLoading from "@/components/playground/loading";
@@ -11,13 +10,11 @@ import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
   PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
-import { LoraConfig, ModelName, Ratio } from "@/config/constants";
+import { Ratio } from "@/config/constants";
 import { Link } from "@/lib/navigation";
-import { cn, createRatio } from "@/lib/utils";
+import { createRatio } from "@/lib/utils";
 
 interface RootLayoutProps {
   params: { locale: string };
@@ -33,12 +30,12 @@ export async function generateMetadata({
     keywords: t("layout.keywords"),
   };
 }
-const breakpointColumnsObj = {
-  default: 4,
-  1024: 3,
-  768: 2,
-  640: 1,
-};
+// const breakpointColumnsObj = {
+//   default: 4,
+//   1024: 3,
+//   768: 2,
+//   640: 1,
+// };
 export default async function ExplorePage({
   params,
 }: {
@@ -88,7 +85,7 @@ export default async function ExplorePage({
                       </div>
                     ) : (
                       <BlurFade
-                        key={item?.images.imageUrl!}
+                        key={item?.images.imageUrl}
                         delay={0.25 + (idx % pageSize) * 0.05}
                         inView
                       >
