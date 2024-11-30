@@ -1,5 +1,3 @@
-import { NextResponse, type NextRequest } from "next/server";
-
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 

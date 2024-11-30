@@ -1,9 +1,10 @@
+import React from "react";
 import { notFound } from "next/navigation";
 
 import { auth } from "@clerk/nextjs/server";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
-import { getFluxById, getFluxDataByPage } from "@/actions/flux-action";
+import { getFluxById } from "@/actions/flux-action";
 import { DownloadAction } from "@/components/history/download-action";
 import { CopyButton } from "@/components/shared/copy-button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,9 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { LoraConfig, ModelName, Ratio } from "@/config/constants";
 import { FluxHashids } from "@/db/dto/flux.dto";
 import { prisma } from "@/db/prisma";
-import { FluxTaskStatus } from "@/db/type";
 import { env } from "@/env.mjs";
-import { Link } from "@/lib/navigation";
 import { cn, createRatio, formatDate } from "@/lib/utils";
 
 interface RootPageProps {
@@ -107,12 +106,12 @@ export async function generateMetadata({
   };
 }
 
-const breakpointColumnsObj = {
-  default: 4,
-  1024: 3,
-  768: 2,
-  640: 1,
-};
+// const breakpointColumnsObj = {
+//   default: 4,
+//   1024: 3,
+//   768: 2,
+//   640: 1,
+// };
 export default async function FluxPage({ params }: RootPageProps) {
   unstable_setRequestLocale(params.locale);
   const t = await getTranslations({
