@@ -37,6 +37,13 @@ export const TextToImageModel: Model<ModelType>[] = [
     description: "For LoRA use. Choose to see LoRAs.",
     type: "Flux AI",
   },
+  {
+    id: model.photoGraphy,
+    name: ModelName[model.photoGraphy],
+    description:
+      "A model specifically designed for photography, enhancing image resolution and quality while preserving details",
+    type: "Flux AI",
+  },
 ];
 
 export const ImageToImageModel: Model<ModelType>[] = [
@@ -45,6 +52,13 @@ export const ImageToImageModel: Model<ModelType>[] = [
     name: ModelName[model.dev],
     description:
       "FLUX.1, a 12B parameters text-to-image model with outstanding aesthetics. text-to-imageinference",
+    type: "Flux AI",
+  },
+  {
+    id: model.upscaler,
+    name: ModelName[model.upscaler],
+    description:
+      "An AI upscaler model that enhances image resolution and quality while preserving details",
     type: "Flux AI",
   },
 ];

@@ -19,8 +19,8 @@ model ChargeOrder {
   currency  String    @db.VarChar
   paymentAt DateTime? @map(name: "payment_at") @db.Timestamp(6)
   result    Json?     @db.Json
-  createdAt DateTime  @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt DateTime  @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  createdAt DateTime? @default(now()) @map(name: "created_at") @db.Timestamp(6)
+  updatedAt DateTime? @default(now()) @map(name: "updated_at") @db.Timestamp(6)
 
   @@map(name: "charge_order")
 }
@@ -52,8 +52,8 @@ model ChargeProduct {
   maximum_images String?
   state          String   @db.VarChar
   type           String?
-  createdAt      DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt      DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  createdAt      DateTime? @default(now()) @map(name: "created_at") @db.Timestamp(6)
+  updatedAt      DateTime? @default(now()) @map(name: "updated_at") @db.Timestamp(6)
 
   @@map(name: "charge_product")
 }
@@ -79,11 +79,11 @@ model FluxData {
   isPrivate        Boolean?       @default(false) @map(name: "is_private")
   downloadNum      Int            @default(0) @map(name: "download_num")
   viewsNum         Int            @default(0) @map(name: "views_num")
-  createdAt        DateTime       @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt        DateTime       @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  createdAt        DateTime?      @default(now()) @map(name: "created_at") @db.Timestamp(6)
+  updatedAt        DateTime?      @default(now()) @map(name: "updated_at") @db.Timestamp(6)
   errorMsg         String?        @map(name: "error_msg")
-  loraUrl          String?        @map("lora_url") @db.VarChar(255)
-  loraName         String?        @map("lora_name") @db.VarChar(255)
+  loraUrl          String?        @map("lora_url") @db.Text
+  loraName         String?        @map("lora_name") @db.Text
   loraScale        Float?         @map("lora_scale") @db.DoublePrecision
   images           FluxAiImages[] @relation("FluxDataToImages")
 
@@ -118,6 +118,7 @@ model FluxAiImages {
   createdAt DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
   updatedAt DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
 
+  @@index([fluxId])
   @@map(name: "flux_ai_images")
 }
 
@@ -267,3 +268,46 @@ model Product {
 
   @@map("products")
 }
+
+model ProductMockup {
+  id                   Int      @id @default(autoincrement())
+  userId               String   @map(name: "user_id") @db.VarChar(200)
+  modelName            String   @map(name: "model_name") @db.VarChar
+  steps                Int
+  loraRank             Int      @map(name: "lora_rank")
+  optimizer            String   @db.VarChar
+  batchSize            Int      @map(name: "batch_size")
+  resolution           String   @db.VarChar
+  autocaption          Boolean
+  imageInput           String   @map(name: "image_input") @db.VarChar
+  triggerWord          String   @map(name: "trigger_word") @db.VarChar
+  learningRate         Float    @map(name: "learning_rate")
+  wandbProject         String   @map(name: "wandb_project") @db.VarChar
+  wandbSaveInterval    Int      @map(name: "wandb_save_interval")
+  captionDropoutRate   Float    @map(name: "caption_dropout_rate")
+  cacheLatentsToDisk   Boolean  @map(name: "cache_latents_to_disk")
+  wandbSampleInterval  Int      @map(name: "wandb_sample_interval")
+  createdAt            DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
+  updatedAt            DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+
+  @@map(name: "product_mockup")
+}
+
+
+
+
+
+// model BrandAssets {
+//   id             Int      @id @default(autoincrement())
+//   userId         String   @map(name: "user_id") @db.VarChar(200)
+//   primaryColor   String   @map(name: "primary_color") @db.VarChar(7)
+//   secondaryColor String   @map(name: "secondary_color") @db.VarChar(7)
+//   accentColor    String   @map(name: "accent_color") @db.VarChar(7)
+//   brandStyle     String   @db.VarChar
+//   styleGuides    Json?    @map(name: "style_guides") 
+//   brandExamples  Json?    @map(name: "brand_examples")
+//   createdAt      DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
+//   updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at") @db.Timestamp(6)
+
+//   @@map(name: "brand_assets")
+// }

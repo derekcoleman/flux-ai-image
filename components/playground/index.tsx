@@ -10,7 +10,6 @@ import { Copy } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import BlurFade from "@/components/magicui/blur-fade";
 import { AspectRatioSelector } from "@/components/playground/aspect-selector";
 import { ModelSelector } from "@/components/playground/model-selector";
 import {
@@ -27,7 +26,6 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Locale } from "@/config";
 import {
@@ -302,7 +300,8 @@ export default function Playground({
               </div>
             )}
 
-            {selectedModel.id === model.dev && (
+            {(selectedModel.id === model.dev ||
+              selectedModel.id === model.upscaler) && (
               <div className="flx flex-col gap-4">
                 <HoverCard openDelay={200}>
                   <HoverCardTrigger asChild>
