@@ -34,8 +34,10 @@ const CreateGenerateSchema = z.object({
     model.pro,
     model.schnell,
     model.dev,
+    model.upscaler,
     model.general,
     model.freeSchnell,
+    model.photoGraphy,
   ]),
   inputPrompt: z.string(),
   aspectRatio: z.enum([
@@ -101,7 +103,7 @@ export async function POST(req: NextRequest) {
       : inputPrompt;
 
     const modelId =
-      "091495765fa5ef2725a175a57b276ec30dc9d39c22d30410f2ede68a3eab66b3";
+      "58b9f08e13f0909493fac7045ae489ab54112779e92352f7466135386553311c";
     const headers = new Headers();
     if (modelName === model.freeSchnell) {
       const thisMonthStart = dayjs().startOf("M");
@@ -176,7 +178,42 @@ export async function POST(req: NextRequest) {
         prompt_strength: 0.8,
         num_inference_steps: 28,
       }),
+      ...(modelName === "philz1337x/clarity-upscaler" && {
+        seed: 1337,
+        image: inputImageUrl,
+        dynamic: 6,
+        handfix: "disabled",
+        pattern: false,
+        sharpen: 0,
+        sd_model: "juggernaut_reborn.safetensors [338b85bc4f]",
+        scheduler: "DPM++ 3M SDE Karras",
+        creativity: 0.35,
+        lora_links: "",
+        downscaling: false,
+        resemblance: 0.6,
+        scale_factor: 2,
+        tiling_width: 112,
+        tiling_height: 144,
+        custom_sd_model: "",
+        negative_prompt:
+          "(worst quality, low quality, normal quality:2) JuggernautNegative-neg",
+        num_inference_steps: 18,
+        downscaling_resolution: 768,
+      }),
+      ...(modelName === "vizyai/product-photography" && {
+        model: "dev",
+        go_fast: false,
+        lora_scale: 1,
+        megapixels: "1",
+        num_outputs: numberOfImages,
+        guidance_scale: 3,
+        prompt_strength: 0.8,
+        extra_lora_scale: 1,
+        num_inference_steps: 28,
+      }),
     };
+
+    console.log({ input, modelName });
 
     const replicateRes = await replicate.run(`${modelName}:${modelId}`, {
       input,
@@ -264,6 +301,8 @@ export async function POST(req: NextRequest) {
         loraName: loraName, // Optional
       },
     });
+
+    console.log({ fluxData });
 
     if (!fluxData) {
       return NextResponse.json({ error: "Create Task Error" }, { status: 400 });

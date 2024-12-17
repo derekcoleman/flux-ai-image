@@ -38,6 +38,8 @@ export const env = createEnv({
     OPEN_AI_API_KEY: z.string().min(1),
     FLUX_AI_PROMPT: z.string().min(1),
     OPEN_AI_MODEL: z.string().min(1),
+    REPLICATE_USERNAME: z.string().min(),
+    REPLICATE_API_TOKEN: z.string().min(),
   },
   client: {
     NEXT_PUBLIC_SITE_URL: z.string().min(1),
@@ -95,6 +97,7 @@ export const env = createEnv({
     FLUX_HEADER_KEY: process.env.FLUX_HEADER_KEY,
     FLUX_CREATE_URL: process.env.FLUX_CREATE_URL,
     REPLICATE_API_TOKEN: process.env.REPLICATE_API_TOKEN,
+    REPLICATE_USERNAME: process.env.REPLICATE_USERNAME,
     APP_ENV: process.env.APP_ENV,
 
     NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
@@ -104,5 +107,6 @@ export const env = createEnv({
     OPEN_AI_API_KEY: process.env.OPEN_AI_API_KEY,
     FLUX_AI_PROMPT: process.env.FLUX_AI_PROMPT,
     OPEN_AI_MODEL: process.env.OPEN_AI_MODEL,
+    HUGGINGFACE_API_TOKEN: process.env.HUGGINGFACE_API_TOKEN,
   },
 });

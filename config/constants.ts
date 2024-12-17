@@ -8,8 +8,10 @@ export enum model {
   pro = "black-forest-labs/flux-1.1-pro",
   schnell = "black-forest-labs/flux-schnell",
   dev = "black-forest-labs/flux-dev",
+  upscaler = "philz1337x/clarity-upscaler",
   general = "lucataco/flux-dev-lora",
   freeSchnell = "siliconflow/flux-schnell",
+  photoGraphy = "vizyai/product-photography",
 }
 
 export enum loras {
@@ -109,8 +111,10 @@ export const Credits = {
   [model.pro]: 10,
   [model.schnell]: 1,
   [model.dev]: 5,
+  [model.upscaler]: 10,
   [model.general]: 8,
   [model.freeSchnell]: 0,
+  [model.photoGraphy]: 20,
 };
 
 export const TextToImageModelName = {
@@ -118,10 +122,12 @@ export const TextToImageModelName = {
   [model.schnell]: "FLUX.1 [schnell]",
   [model.general]: "FLUX.1 General",
   [model.freeSchnell]: "FLUX.1 [schnell]",
+  [model.photoGraphy]: "FLUX.1 [photoGraphy]",
 };
 
 export const ImageToImageModelName = {
   [model.dev]: "FLUX.1 [dev]",
+  [model.upscaler]: "Clarity Upscaler v1.0",
 };
 
 export const ModelName = { ...ImageToImageModelName, ...TextToImageModelName };
@@ -161,4 +167,6 @@ export const ModelDefaultAdVancedSetting = {
   },
   [model.schnell]: "FLUX.1 [schnell]",
   [model.dev]: "FLUX.1 [dev]",
+  [model.upscaler]: "Clarity Upscaler v1.0",
+  [model.photoGraphy]: "FLUX.1 [photoGraphy]",
 };

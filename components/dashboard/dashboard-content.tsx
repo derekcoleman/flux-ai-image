@@ -89,8 +89,10 @@ export default function DashboardContent() {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const { data, isLoading } = useGetFluxData({
     page: 1,
-    pageSize: 1,
+    pageSize: 4,
   });
+
+  console.log(data);
 
   if (!isLoaded || isLoading) {
     return (

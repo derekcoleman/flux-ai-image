@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, memo, useEffect, useState } from "react";
+import React, { Fragment, memo, useEffect, useState } from "react";
 
 import {
   ChevronDown,
@@ -22,11 +22,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { siteConfig } from "@/config/site";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Link, usePathname } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-import { NavItem, SidebarNavItem } from "@/types";
+import { SidebarNavItem } from "@/types";
 
 import UpgradePlan from "../upgrade-plan";
 import { NavBar, NavbarLogo } from "./navbar";
@@ -56,10 +55,19 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
   //     );
   //   }
   // }, [isSidebarExpanded]);
-  const [expandedItem, setExpandedItem] = useState<string | null>("Company");
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
+    {},
+  );
 
   const { isTablet } = useMediaQuery();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(!isTablet);
+
+  const toggleExpanded = (itemName: string) => {
+    setExpandedItems((prev) => ({
+      ...prev,
+      [itemName]: !prev[itemName],
+    }));
+  };
 
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
@@ -123,25 +131,21 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                         isSidebarExpanded ? (
                           <div key={`item-${j}`}>
                             <button
-                              onClick={() =>
-                                setExpandedItem(
-                                  expandedItem === item.name ? null : item.name,
-                                )
-                              }
+                              onClick={() => toggleExpanded(item.title)}
                               className="flex w-full items-center justify-between rounded-lg p-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-gray-700 hover:text-accent-foreground"
                             >
                               <div className="flex items-center gap-3 rounded-md text-sm font-medium hover:bg-gray-700">
                                 <Icon className="size-5" />
                                 {t(item.title)}
                               </div>
-                              {expandedItem === item.name ? (
+                              {expandedItems[item.title] ? (
                                 <ChevronDown className="h-4 w-4" />
                               ) : (
                                 <ChevronRight className="h-4 w-4" />
                               )}
                             </button>
                             {/* Child items */}
-                            {expandedItem === item.name && (
+                            {expandedItems[item.title] && (
                               <div className="ml-11 mt-1 space-y-1">
                                 {item.children.map((child) => (
                                   <Link
