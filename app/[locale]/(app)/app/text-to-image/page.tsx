@@ -1,3 +1,5 @@
+import React from "react";
+
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 
 import Playground from "@/components/playground";

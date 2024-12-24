@@ -4,6 +4,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import Replicate from "replicate";
 import { z } from "zod";
 
+import { prisma } from "@/db/prisma";
 import { env } from "@/env.mjs";
 
 const createModelSchema = z.object({
@@ -11,6 +12,7 @@ const createModelSchema = z.object({
   description: z.string().optional(),
   visibility: z.enum(["public", "private"]).default("public"),
   hardware: z.enum(["cpu", "gpu-t4", "gpu-a100"]).default("gpu-t4"),
+  username: z.string().min(1),
 });
 
 export async function POST(req: NextRequest) {
@@ -23,6 +25,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const requestData = createModelSchema.parse(await req.json());
+    console.log({
+      replicate: env.REPLICATE_API_TOKEN,
+      username: env.REPLICATE_USERNAME,
+      name: requestData?.name,
+    });
 
     const replicate = new Replicate({
       auth: env.REPLICATE_API_TOKEN,
@@ -32,13 +39,35 @@ export async function POST(req: NextRequest) {
       env.REPLICATE_USERNAME,
       requestData.name,
       {
-        visibility: "public",
-        hardware: requestData.hardware,
-        description: requestData.description,
+        visibility: "private",
+        hardware: "gpu-t4",
+        description: requestData?.username,
       },
     );
 
-    return NextResponse.json({ model }, { status: 201 });
+    const productMockup = await prisma.productMockup.create({
+      data: {
+        userId,
+        modelName: requestData.name,
+        steps: 1000,
+        loraRank: 16,
+        trainingStatus: "pending",
+        optimizer: "adamw8bit",
+        batchSize: 1,
+        resolution: "512,768,1024",
+        autocaption: true,
+        imageInput: "",
+        triggerWord: "TOK",
+        learningRate: 0.0004,
+        wandbProject: "flux_train_replicate",
+        wandbSaveInterval: 100,
+        captionDropoutRate: 0.05,
+        cacheLatentsToDisk: false,
+        wandbSampleInterval: 100,
+      },
+    });
+
+    return NextResponse.json({ model, productMockup }, { status: 201 });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json(
@@ -54,7 +83,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const { userId } = auth();
   const user = await currentUser();
 
@@ -63,20 +92,30 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const replicate = new Replicate({
-      auth: env.REPLICATE_API_TOKEN,
+    const productMockups = await prisma.productMockup.findMany({
+      where: {
+        userId: userId,
+      },
+      select: {
+        modelName: true,
+        userId: true,
+        id: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
-    const searchParams = req.nextUrl.searchParams;
-    const username = searchParams.get("username") || env.REPLICATE_USERNAME;
-
-    const models = await replicate.models.list({ username });
-
-    return NextResponse.json({ models: models.results }, { status: 200 });
+    return NextResponse.json(
+      {
+        Models: productMockups,
+      },
+      { status: 200 },
+    );
   } catch (err) {
     console.error(err);
     return NextResponse.json(
-      { error: "Failed to fetch models", details: err.message },
+      { error: "Failed to fetch data", details: err.message },
       { status: 500 },
     );
   }

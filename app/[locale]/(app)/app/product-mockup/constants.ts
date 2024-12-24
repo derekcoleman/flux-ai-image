@@ -6,6 +6,7 @@ interface ZipFileInput extends File {
 
 export const defaultValues = {
   model_name: "",
+  description: "",
   steps: 1000,
   lora_rank: 16,
   optimizer: "adamw8bit",
@@ -27,9 +28,14 @@ export const trainingConfigSchema = z.object({
     .string()
     .min(1, "Model name is required")
     .regex(
-      /^[a-z0-9-]+$/,
-      "Only lowercase letters, numbers, and hyphens allowed",
+      /^[a-z0-9._-]+$/,
+      "Model name may only contain lowercase letters, numbers, periods, dashes and underscores",
+    )
+    .regex(
+      /^(?![-._]).*[^-._]$/,
+      "Model name cannot start or end with a dash, underscore, or period",
     ),
+  description: z.string().min(1, "Description is required"),
   steps: z.number().min(3).max(6000),
   lora_rank: z.number().min(4).max(128),
   optimizer: z.string().min(1),

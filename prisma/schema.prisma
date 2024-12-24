@@ -278,7 +278,10 @@ model ProductMockup {
   optimizer            String   @db.VarChar
   batchSize            Int      @map(name: "batch_size")
   resolution           String   @db.VarChar
+  trainingStatus       String   @map(name: "training_status") @db.VarChar
   autocaption          Boolean
+  trainingId           String   @map(name: "training_id") @db.VarChar @unique
+  description          String?  @db.Text
   imageInput           String   @map(name: "image_input") @db.VarChar
   triggerWord          String   @map(name: "trigger_word") @db.VarChar
   learningRate         Float    @map(name: "learning_rate")
@@ -287,6 +290,7 @@ model ProductMockup {
   captionDropoutRate   Float    @map(name: "caption_dropout_rate")
   cacheLatentsToDisk   Boolean  @map(name: "cache_latents_to_disk")
   wandbSampleInterval  Int      @map(name: "wandb_sample_interval")
+  failedReason        String?  @map(name: "failed_reason") @db.Text
   createdAt            DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
   updatedAt            DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
 

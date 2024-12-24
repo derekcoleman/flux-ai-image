@@ -1,6 +1,4 @@
-import React, { memo, useState } from "react";
-
-import { BadgePlus } from "lucide-react";
+import React, { memo } from "react";
 
 import { FormFieldProps } from "@/app/[locale]/(app)/app/product-mockup/types";
 import {
@@ -11,153 +9,187 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
+// import { useGetReplicateModels } from "@/hooks/replicateModel/use-get-replicateModels";
+
+// import { useSaveReplicateModel } from "@/hooks/replicateModel/use-save-replicateModel";
 
 import { Checkbox } from "../ui/checkbox";
 
-export const ModelNameField = memo(
-  ({ control, models }: FormFieldProps & { models: string[] }) => {
-    const [isCreating, setIsCreating] = useState(false);
-    const [newModelName, setNewModelName] = useState("");
+export const ModelNameField = memo(({ control }: FormFieldProps) => (
+  <FormField
+    control={control}
+    name="model_name"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel className="text-white">Model Name</FormLabel>
+        <FormControl>
+          <Input
+            className="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-white"
+            placeholder="Enter model name"
+            {...field}
+            onChange={(e) => field.onChange(e.target.value)}
+            value={field.value || ""}
+          />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+));
 
-    return (
-      <FormField
-        control={control}
-        name="model_name"
-        render={({ field }) => {
-          const handleCreateModel = () => {
-            if (newModelName.trim()) {
-              field.onChange(newModelName);
-              setIsCreating(false);
-              setNewModelName("");
-            }
-          };
+export const DescriptionField = memo(({ control }: FormFieldProps) => (
+  <FormField
+    control={control}
+    name="description"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel className="text-white">Description</FormLabel>
+        <FormControl>
+          <Input
+            className="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-white"
+            placeholder="What this training is about..."
+            {...field}
+            onChange={(e) => field.onChange(e.target.value)}
+            value={field.value || ""}
+          />
+        </FormControl>
+        <FormMessage />
+        <p className="text-sm text-muted-foreground">
+          Briefly describe what you&apos;re training and its purpose
+        </p>
+      </FormItem>
+    )}
+  />
+));
 
-          const handleCancel = () => {
-            setIsCreating(false);
-            setNewModelName("");
-          };
+// export const ModelNameField = memo(
+//   ({ control }: FormFieldProps & { models: string[] }) => {
+//     const [isCreating, setIsCreating] = useState(false);
+//     const [newModelName, setNewModelName] = useState("");
+//     const user = useUser();
 
-          return (
-            <FormItem>
-              <FormLabel className="text-white">Destination</FormLabel>
-              <FormControl>
-                {isCreating ? (
-                  <div className="space-y-2">
-                    <Input
-                      className="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-white"
-                      placeholder="Enter new model name"
-                      value={newModelName}
-                      onChange={(e) => setNewModelName(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleCreateModel();
-                        if (e.key === "Escape") handleCancel();
-                      }}
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        className="flex-1 rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
-                        onClick={handleCancel}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="flex-1 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-                        onClick={handleCreateModel}
-                        disabled={!newModelName.trim()}
-                      >
-                        Create
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <Select
-                    onValueChange={(value) => {
-                      if (value === "create-new") {
-                        setIsCreating(true);
-                      } else {
-                        field.onChange(value);
-                      }
-                    }}
-                    value={field.value}
-                  >
-                    <SelectTrigger className="bg-gray-700">
-                      <SelectValue placeholder="Select a model" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem
-                        value="create-new"
-                        onClick={() => setIsCreating(true)}
-                      >
-                        <div className="flex items-center gap-2">
-                          <BadgePlus className="h-5 w-5" /> Create new model
-                        </div>
-                      </SelectItem>
-                      {models?.map((model) => (
-                        <SelectItem key={model} value={model}>
-                          {model}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              </FormControl>
-              <FormMessage />
-              <p className="text-sm text-muted-foreground">
-                Select a model on VizyAi that will be the destination for the
-                trained version. If the model does not exist, select the
-                &quot;Create model&quot; option and a field will appear to enter
-                the name of the new model. We&apos;ll create the model for you
-                when you create the training.
-              </p>
-            </FormItem>
-          );
-        }}
-      />
-    );
-  },
-);
+//     const { saveModelData, isSaving } = useSaveReplicateModel(() => {
+//       setIsCreating(false);
+//       setNewModelName("");
+//     });
 
-// export const InputImagesField = memo(({ control }: FormFieldProps) => (
-//   <FormField
-//     control={control}
-//     name="input_images"
-//     render={({ field: { onChange, value, ...field } }) => (
-//       <FormItem>
-//         <FormLabel className="text-white">Input Images (ZIP file)</FormLabel>
-//         <FormControl>
-//           <Input
-//             type="file"
-//             accept=".zip"
-//             className={`w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-white`}
-//             onChange={(e) => {
-//               const file = e.target.files?.[0];
-//               if (file && file.type === "application/zip") {
-//                 onChange(file);
-//               }
-//             }}
-//             value={value}
-//             {...field}
-//           />
-//         </FormControl>
-//         <FormMessage />
-//         <p className="text-sm text-muted-foreground">
-//           A zip file containing the images that will be used for training. We
-//           recommend a minimum of 10 images. If you include captions, include
-//           them as one .txt file per image, e.g. my-photo.jpg should have a
-//           caption file named my-photo.txt. If you don&apos;t include captions,
-//           you can use autocaptioning (enabled by default).
-//         </p>
-//       </FormItem>
-//     )}
-//   />
-// ));
+//     const { models: replicateModels, isLoading: isLoadingModels } =
+//       useGetReplicateModels();
+
+//     return (
+//       <FormField
+//         control={control}
+//         name="model_name"
+//         render={({ field }) => {
+//           const handleCreateModel = () => {
+//             if (newModelName.trim()) {
+//               saveModelData({
+//                 name: newModelName,
+//                 username: user?.user?.fullName ?? "",
+//               });
+//             }
+//           };
+
+//           const handleCancel = () => {
+//             setIsCreating(false);
+//             setNewModelName("");
+//           };
+
+//           return (
+//             <FormItem>
+//               <FormLabel className="text-white">Destination</FormLabel>
+//               <FormControl>
+//                 {isCreating ? (
+//                   <div className="space-y-2">
+//                     <Input
+//                       className="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-white"
+//                       placeholder="Enter new model name"
+//                       value={newModelName}
+//                       onChange={(e) => setNewModelName(e.target.value)}
+//                       onKeyDown={(e) => {
+//                         if (e.key === "Enter") handleCreateModel();
+//                         if (e.key === "Escape") handleCancel();
+//                       }}
+//                     />
+//                     <div className="flex gap-2">
+//                       <button
+//                         className="flex-1 rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
+//                         onClick={handleCancel}
+//                         disabled={isSaving}
+//                       >
+//                         Cancel
+//                       </button>
+//                       <button
+//                         className="flex-1 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:opacity-50"
+//                         onClick={handleCreateModel}
+//                         disabled={!newModelName.trim() || isSaving}
+//                       >
+//                         {isSaving ? (
+//                           <span className="flex items-center justify-center gap-2">
+//                             <Loader2 className="h-4 w-4 animate-spin" />
+//                             Creating...
+//                           </span>
+//                         ) : (
+//                           "Create"
+//                         )}
+//                       </button>
+//                     </div>
+//                   </div>
+//                 ) : (
+//                   <Select
+//                     onValueChange={(value) => {
+//                       if (value === "create-new") {
+//                         setIsCreating(true);
+//                       } else {
+//                         const selectedModel = replicateModels?.find(
+//                           (model) => model.name === value,
+//                         );
+//                         field.onChange({
+//                           name: selectedModel?.name,
+//                           id: selectedModel?.id,
+//                         });
+//                       }
+//                     }}
+//                     value={field.value?.name || ""}
+//                   >
+//                     <SelectTrigger className="bg-gray-700">
+//                       <SelectValue placeholder="Select a model" />
+//                     </SelectTrigger>
+//                     <SelectContent>
+//                       <SelectItem
+//                         value="create-new"
+//                         onClick={() => setIsCreating(true)}
+//                       >
+//                         <div className="flex items-center gap-2">
+//                           <BadgePlus className="h-5 w-5" /> Create new model
+//                         </div>
+//                       </SelectItem>
+//                       {replicateModels?.map((model) => (
+//                         <SelectItem key={model.id} value={model.name}>
+//                           {model.name}
+//                         </SelectItem>
+//                       ))}
+//                       {isLoadingModels && (
+//                         <SelectItem value="loading" disabled>
+//                           <div className="flex items-center gap-2">
+//                             <Loader2 className="h-4 w-4 animate-spin" />
+//                             Loading models...
+//                           </div>
+//                         </SelectItem>
+//                       )}
+//                     </SelectContent>
+//                   </Select>
+//                 )}
+//               </FormControl>
+//               <FormMessage />
+//             </FormItem>
+//           );
+//         }}
+//       />
+//     );
+//   },
+// );
 
 export const InputImagesField = memo(({ control }: FormFieldProps) => (
   <FormField
@@ -165,7 +197,7 @@ export const InputImagesField = memo(({ control }: FormFieldProps) => (
     name="input_images"
     render={({ field }) => (
       <FormItem>
-        <FormLabel className="text-white">Input Images (ZIP file)</FormLabel>
+        <FormLabel className="text-white">Images (ZIP file)</FormLabel>
         <FormControl>
           <Input
             type="file"
@@ -179,13 +211,6 @@ export const InputImagesField = memo(({ control }: FormFieldProps) => (
         </FormControl>
 
         <FormMessage />
-        <p className="text-sm text-muted-foreground">
-          A zip file containing the images that will be used for training. We
-          recommend a minimum of 10 images. If you include captions, include
-          them as one .txt file per image, e.g. my-photo.jpg should have a
-          caption file named my-photo.txt. If you don&apos;t include captions,
-          you can use autocaptioning (enabled by default).
-        </p>
       </FormItem>
     )}
   />
@@ -445,6 +470,7 @@ export const OptimizerField = memo(({ control }: FormFieldProps) => (
     )}
   />
 ));
+
 export const CacheLatentsField = memo(({ control }: FormFieldProps) => (
   <FormField
     control={control}
@@ -517,6 +543,7 @@ export const WandbSaveIntervalField = memo(({ control }: FormFieldProps) => (
 ));
 
 ModelNameField.displayName = "ModelNameField";
+DescriptionField.displayName = "DescriptionField";
 InputImagesField.displayName = "InputImagesField";
 TriggerWordField.displayName = "TriggerWordField";
 AutoCaptionField.displayName = "AutoCaptionField";

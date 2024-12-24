@@ -1,32 +1,45 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { useToast } from "@/components/ui/use-toast";
 import {
   Productmockup,
   saveProductMockup,
 } from "@/lib/services/productmockupServices";
 
 export const useSaveProductMockup = (
-  reset: () => void,
+  setUrls: (urls: { cancel: string; stream: string; get: string }) => void,
 ): {
-  saveProductData: (data: Productmockup) => void;
+  saveProductData: (data: Productmockup) => Promise<void>;
   isSaving: boolean;
+  error: Error | null;
 } => {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const mutation = useMutation<Productmockup, Error, Productmockup>({
     mutationFn: saveProductMockup,
-    onSuccess: (data) => {
-      console.log("Product Mockup created and saved successfully:", data);
+    onSuccess: (data: any) => {
+      toast({
+        title: "Success",
+        description: "Product Mockup created successfully",
+      });
       queryClient.invalidateQueries({ queryKey: ["productMockUp"] });
-      reset();
+      setUrls(data.urls);
     },
-    onError: (error) => {
-      console.error("Error saving product mockup:", error);
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create Product Mockup",
+        variant: "destructive",
+      });
+      throw error;
     },
   });
 
   return {
-    saveProductData: mutation.mutate,
+    saveProductData: mutation.mutateAsync,
     isSaving: mutation.isPending,
+    error: mutation.error,
   };
 };

@@ -7,6 +7,7 @@ import {
   DashboardSidebar,
   MobileSheetSidebar,
 } from "@/components/layout/dashboard-sidebar";
+import { ModeToggle } from "@/components/layout/mode-toggle";
 import { NavbarUserInfo } from "@/components/layout/navbar";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 import { dashboardConfig } from "@/config/dashboard";
@@ -55,6 +56,7 @@ export default async function DashboardLayout({
         <div className="flex flex-1 flex-col">
           <header className="sticky top-0 z-50 flex h-14 items-center gap-3 bg-background bg-gray-900 px-4 lg:h-[60px] xl:px-10">
             <MobileSheetSidebar links={filteredLinks} />
+            {/* <ModeToggle /> */}
 
             <div className="w-full flex-1">
               {/* <div className="hidden md:block">
@@ -64,7 +66,7 @@ export default async function DashboardLayout({
 
             {/* <Notifications /> */}
             <UserPoints chargeProduct={chargeProduct} />
-            {/* <ModeToggle /> */}
+            <ModeToggle />
             <NavbarUserInfo />
           </header>
 
