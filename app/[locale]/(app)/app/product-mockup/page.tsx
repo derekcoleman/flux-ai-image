@@ -1,27 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import {
-  AutoCaptionField,
-  BatchSizeField,
-  CacheLatentsField,
-  CaptionDropoutRateField,
+  DescriptionField,
   InputImagesField,
-  LearningRateField,
-  LoRARankField,
   ModelNameField,
-  OptimizerField,
-  ResolutionField,
-  StepsField,
-  TriggerWordField,
-  WandbProjectField,
-  WandbSampleIntervalField,
-  WandbSaveIntervalField,
 } from "@/components/product-mockup/FormFields";
 import { ModelInProgress } from "@/components/product-mockup/ModelInProgress";
 import { Button } from "@/components/ui/button";
@@ -32,6 +20,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 import { useSaveProductMockup } from "@/hooks/productMockup/use-save-productMockup";
 
 import {
@@ -41,31 +30,57 @@ import {
 } from "./constants";
 
 export default function TrainModelForm() {
-  const { saveProductData, isSaving } = useSaveProductMockup(() =>
-    form.reset(defaultValues),
-  );
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const { toast } = useToast();
+  const [urls, setUrls] = useState<{
+    cancel: string;
+    stream: string;
+    get: string;
+  } | null>();
+  const [isModelStarted, setIsModelStarted] = useState(false);
 
   const form = useForm<TrainingConfig>({
     resolver: zodResolver(trainingConfigSchema),
-    defaultValues: defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      model_name: defaultValues.model_name,
+    },
   });
+
+  useEffect(() => {
+    const storedTrainingData = localStorage.getItem("modelTrainingData");
+    if (storedTrainingData) {
+      const { urls: storedUrls } = JSON.parse(storedTrainingData);
+      console.log({ storedUrls });
+      setUrls(storedUrls);
+      setIsModelStarted(true);
+    }
+  }, []);
+
+  const { saveProductData, isSaving, error } = useSaveProductMockup((urls) => {
+    setUrls(urls);
+    setIsModelStarted(true);
+    localStorage.setItem(
+      "modelTrainingData",
+      JSON.stringify({
+        urls,
+        modelName: form.getValues("model_name"),
+      }),
+    );
+  });
+
+  console.log({ error });
 
   const onSubmit = async (data: TrainingConfig) => {
     try {
-      setProgress(0);
       const file = data.input_images;
-
-      const progressInterval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 95) {
-            clearInterval(progressInterval);
-            return prev;
-          }
-          return prev + 5;
+      if (!file) {
+        toast({
+          title: "Error",
+          description: "Please select an image file",
+          variant: "destructive",
         });
-      }, 500);
+        return;
+      }
 
       const base64String = await new Promise((resolve) => {
         const reader = new FileReader();
@@ -77,82 +92,81 @@ export default function TrainModelForm() {
       });
 
       await saveProductData({
-        ...data,
+        ...defaultValues,
+        model_name: form.getValues("model_name"),
         input_images: base64String as string,
+        description: form.getValues("description"),
       });
-
-      clearInterval(progressInterval);
-      setProgress(100);
     } catch (error) {
       console.error("Submission error:", error);
+      // The toast for the error is already shown in the mutation's onError
+
+      setUrls(null);
+      setIsModelStarted(false);
+
+      form.setError("model_name", {
+        type: "manual",
+        message:
+          "Model name already exists or is invalid. Please choose a unique name that contains only letters, numbers, and hyphens.",
+      });
+    }
+  };
+
+  const handleCloseModal = () => {
+    if (!isModelStarted) {
+      setUrls(null);
+      form.reset({
+        ...defaultValues,
+        model_name: defaultValues.model_name,
+      });
+      const fileInput = document.querySelector(
+        'input[type="file"]',
+      ) as HTMLInputElement;
+      if (fileInput) fileInput.value = "";
     }
   };
 
   return (
-    <div className="container mx-auto max-w-3xl py-10">
-      <Card className="bg-gray-800">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            Training Configuration
+    <div className="flex min-h-[80vh] items-center justify-center px-4">
+      <Card className="w-full max-w-2xl rounded-2xl border border-gray-700/50 bg-gray-800 bg-opacity-30 shadow-2xl backdrop-blur-lg">
+        <CardHeader className="space-y-4 border-b border-gray-700/50 px-8 pb-8 pt-8">
+          <CardTitle className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-4xl font-bold text-transparent">
+            Train Your Model
           </CardTitle>
-          <CardDescription>
-            Configure your model training parameters
+          <CardDescription className="text-lg text-gray-300">
+            Upload your images and configure training parameters to get started
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-8 py-8">
           <FormProvider {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <ModelNameField control={form.control} models={["ok"]} />
-              <InputImagesField control={form.control} />
-              <TriggerWordField control={form.control} />
-              <AutoCaptionField control={form.control} />
-              <StepsField control={form.control} />
-              <LoRARankField control={form.control} />
-              <WandbProjectField control={form.control} />
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="space-y-8">
+                <ModelNameField control={form.control} />
+                <DescriptionField control={form.control} />
+                <InputImagesField control={form.control} />
+              </div>
 
-              <button
-                type="button"
-                onClick={() => setShowAdvanced(!showAdvanced)}
-                className="flex w-full items-center justify-between rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-left text-sm hover:bg-gray-700"
+              <Button
+                type="submit"
+                disabled={isSaving}
+                className="relative w-full rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 py-6 text-lg font-semibold tracking-wide shadow-lg transition-all duration-300 hover:from-blue-600 hover:to-purple-700 hover:shadow-xl focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-70"
               >
-                <span>
-                  <span className="font-medium">Advanced Settings</span>
-                  <br />
-                  <span className="text-sm text-muted-foreground">
-                    Including Learning Rate and 7 more...
-                  </span>
-                </span>
-                {showAdvanced ? (
-                  <ChevronUp className="h-5 w-5" />
-                ) : (
-                  <ChevronDown className="h-5 w-5" />
-                )}
-              </button>
-
-              {showAdvanced && (
-                <>
-                  <LearningRateField control={form.control} />
-                  <BatchSizeField control={form.control} />
-                  <ResolutionField control={form.control} />
-                  <CaptionDropoutRateField control={form.control} />
-                  <OptimizerField control={form.control} />
-                  <CacheLatentsField control={form.control} />
-                  <WandbSampleIntervalField control={form.control} />
-                  <WandbSaveIntervalField control={form.control} />
-                </>
-              )}
-
-              <Button type="submit" disabled={false} className="w-full">
                 {form.formState.isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
+                  <div className="flex items-center justify-center space-x-3">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                    <span className="text-white">Processing...</span>
+                  </div>
                 ) : (
-                  "Create Training"
+                  <span className="text-white">Start Training</span>
                 )}
               </Button>
-              <ModelInProgress isOpen={isSaving} progress={progress} />
+
+              <ModelInProgress
+                isOpen={isSaving || !!urls || isModelStarted}
+                urls={urls}
+                onClose={handleCloseModal}
+                setIsModelStarted={setIsModelStarted}
+              />
             </form>
           </FormProvider>
         </CardContent>

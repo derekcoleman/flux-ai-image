@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
@@ -30,17 +31,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Locale } from "@/config";
 import {
   Credits,
-  ImageToImageModelName,
   loras,
   model,
+  ModelName,
   Ratio,
-  TextToImageModelName,
+  updateProductModels,
 } from "@/config/constants";
 import {
   ChargeProductSelectDto,
   FluxSelectDto,
   UserCreditSelectDto,
 } from "@/db/type";
+import { useGetTrainedModel } from "@/hooks/trainedModel/use-get-trainedModel";
 import { useGenerator } from "@/hooks/use-genrator";
 import { cn, createRatio } from "@/lib/utils";
 
@@ -102,7 +104,26 @@ export default function Playground({
   chargeProduct?: ChargeProductSelectDto[];
   tab: string;
 }) {
-  const models = tab === "ImageToImage" ? ImageToImageModel : TextToImageModel;
+  const { data: trainedModelsData } = useGetTrainedModel();
+
+  const models = useMemo(() => {
+    const baseModels =
+      tab === "ImageToImage" ? ImageToImageModel : TextToImageModel;
+
+    if (!trainedModelsData?.length) return baseModels;
+
+    const productModels = trainedModelsData
+      .filter((m) => m.trainingStatus === "succeeded")
+      .map((m) => ({
+        id: m.modelPath,
+        name: m.name,
+        description: `Custom trained model - ${m.triggerWord}`,
+        type: "product",
+      }));
+
+    return [...baseModels, ...productModels];
+  }, [tab, trainedModelsData]);
+
   const [isPublic, setIsPublic] = React.useState(true);
   const [selectedModel, setSelectedModel] = React.useState<Model>(models[0]);
   const [numberOfImages, setNumberOfImages] = React.useState<number>(1);
@@ -121,13 +142,14 @@ export default function Playground({
     }
   >();
   const useCreateTask = useCreateTaskMutation();
+
   const [uploadInputImage, setUploadInputImage] = useState<any[]>([]);
   const t = useTranslations("Playground");
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
   const [pricingCardOpen, setPricingCardOpen] = useState(false);
   const [lora, setLora] = React.useState<string>(loras.wukong);
-  const [response, setResponse] = useState<any>(null);
+  const [setResponse] = useState<any>(null);
   const {
     inputPrompt,
     setInputPrompt,
@@ -135,9 +157,6 @@ export default function Playground({
     handleGenerate,
     loading: isgenerateLoading,
   } = useGenerator();
-
-  const ModelName =
-    tab === "ImageToImage" ? ImageToImageModelName : TextToImageModelName;
 
   const queryTask = useQuery({
     queryKey: ["queryFluxTask", fluxId],
@@ -164,6 +183,12 @@ export default function Playground({
       return res.json();
     },
   });
+
+  useEffect(() => {
+    if (trainedModelsData) {
+      updateProductModels(trainedModelsData);
+    }
+  }, [trainedModelsData]);
 
   useEffect(() => {
     const key = "GENERATOR_PROMPT";
@@ -200,8 +225,7 @@ export default function Playground({
       "queryUserPoints",
     ]) as UserCreditSelectDto;
     if (queryData?.credit <= 0) {
-      t("error.insufficientCredits") &&
-        toast.error(t("error.insufficientCredits"));
+      toast.error(t("error.insufficientCredits"));
       setPricingCardOpen(true);
       return;
     }
@@ -389,7 +413,10 @@ export default function Playground({
                           {fluxData?.inputPrompt && (
                             <button
                               className="focus-ring text-content-strong border-stroke-strong hover:border-stroke-stronger data-[state=open]:bg-surface-alpha-light inline-flex h-8 items-center justify-center whitespace-nowrap rounded-lg border bg-transparent px-2.5 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50"
-                              onClick={() => copyPrompt(fluxData?.inputPrompt!)}
+                              onClick={() =>
+                                fluxData?.inputPrompt &&
+                                copyPrompt(fluxData.inputPrompt)
+                              }
                             >
                               <Copy className="icon-xs me-1" />
                               {t("action.copy")}
