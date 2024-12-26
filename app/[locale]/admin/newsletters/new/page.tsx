@@ -20,8 +20,6 @@ export default function CreateNewsletterPage() {
   function onSubmit(input: CreateSchema, error: FormListFieldData | null) {
     if (error) {
       const err = getErrorMessage(error);
-      console.log("error-->", err);
-
       return toast.error(err + "");
     }
     startCreateTransition(() => {

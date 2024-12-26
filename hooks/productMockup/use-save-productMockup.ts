@@ -17,15 +17,17 @@ export const useSaveProductMockup = (
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const mutation = useMutation<Productmockup, Error, Productmockup>({
-    mutationFn: saveProductMockup,
-    onSuccess: (data: any) => {
+  const mutation = useMutation<void, Error, Productmockup>({
+    mutationFn: async (data) => {
+      const result = await saveProductMockup(data);
+      setUrls((result as any).urls);
+    },
+    onSuccess: () => {
       toast({
         title: "Success",
         description: "Product Mockup created successfully",
       });
       queryClient.invalidateQueries({ queryKey: ["productMockUp"] });
-      setUrls(data.urls);
     },
     onError: (error: Error) => {
       toast({

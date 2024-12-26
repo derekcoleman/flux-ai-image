@@ -33,7 +33,6 @@ export async function GET(req: NextRequest) {
     if (model) {
       whereConditions.model = model;
     }
-    console.log(whereConditions, "<<----<<<");
 
     const [fluxData, total] = await Promise.all([
       prisma.fluxData.findMany({

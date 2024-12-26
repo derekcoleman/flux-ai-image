@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
 import { prisma } from "@/db/prisma";
+import { getUserCredit } from "@/db/queries/account";
+import { BillingType } from "@/db/type";
 import { env } from "@/env.mjs";
 import { S3Service } from "@/lib/s3";
 
@@ -25,7 +27,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
+  const needCredit = 100;
+
   try {
+    const account = await getUserCredit(userId);
+    if (account.credit < needCredit) {
+      return NextResponse.json(
+        { error: "Insufficient credit", code: 1000402 },
+        { status: 400 },
+      );
+    }
     const requestData = trainModelSchema.parse(await req.json());
 
     // 1. Upload zip file to storage
@@ -123,6 +134,7 @@ export async function POST(req: NextRequest) {
         },
       },
     );
+
     await prisma.productMockup.create({
       data: {
         userId,
@@ -184,10 +196,25 @@ export async function GET(req: NextRequest) {
     trainingId = url.searchParams.get("trainingId");
 
     if (!trainingId) {
-      return NextResponse.json(
-        { error: "Training ID is required" },
-        { status: 400 },
-      );
+      // If no trainingId is provided, return list of successful models
+      const successfulModels = await prisma.productMockup.findMany({
+        where: {
+          userId,
+          trainingStatus: "succeeded",
+        },
+        select: {
+          id: true,
+          modelName: true,
+          description: true,
+          trainingId: true,
+          triggerWord: true,
+          createdAt: true,
+        },
+      });
+
+      return NextResponse.json({
+        models: successfulModels,
+      });
     }
 
     const replicate = new Replicate({
@@ -206,12 +233,44 @@ export async function GET(req: NextRequest) {
         },
       });
     } else if (trainingStatus.status === "succeeded") {
+      const needCredit = 100;
+      const account = await getUserCredit(userId);
       await prisma.productMockup.update({
         where: { trainingId },
         data: {
           trainingStatus: trainingStatus.status,
           failedReason: null, // Clear any previous error when succeeded
         },
+      });
+
+      await prisma.$transaction(async (tx) => {
+        const newAccount = await tx.userCredit.update({
+          where: { id: account.id },
+          data: {
+            credit: {
+              decrement: needCredit,
+            },
+          },
+        });
+        const billing = await tx.userBilling.create({
+          data: {
+            userId,
+            state: "Done",
+            amount: -needCredit,
+            type: BillingType.Withdraw,
+            description: `Train Model Withdraw`,
+          },
+        });
+
+        await tx.userCreditTransaction.create({
+          data: {
+            userId,
+            credit: -needCredit,
+            balance: newAccount.credit,
+            billingId: billing.id,
+            type: "Train Model",
+          },
+        });
       });
     }
 

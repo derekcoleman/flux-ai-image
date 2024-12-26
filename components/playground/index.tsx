@@ -105,24 +105,63 @@ export default function Playground({
   tab: string;
 }) {
   const { data: trainedModelsData } = useGetTrainedModel();
+  const [productMockups, setProductMockups] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchProductMockups = async () => {
+      try {
+        const token = await getToken();
+        const response = await fetch("/api/products-mockup", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch product mockups");
+        }
+
+        const data = await response.json();
+        if (data.models) {
+          // Process models data if needed
+          setProductMockups(data.models);
+        }
+      } catch (error) {
+        console.error("Error fetching product mockups:", error);
+      }
+    };
+
+    fetchProductMockups();
+  }, []);
 
   const models = useMemo(() => {
     const baseModels =
       tab === "ImageToImage" ? ImageToImageModel : TextToImageModel;
 
-    if (!trainedModelsData?.length) return baseModels;
+    const trainedModels =
+      trainedModelsData
+        ?.filter((m) => m.trainingStatus === "succeeded")
+        .map((m) => ({
+          id: m.modelPath,
+          name: m.name,
+          description: `Custom trained model - ${m.triggerWord}`,
+          type: "product" as const,
+          credits: 10,
+        })) || [];
 
-    const productModels = trainedModelsData
-      .filter((m) => m.trainingStatus === "succeeded")
-      .map((m) => ({
-        id: m.modelPath,
-        name: m.name,
-        description: `Custom trained model - ${m.triggerWord}`,
-        type: "product",
-      }));
+    const mockupModels =
+      productMockups?.map((m) => ({
+        id: `vizyai/${m.modelName}`,
+        name: m.modelName,
+        description: m.description || "No description",
+        type: "product" as const,
+        triggerWord: m.triggerWord,
+      })) || [];
 
-    return [...baseModels, ...productModels];
-  }, [tab, trainedModelsData]);
+    return [...baseModels, ...trainedModels, ...mockupModels];
+  }, [tab, trainedModelsData, productMockups]);
+
+  console.log("models", models);
 
   const [isPublic, setIsPublic] = React.useState(true);
   const [selectedModel, setSelectedModel] = React.useState<Model>(models[0]);
@@ -149,7 +188,7 @@ export default function Playground({
   const queryClient = useQueryClient();
   const [pricingCardOpen, setPricingCardOpen] = useState(false);
   const [lora, setLora] = React.useState<string>(loras.wukong);
-  const [setResponse] = useState<any>(null);
+  const [, setResponse] = useState<any>(null);
   const {
     inputPrompt,
     setInputPrompt,
@@ -528,8 +567,12 @@ export default function Playground({
                       {t("form.submit")}
                       <Icons.PointIcon className="size-[14px]" />
                       <span>
-                        {Number(Credits[selectedModel.id]) *
-                          Number(numberOfImages)}
+                        {selectedModel.type === "product"
+                          ? 10 * numberOfImages // Custom models always cost 10 credits
+                          : selectedModel.credits
+                            ? selectedModel.credits * numberOfImages
+                            : Number(Credits[selectedModel.id]) *
+                              Number(numberOfImages)}
                       </span>
                     </>
                   )}

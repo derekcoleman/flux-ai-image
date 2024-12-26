@@ -23,8 +23,8 @@ export function useCancelTraining(onSuccessCallback: () => void): {
     CancelTrainingParams
   >({
     mutationFn: cancelTrainingRequest,
-    onSuccess: (data) => {
-      console.log("Training cancelled successfully:", data, onSuccessCallback);
+    onSuccess: () => {
+
       queryClient.invalidateQueries({ queryKey: ["training"] });
       onSuccessCallback();
     },

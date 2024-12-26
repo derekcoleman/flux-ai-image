@@ -10,130 +10,129 @@ datasource db {
 
 model ChargeOrder {
   id        Int       @id @default(autoincrement())
-  userId    String    @map(name: "user_id") @db.VarChar(200)
-  userInfo  Json?     @map(name: "user_info") @db.Json
+  userId    String    @map("user_id") @db.VarChar(200)
+  userInfo  Json?     @map("user_info") @db.Json
   amount    Int
   credit    Int
   phase     String    @db.VarChar
   channel   String    @db.VarChar
   currency  String    @db.VarChar
-  paymentAt DateTime? @map(name: "payment_at") @db.Timestamp(6)
+  paymentAt DateTime? @map("payment_at") @db.Timestamp(6)
   result    Json?     @db.Json
-  createdAt DateTime? @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt DateTime? @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamp(6)
 
-  @@map(name: "charge_order")
+  @@map("charge_order")
 }
 
 model ClaimedActivityOrder {
   id            Int      @id @default(autoincrement())
-  chargeOrderId Int      @map(name: "charge_order_id")
-  userId        String   @map(name: "user_id") @db.VarChar(200)
+  chargeOrderId Int      @map("charge_order_id")
+  userId        String   @map("user_id") @db.VarChar(200)
   credit        Int
-  createdAt     DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt     DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
-  activityCode  String   @map(name: "activity_code") @db.VarChar(200)
-  transactionId Int?     @map(name: "transaction_id")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+  activityCode  String   @map("activity_code") @db.VarChar(200)
+  transactionId Int?     @map("transaction_id")
 
-  @@map(name: "claimed_activity_order")
+  @@map("claimed_activity_order")
 }
 
 model ChargeProduct {
   id             Int      @id @default(autoincrement())
   amount         Int
-  originalAmount Int      @map(name: "original_amount")
+  originalAmount Int      @map("original_amount")
   credit         Int
   currency       String   @db.VarChar
   locale         String   @db.VarChar
   title          String   @db.VarChar
   tag            Json?    @db.Json
   message        String?
-  per_image      String?
-  maximum_images String?
   state          String   @db.VarChar
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+  maximum_images String?
+  per_image      String?
   type           String?
-  createdAt      DateTime? @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt      DateTime? @default(now()) @map(name: "updated_at") @db.Timestamp(6)
 
-  @@map(name: "charge_product")
+  @@map("charge_product")
 }
 
 model FluxData {
   id               Int            @id @default(autoincrement())
-  userId           String         @map(name: "user_id") @db.VarChar
-  replicateId      String         @map(name: "replicate_id") @db.VarChar
-  inputPrompt      String?        @map(name: "input_prompt")
-  executePrompt    String?        @map(name: "execute_prompt")
+  userId           String         @map("user_id") @db.VarChar
+  replicateId      String         @map("replicate_id") @db.VarChar
+  inputPrompt      String?        @map("input_prompt")
+  executePrompt    String?        @map("execute_prompt")
   steps            Int?
   guidance         Int?
   interval         Int?
-  inputImageUrl    String?        @map(name: "input_image_url") @db.VarChar
   model            String         @db.VarChar(255)
-  executeStartTime BigInt?        @map(name: "execute_start_time")
-  executeEndTime   BigInt?        @map(name: "execute_end_time")
+  executeStartTime BigInt?        @map("execute_start_time")
+  executeEndTime   BigInt?        @map("execute_end_time")
   locale           String?        @db.VarChar(64)
   aspectRatio      String         @map("aspect_ratio") @db.VarChar
   safetyTolerance  Int?           @map("safety_tolerance")
   seed             Int?
-  taskStatus       String         @map(name: "task_status") @db.VarChar
-  isPrivate        Boolean?       @default(false) @map(name: "is_private")
-  downloadNum      Int            @default(0) @map(name: "download_num")
-  viewsNum         Int            @default(0) @map(name: "views_num")
-  createdAt        DateTime?      @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt        DateTime?      @default(now()) @map(name: "updated_at") @db.Timestamp(6)
-  errorMsg         String?        @map(name: "error_msg")
-  loraUrl          String?        @map("lora_url") @db.Text
-  loraName         String?        @map("lora_name") @db.Text
-  loraScale        Float?         @map("lora_scale") @db.DoublePrecision
+  taskStatus       String         @map("task_status") @db.VarChar
+  isPrivate        Boolean?       @default(false) @map("is_private")
+  downloadNum      Int            @default(0) @map("download_num")
+  viewsNum         Int            @default(0) @map("views_num")
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime       @default(now()) @map("updated_at") @db.Timestamp(6)
+  errorMsg         String?        @map("error_msg")
+  inputImageUrl    String?        @map("input_image_url") @db.VarChar
+  loraName         String?        @map("lora_name") @db.VarChar(255)
+  loraScale        Float?         @map("lora_scale")
+  loraUrl          String?        @map("lora_url") @db.VarChar(255)
   images           FluxAiImages[] @relation("FluxDataToImages")
 
-  @@map(name: "flux_data")
+  @@map("flux_data")
 }
 
 model FluxDownloads {
   id        Int      @id @default(autoincrement())
-  fluxId    Int      @map(name: "flux_id")
-  userId    String   @map(name: "user_id") @db.VarChar(200)
-  createdAt DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  fluxId    Int      @map("flux_id")
+  userId    String   @map("user_id") @db.VarChar(200)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
 
-  @@map(name: "flux_downloads")
+  @@map("flux_downloads")
 }
 
 model FluxViews {
   id        Int      @id @default(autoincrement())
-  fluxId    Int      @map(name: "flux_id")
-  userId    String   @map(name: "user_id") @db.VarChar(200)
-  createdAt DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  fluxId    Int      @map("flux_id")
+  userId    String   @map("user_id") @db.VarChar(200)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
 
-  @@map(name: "flux_views")
+  @@map("flux_views")
 }
 
 model FluxAiImages {
   id        Int      @id @default(autoincrement())
-  fluxId    Int      @map(name: "flux_id")
+  fluxId    Int      @map("flux_id")
+  imageUrl  String   @map("image_url") @db.VarChar
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
   fluxData  FluxData @relation("FluxDataToImages", fields: [fluxId], references: [id], onDelete: Cascade)
-  imageUrl  String   @map(name: "image_url") @db.VarChar
-  createdAt DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
 
-  @@index([fluxId])
-  @@map(name: "flux_ai_images")
+  @@map("flux_ai_images")
 }
 
 model GiftCode {
   id            Int       @id @default(autoincrement())
   code          String    @db.VarChar(256)
-  creditAmount  Int       @map(name: "credit_amount")
+  creditAmount  Int       @map("credit_amount")
   used          Boolean?  @default(false)
-  usedBy        String?   @map(name: "used_by") @db.VarChar(200)
-  usedAt        DateTime? @map(name: "used_at") @db.Timestamp(6)
-  transactionId Int?      @map(name: "transaction_id")
-  createdAt     DateTime  @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  expiredAt     DateTime? @map(name: "expired_at") @db.Timestamp(6)
+  usedBy        String?   @map("used_by") @db.VarChar(200)
+  usedAt        DateTime? @map("used_at") @db.Timestamp(6)
+  transactionId Int?      @map("transaction_id")
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  expiredAt     DateTime? @map("expired_at") @db.Timestamp(6)
 
-  @@map(name: "gift_code")
+  @@map("gift_code")
 }
 
 model media {
@@ -143,12 +142,12 @@ model media {
   url       String   @db.VarChar
   color     String?  @db.VarChar
   blurhash  String?  @db.VarChar
-  fileSize  Int      @map(name: "file_size")
-  fileType  String   @map(name: "file_type") @db.VarChar
+  fileSize  Int      @map("file_size")
+  fileType  String   @map("file_type") @db.VarChar
   md5       String   @db.VarChar
   ext       Json?    @db.Json
-  createdAt DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
 }
 
 model newsletters {
@@ -156,9 +155,9 @@ model newsletters {
   subject   String?   @db.VarChar(200)
   body      String?
   locale    String?   @db.VarChar(10)
-  sentAt    DateTime? @map(name: "sent_at") @db.Timestamp(6)
-  createdAt DateTime  @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt DateTime  @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  sentAt    DateTime? @map("sent_at") @db.Timestamp(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamp(6)
 }
 
 model subscribers {
@@ -166,96 +165,94 @@ model subscribers {
   email          String?   @db.VarChar(120)
   token          String?   @db.VarChar(50)
   locale         String?   @db.VarChar(10)
-  subscribedAt   DateTime? @map(name: "subscribed_at") @db.Timestamp(6)
-  unsubscribedAt DateTime? @map(name: "unsubscribed_at") @db.Timestamp(6)
-
-  updatedAt DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  subscribedAt   DateTime? @map("subscribed_at") @db.Timestamp(6)
+  unsubscribedAt DateTime? @map("unsubscribed_at") @db.Timestamp(6)
+  updatedAt      DateTime  @default(now()) @map("updated_at") @db.Timestamp(6)
 }
 
 model UserBilling {
   id          Int      @id @default(autoincrement())
-  userId      String   @map(name: "user_id") @db.VarChar(200)
+  userId      String   @map("user_id") @db.VarChar(200)
   state       String   @db.VarChar
   amount      Int
   type        String   @db.VarChar
-  fluxId      Int?     @map(name: "flux_id")
+  fluxId      Int?     @map("flux_id")
   description String?  @db.VarChar
-  createdAt   DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt   DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
 
-  @@map(name: "user_billing")
+  @@map("user_billing")
 }
 
 model UserCredit {
   id        Int      @id @default(autoincrement())
-  userId    String   @map(name: "user_id") @db.VarChar(200)
+  userId    String   @map("user_id") @db.VarChar(200)
   credit    Int
-  createdAt DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
 
-  @@map(name: "user_credit")
+  @@map("user_credit")
 }
 
 model UserCreditTransaction {
   id        Int      @id @default(autoincrement())
-  userId    String   @map(name: "user_id") @db.VarChar(200)
+  userId    String   @map("user_id") @db.VarChar(200)
   credit    Int
   balance   Int
-  billingId Int?     @map(name: "billing_id")
+  billingId Int?     @map("billing_id")
   type      String   @db.VarChar
-  createdAt DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
 
-  @@map(name: "user_credit_transaction")
+  @@map("user_credit_transaction")
 }
 
 model UserPaymentInfo {
   id                     Int       @id @default(autoincrement())
-  userId                 String    @map(name: "user_id") @db.VarChar(200)
-  userInfo               Json?     @map(name: "user_info") @db.Json
-  stripeCustomerId       String?   @map(name: "stripe_customer_id") @db.VarChar
-  stripeSubscriptionId   String?   @map(name: "stripe_subscription_id") @db.VarChar
-  stripePriceId          String?   @map(name: "stripe_price_id") @db.VarChar
-  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end") @db.Timestamp(6)
-  createdAt              DateTime  @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt              DateTime  @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  userId                 String    @map("user_id") @db.VarChar(200)
+  userInfo               Json?     @map("user_info") @db.Json
+  stripeCustomerId       String?   @map("stripe_customer_id") @db.VarChar
+  stripeSubscriptionId   String?   @map("stripe_subscription_id") @db.VarChar
+  stripePriceId          String?   @map("stripe_price_id") @db.VarChar
+  stripeCurrentPeriodEnd DateTime? @map("stripe_current_period_end") @db.Timestamp(6)
+  createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt              DateTime  @default(now()) @map("updated_at") @db.Timestamp(6)
 
-  @@map(name: "user_payment_info")
+  @@map("user_payment_info")
 }
 
 model OnboardingAnswers {
-  id               Int       @id @default(autoincrement())
-  userId           String    @map(name: "user_id") @db.VarChar(200) @unique
-  role             String
-  interests        Json
-  designTypes      Json
-  experienceLevel  String
-  goals            Json
-  createdAt        DateTime  @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt        DateTime  @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  id              Int      @id @default(autoincrement())
+  userId          String   @unique @map("user_id") @db.VarChar(200)
+  role            String
+  interests       Json
+  designTypes     Json
+  experienceLevel String
+  goals           Json
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
 
-  @@map(name: "onboarding_answers")
+  @@map("onboarding_answers")
 }
-
 
 model CompanyInformation {
   id             Int      @id @default(autoincrement())
-  userId         String   @map(name: "user_id") @db.VarChar(200) @unique
+  userId         String   @unique @map("user_id") @db.VarChar(200)
   companyName    String   @db.VarChar(255)
   websiteUrl     String   @db.VarChar(255)
-  description    String   @db.Text
-  targetAudience String   @db.Text
-  companyLogo    String?  @db.VarChar(255)
+  description    String
+  targetAudience String
   industry       String   @db.VarChar(255)
-  createdAt      DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt      DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+  companyLogo    String?  @db.VarChar(255)
 
-  @@map(name: "company_information")
+  @@map("company_information")
 }
 
 model Product {
-  id          Int      @id @default(autoincrement()) 
-  userId      String   @map(name: "user_id") @db.VarChar(200)
+  id          Int      @id @default(autoincrement())
+  userId      String   @map("user_id") @db.VarChar(200)
   name        String
   description String
   price       String
@@ -263,55 +260,36 @@ model Product {
   frequency   String?
   category    String
   images      Json
-  createdAt   DateTime @default(now()) 
+  createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@map("products")
 }
 
 model ProductMockup {
-  id                   Int      @id @default(autoincrement())
-  userId               String   @map(name: "user_id") @db.VarChar(200)
-  modelName            String   @map(name: "model_name") @db.VarChar
-  steps                Int
-  loraRank             Int      @map(name: "lora_rank")
-  optimizer            String   @db.VarChar
-  batchSize            Int      @map(name: "batch_size")
-  resolution           String   @db.VarChar
-  trainingStatus       String   @map(name: "training_status") @db.VarChar
-  autocaption          Boolean
-  trainingId           String   @map(name: "training_id") @db.VarChar @unique
-  description          String?  @db.Text
-  imageInput           String   @map(name: "image_input") @db.VarChar
-  triggerWord          String   @map(name: "trigger_word") @db.VarChar
-  learningRate         Float    @map(name: "learning_rate")
-  wandbProject         String   @map(name: "wandb_project") @db.VarChar
-  wandbSaveInterval    Int      @map(name: "wandb_save_interval")
-  captionDropoutRate   Float    @map(name: "caption_dropout_rate")
-  cacheLatentsToDisk   Boolean  @map(name: "cache_latents_to_disk")
-  wandbSampleInterval  Int      @map(name: "wandb_sample_interval")
-  failedReason        String?  @map(name: "failed_reason") @db.Text
-  createdAt            DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-  updatedAt            DateTime @default(now()) @map(name: "updated_at") @db.Timestamp(6)
+  id                  Int       @id @default(autoincrement())
+  userId              String    @map("user_id") @db.VarChar(200)
+  modelName           String    @map("model_name") @db.VarChar
+  steps               Int
+  loraRank            Int       @map("lora_rank")
+  optimizer           String    @db.VarChar
+  batchSize           Int       @map("batch_size")
+  resolution          String    @db.VarChar
+  trainingStatus      String    @map("training_status") @db.VarChar
+  autocaption         Boolean
+  trainingId          String    @unique @map("training_id") @db.VarChar
+  description         String?
+  imageInput          String    @map("image_input") @db.VarChar
+  triggerWord         String    @map("trigger_word") @db.VarChar
+  learningRate        Float     @map("learning_rate")
+  wandbProject        String    @map("wandb_project") @db.VarChar
+  wandbSaveInterval   Int       @map("wandb_save_interval")
+  captionDropoutRate  Float     @map("caption_dropout_rate")
+  cacheLatentsToDisk  Boolean   @map("cache_latents_to_disk")
+  wandbSampleInterval Int       @map("wandb_sample_interval")
+  failedReason        String?   @map("failed_reason")
+  createdAt           DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt           DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
 
-  @@map(name: "product_mockup")
+  @@map("product_mockup")
 }
-
-
-
-
-
-// model BrandAssets {
-//   id             Int      @id @default(autoincrement())
-//   userId         String   @map(name: "user_id") @db.VarChar(200)
-//   primaryColor   String   @map(name: "primary_color") @db.VarChar(7)
-//   secondaryColor String   @map(name: "secondary_color") @db.VarChar(7)
-//   accentColor    String   @map(name: "accent_color") @db.VarChar(7)
-//   brandStyle     String   @db.VarChar
-//   styleGuides    Json?    @map(name: "style_guides") 
-//   brandExamples  Json?    @map(name: "brand_examples")
-//   createdAt      DateTime @default(now()) @map(name: "created_at") @db.Timestamp(6)
-//   updatedAt      DateTime @default(now()) @updatedAt @map(name: "updated_at") @db.Timestamp(6)
-
-//   @@map(name: "brand_assets")
-// }

@@ -1,18 +1,19 @@
 import { model, ModelName } from "@/config/constants";
 
-export const types = ["Flux AI"] as const;
+export const types = ["Flux AI", "product"] as const;
 
 export type ModelType = (typeof types)[number];
 
-export interface Model<Type = string> {
+export interface Model {
   id: string;
   name: string;
   description: string;
+  type: ModelType;
+  credits?: number;
   strengths?: string;
-  type: Type;
 }
 
-export const TextToImageModel: Model<ModelType>[] = [
+export const TextToImageModel: Model[] = [
   {
     id: model.pro,
     name: ModelName[model.pro],
@@ -46,7 +47,7 @@ export const TextToImageModel: Model<ModelType>[] = [
   },
 ];
 
-export const ImageToImageModel: Model<ModelType>[] = [
+export const ImageToImageModel: Model[] = [
   {
     id: model.dev,
     name: ModelName[model.dev],

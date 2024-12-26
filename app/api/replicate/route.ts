@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
       data: {
         userId,
         modelName: requestData.name,
+        trainingId: "",
         steps: 1000,
         loraRank: 16,
         trainingStatus: "pending",

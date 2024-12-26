@@ -15,8 +15,7 @@ export const useSaveReplicateModel = (
 
   const mutation = useMutation<ReplicateModel, Error, ReplicateModel>({
     mutationFn: createReplicateModel,
-    onSuccess: (data) => {
-      console.log("Replicate Model created and saved successfully:", data);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["replicateModels"] });
       reset();
     },
