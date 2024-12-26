@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
@@ -10,7 +11,6 @@ import { Copy } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import BlurFade from "@/components/magicui/blur-fade";
 import { AspectRatioSelector } from "@/components/playground/aspect-selector";
 import { ModelSelector } from "@/components/playground/model-selector";
 import {
@@ -27,22 +27,22 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Locale } from "@/config";
 import {
   Credits,
-  ImageToImageModelName,
   loras,
   model,
+  ModelName,
   Ratio,
-  TextToImageModelName,
+  updateProductModels,
 } from "@/config/constants";
 import {
   ChargeProductSelectDto,
   FluxSelectDto,
   UserCreditSelectDto,
 } from "@/db/type";
+import { useGetTrainedModel } from "@/hooks/trainedModel/use-get-trainedModel";
 import { useGenerator } from "@/hooks/use-genrator";
 import { cn, createRatio } from "@/lib/utils";
 
@@ -104,7 +104,65 @@ export default function Playground({
   chargeProduct?: ChargeProductSelectDto[];
   tab: string;
 }) {
-  const models = tab === "ImageToImage" ? ImageToImageModel : TextToImageModel;
+  const { data: trainedModelsData } = useGetTrainedModel();
+  const [productMockups, setProductMockups] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchProductMockups = async () => {
+      try {
+        const token = await getToken();
+        const response = await fetch("/api/products-mockup", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch product mockups");
+        }
+
+        const data = await response.json();
+        if (data.models) {
+          // Process models data if needed
+          setProductMockups(data.models);
+        }
+      } catch (error) {
+        console.error("Error fetching product mockups:", error);
+      }
+    };
+
+    fetchProductMockups();
+  }, []);
+
+  const models = useMemo(() => {
+    const baseModels =
+      tab === "ImageToImage" ? ImageToImageModel : TextToImageModel;
+
+    const trainedModels =
+      trainedModelsData
+        ?.filter((m) => m.trainingStatus === "succeeded")
+        .map((m) => ({
+          id: m.modelPath,
+          name: m.name,
+          description: `Custom trained model - ${m.triggerWord}`,
+          type: "product" as const,
+          credits: 10,
+        })) || [];
+
+    const mockupModels =
+      productMockups?.map((m) => ({
+        id: `vizyai/${m.modelName}`,
+        name: m.modelName,
+        description: m.description || "No description",
+        type: "product" as const,
+        triggerWord: m.triggerWord,
+      })) || [];
+
+    return [...baseModels, ...trainedModels, ...mockupModels];
+  }, [tab, trainedModelsData, productMockups]);
+
+  console.log("models", models);
+
   const [isPublic, setIsPublic] = React.useState(true);
   const [selectedModel, setSelectedModel] = React.useState<Model>(models[0]);
   const [numberOfImages, setNumberOfImages] = React.useState<number>(1);
@@ -123,13 +181,14 @@ export default function Playground({
     }
   >();
   const useCreateTask = useCreateTaskMutation();
+
   const [uploadInputImage, setUploadInputImage] = useState<any[]>([]);
   const t = useTranslations("Playground");
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
   const [pricingCardOpen, setPricingCardOpen] = useState(false);
   const [lora, setLora] = React.useState<string>(loras.wukong);
-  const [response, setResponse] = useState<any>(null);
+  const [, setResponse] = useState<any>(null);
   const {
     inputPrompt,
     setInputPrompt,
@@ -137,9 +196,6 @@ export default function Playground({
     handleGenerate,
     loading: isgenerateLoading,
   } = useGenerator();
-
-  const ModelName =
-    tab === "ImageToImage" ? ImageToImageModelName : TextToImageModelName;
 
   const queryTask = useQuery({
     queryKey: ["queryFluxTask", fluxId],
@@ -166,6 +222,12 @@ export default function Playground({
       return res.json();
     },
   });
+
+  useEffect(() => {
+    if (trainedModelsData) {
+      updateProductModels(trainedModelsData);
+    }
+  }, [trainedModelsData]);
 
   useEffect(() => {
     const key = "GENERATOR_PROMPT";
@@ -202,8 +264,7 @@ export default function Playground({
       "queryUserPoints",
     ]) as UserCreditSelectDto;
     if (queryData?.credit <= 0) {
-      t("error.insufficientCredits") &&
-        toast.error(t("error.insufficientCredits"));
+      toast.error(t("error.insufficientCredits"));
       setPricingCardOpen(true);
       return;
     }
@@ -302,7 +363,8 @@ export default function Playground({
               </div>
             )}
 
-            {selectedModel.id === model.dev && (
+            {(selectedModel.id === model.dev ||
+              selectedModel.id === model.upscaler) && (
               <div className="flx flex-col gap-4">
                 <HoverCard openDelay={200}>
                   <HoverCardTrigger asChild>
@@ -390,7 +452,10 @@ export default function Playground({
                           {fluxData?.inputPrompt && (
                             <button
                               className="focus-ring text-content-strong border-stroke-strong hover:border-stroke-stronger data-[state=open]:bg-surface-alpha-light inline-flex h-8 items-center justify-center whitespace-nowrap rounded-lg border bg-transparent px-2.5 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50"
-                              onClick={() => copyPrompt(fluxData?.inputPrompt!)}
+                              onClick={() =>
+                                fluxData?.inputPrompt &&
+                                copyPrompt(fluxData.inputPrompt)
+                              }
                             >
                               <Copy className="icon-xs me-1" />
                               {t("action.copy")}
@@ -502,8 +567,12 @@ export default function Playground({
                       {t("form.submit")}
                       <Icons.PointIcon className="size-[14px]" />
                       <span>
-                        {Number(Credits[selectedModel.id]) *
-                          Number(numberOfImages)}
+                        {selectedModel.type === "product"
+                          ? 10 * numberOfImages // Custom models always cost 10 credits
+                          : selectedModel.credits
+                            ? selectedModel.credits * numberOfImages
+                            : Number(Credits[selectedModel.id]) *
+                              Number(numberOfImages)}
                       </span>
                     </>
                   )}

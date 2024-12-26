@@ -9,6 +9,7 @@ export const useSaveOnboarding = (): {
   saveOnboardingData: (data: OnboardingAnswers) => void;
   isSaving: boolean;
 } => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mutation = useMutation<any, Error, OnboardingAnswers>({
     mutationFn: saveOnboardingAnswers,
     onSuccess: (data) => {

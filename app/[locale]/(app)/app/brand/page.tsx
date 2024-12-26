@@ -125,8 +125,8 @@ export default function BrandAssets() {
       <div className="mb-8">
         <h1 className="mb-2 text-3xl font-bold text-white">Brand Assets</h1>
         <p className="text-gray-400">
-          Define your brand's visual identity to ensure consistent AI-generated
-          content
+          Define your brand&apos;s visual identity to ensure consistent
+          AI-generated content
         </p>
       </div>
 

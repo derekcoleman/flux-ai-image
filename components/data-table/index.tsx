@@ -8,6 +8,7 @@ import { TrashIcon } from "lucide-react";
 
 import { PageProps } from "./types";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface TableProps<TData = any> {
   searchPromise: ReturnType<() => Promise<PageProps<TData>>>;
   deleteAction?: (ids: string[]) => Promise<void>;

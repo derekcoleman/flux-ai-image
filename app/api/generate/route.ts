@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import dayjs from "dayjs";
+import { generate } from "random-words";
 import Replicate from "replicate";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
@@ -30,13 +31,7 @@ function getKey(id: string) {
 export const maxDuration = 60;
 
 const CreateGenerateSchema = z.object({
-  model: z.enum([
-    model.pro,
-    model.schnell,
-    model.dev,
-    model.general,
-    model.freeSchnell,
-  ]),
+  model: z.string(),
   inputPrompt: z.string(),
   aspectRatio: z.enum([
     Ratio.r1,
@@ -76,6 +71,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const data = await req.json();
+
     const {
       model: modelName,
       inputPrompt,
@@ -96,12 +92,14 @@ export async function POST(req: NextRequest) {
     //   triggerWord = loraTriggerWords[loraName || ""];
     // }
 
-    const finalPrompt = triggerWord
-      ? `${inputPrompt} ${triggerWord}`
-      : inputPrompt;
+    const finalPrompt = modelName.startsWith("vizyai/")
+      ? `${inputPrompt} ${generate({ exactly: 1 })[0].toUpperCase()}`
+      : triggerWord
+        ? `${inputPrompt} ${triggerWord}`
+        : inputPrompt;
 
     const modelId =
-      "091495765fa5ef2725a175a57b276ec30dc9d39c22d30410f2ede68a3eab66b3";
+      "58b9f08e13f0909493fac7045ae489ab54112779e92352f7466135386553311c";
     const headers = new Headers();
     if (modelName === model.freeSchnell) {
       const thisMonthStart = dayjs().startOf("M");
@@ -126,7 +124,10 @@ export async function POST(req: NextRequest) {
     }
 
     const account = await getUserCredit(userId);
-    const needCredit = Number(Credits[modelName]) * Number(numberOfImages);
+    const needCredit = modelName.startsWith("vizyai/")
+      ? 10 * Number(numberOfImages)
+      : Number(Credits[modelName]) * Number(numberOfImages);
+
     if (
       (!account.credit && modelName !== model.freeSchnell) ||
       account.credit < needCredit
@@ -143,6 +144,25 @@ export async function POST(req: NextRequest) {
     const replicate = new Replicate({
       auth: env.REPLICATE_API_TOKEN,
     });
+
+    const successfulModels = await prisma.productMockup.findMany({
+      where: {
+        userId,
+        trainingStatus: "succeeded",
+      },
+      select: {
+        id: true,
+        modelName: true,
+        description: true,
+        trainingId: true,
+        triggerWord: true,
+        createdAt: true,
+      },
+    });
+
+    const customModel = successfulModels.find(
+      (m) => m.modelName === modelName.split("/")[1],
+    )?.modelName;
 
     const input = {
       prompt: finalPrompt,
@@ -176,11 +196,61 @@ export async function POST(req: NextRequest) {
         prompt_strength: 0.8,
         num_inference_steps: 28,
       }),
+      ...(modelName === "philz1337x/clarity-upscaler" && {
+        seed: 1337,
+        image: inputImageUrl,
+        dynamic: 6,
+        handfix: "disabled",
+        pattern: false,
+        sharpen: 0,
+        sd_model: "juggernaut_reborn.safetensors [338b85bc4f]",
+        scheduler: "DPM++ 3M SDE Karras",
+        creativity: 0.35,
+        lora_links: "",
+        downscaling: false,
+        resemblance: 0.6,
+        scale_factor: 2,
+        tiling_width: 112,
+        tiling_height: 144,
+        custom_sd_model: "",
+        negative_prompt:
+          "(worst quality, low quality, normal quality:2) JuggernautNegative-neg",
+        num_inference_steps: 18,
+        downscaling_resolution: 768,
+      }),
+      ...(modelName === "vizyai/product-photography" && {
+        model: "dev",
+        go_fast: false,
+        lora_scale: 1,
+        megapixels: "1",
+        num_outputs: numberOfImages,
+        guidance_scale: 3,
+        prompt_strength: 0.8,
+        extra_lora_scale: 1,
+        num_inference_steps: 28,
+      }),
+      ...(modelName === `vizyai/${customModel}` && {
+        model: "dev",
+        go_fast: false,
+        lora_scale: 1,
+        megapixels: "1",
+        num_outputs: numberOfImages,
+        output_format: "webp",
+        guidance_scale: 3,
+        output_quality: 80,
+        prompt_strength: 0.8,
+        extra_lora_scale: 1,
+        num_inference_steps: 28,
+      }),
     };
 
-    const replicateRes = await replicate.run(`${modelName}:${modelId}`, {
-      input,
-    });
+    const [owner, modelPath] = modelName.split("/");
+    const replicateRes = await replicate.run(
+      `${owner}/${modelPath}:${modelId}`,
+      {
+        input,
+      },
+    );
 
     if (!replicateRes) {
       return NextResponse.json(

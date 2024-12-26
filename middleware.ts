@@ -45,7 +45,6 @@ export default clerkMiddleware(async (auth, req) => {
   if (process.env.EDGE_CONFIG && env.VERCEL_ENV !== "development") {
     const blockedIPs = await get<string[]>("blocked_ips");
     const ip = getIP(req);
-    console.log("ip-->", ip);
 
     if (blockedIPs?.includes(ip)) {
       if (isApi) {

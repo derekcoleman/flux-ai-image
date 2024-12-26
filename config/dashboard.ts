@@ -39,6 +39,17 @@ export const dashboardConfig: DashboardConfig = {
           icon: "Images",
         },
         {
+          title: "Marketing",
+          icon: "Megaphone",
+          children: [
+            {
+              title: "productMockUps",
+              href: "/app/product-mockup",
+              icon: "Layers2",
+            },
+          ],
+        },
+        {
           title: "Company",
           icon: "Building",
           children: [

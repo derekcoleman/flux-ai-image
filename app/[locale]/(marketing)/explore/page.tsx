@@ -19,6 +19,7 @@ import { createRatio } from "@/lib/utils";
 interface RootLayoutProps {
   params: { locale: string };
 }
+
 export async function generateMetadata({
   params: { locale },
 }: Omit<RootLayoutProps, "children">) {

@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   AlertTriangle,
   ArrowRight,
@@ -21,14 +23,15 @@ import {
   Images,
   Languages,
   Laptop,
+  Layers2,
   LineChart,
   Loader2,
   LucideIcon,
   LucideProps,
+  Megaphone,
   Moon,
   MoreVertical,
   Plus,
-  Puzzle,
   RectangleHorizontal,
   RectangleVertical,
   Search,
@@ -48,6 +51,8 @@ export type Icon = LucideIcon;
 export const Icons = {
   Building: Building,
   Building2: Building2,
+  Layers2: Layers2,
+  Megaphone: Megaphone,
   Target: Target,
   FolderKanban: FolderKanban,
   Video: Video,
@@ -116,9 +121,9 @@ export const Icons = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       {...props}
     >
       <rect width="14" height="18" x="6" y="2" rx="2" />
@@ -132,9 +137,9 @@ export const Icons = {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       {...props}
     >
       <rect height="14" width="18" y="6" x="2" rx="2" />

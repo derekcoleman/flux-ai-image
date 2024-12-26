@@ -34,7 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LoraConfig, loras, model } from "@/config/constants";
+import { LoraConfig, model } from "@/config/constants";
 import { useMutationObserver } from "@/hooks/use-mutation-observer";
 import { cn } from "@/lib/utils";
 
@@ -52,6 +52,7 @@ interface ModelSelectorProps extends PopoverProps {
 
 export function ModelSelector({
   models,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   types,
   selectedModel,
   onChange,
@@ -62,6 +63,10 @@ export function ModelSelector({
   const [open, setOpen] = React.useState(false);
   const [peekedModel, setPeekedModel] = React.useState<Model>(models[0]);
   const t = useTranslations("Playground");
+
+  // Separate models into base and custom models
+  const baseModels = models.filter((model) => model.type === "Flux AI");
+  const customModels = models.filter((model) => model.type === "product");
 
   return (
     <div className="flex flex-col gap-2">
@@ -88,7 +93,6 @@ export function ModelSelector({
               className="w-full justify-between bg-transparent"
             >
               {selectedModel ? selectedModel.name : "Select a model..."}
-
               <Icons.CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
@@ -124,24 +128,36 @@ export function ModelSelector({
                   <CommandInput placeholder="Search Models..." />
                   <CommandEmpty>No Models found.</CommandEmpty>
                   <HoverCardTrigger />
-                  {types.map((type) => (
-                    <CommandGroup key={type} heading={type}>
-                      {models
-                        .filter((model) => model.type === type)
-                        .map((model) => (
-                          <ModelItem
-                            key={model.id}
-                            model={model}
-                            isSelected={selectedModel?.id === model.id}
-                            onPeek={(model) => setPeekedModel(model)}
-                            onSelect={() => {
-                              onChange(model);
-                              setOpen(false);
-                            }}
-                          />
-                        ))}
+                  <CommandGroup heading="Flux AI">
+                    {baseModels.map((model) => (
+                      <ModelItem
+                        key={model.id}
+                        model={model}
+                        isSelected={selectedModel?.id === model.id}
+                        onPeek={(model) => setPeekedModel(model)}
+                        onSelect={() => {
+                          onChange(model);
+                          setOpen(false);
+                        }}
+                      />
+                    ))}
+                  </CommandGroup>
+                  {customModels.length > 0 && (
+                    <CommandGroup heading="Your Trained Models">
+                      {customModels.map((model) => (
+                        <ModelItem
+                          key={model.id}
+                          model={model}
+                          isSelected={selectedModel?.id === model.id}
+                          onPeek={(model) => setPeekedModel(model)}
+                          onSelect={() => {
+                            onChange(model);
+                            setOpen(false);
+                          }}
+                        />
+                      ))}
                     </CommandGroup>
-                  ))}
+                  )}
                 </CommandList>
               </Command>
             </HoverCard>
@@ -159,7 +175,7 @@ export function ModelSelector({
               <SelectGroup>
                 <SelectLabel>{t("form.loraLabel")}</SelectLabel>
                 {Object.keys(LoraConfig).map((key) => (
-                  <SelectItem value={key}>
+                  <SelectItem key={key} value={key}>
                     {LoraConfig[key].styleName}
                   </SelectItem>
                 ))}

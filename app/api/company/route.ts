@@ -211,8 +211,6 @@ async function handleCompanyLogo(
   companyLogo: string | null,
   s3Service: S3Service,
 ) {
-  console.log(companyLogo, existingCompany.companyLogo, "ok");
-
   if (companyLogo === null && existingCompany.companyLogo) {
     return await deleteExistingLogo(existingCompany, s3Service);
   }
