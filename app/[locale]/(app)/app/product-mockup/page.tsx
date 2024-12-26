@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 
+import { useAuth } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { Loader2, Plus, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -89,22 +91,6 @@ function TrainingRow({
       onStatusChange(training.id, trainingStatus);
     }
   }, [trainingStatus, training.id, training.status, onStatusChange]);
-
-  // if (isLoading) {
-  //   return (
-  //     <TableRow className="border-gray-700/50">
-  //       <TableCell className="py-4">
-  //         <Skeleton className="h-12 w-48" />
-  //       </TableCell>
-  //       <TableCell className="py-4">
-  //         <Skeleton className="h-12 w-32" />
-  //       </TableCell>
-  //       <TableCell className="py-4">
-  //         <Skeleton className="h-10 w-40" />
-  //       </TableCell>
-  //     </TableRow>
-  //   );
-  // }
 
   return (
     <>
@@ -224,6 +210,17 @@ export default function TrainModelForm() {
   const [trainings, setTrainings] = useState<Training[]>([]);
   const [open, setOpen] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  const { getToken } = useAuth();
+
+  const { data } = useQuery({
+    queryKey: ["queryUserPoints"],
+    queryFn: async () => {
+      return fetch(`/api/account`, {
+        headers: { Authorization: `Bearer ${await getToken()}` },
+      }).then((res) => res.json());
+    },
+  });
 
   const form = useForm<TrainingConfig>({
     resolver: zodResolver(trainingConfigSchema),
@@ -354,12 +351,32 @@ export default function TrainModelForm() {
             Train your models and manage your mockups
           </p>
         </div>
-        <Sheet open={open} onOpenChange={setOpen}>
+        <Sheet open={data?.credit >= 100 ? open : false} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button className="bg-white text-gray-800 hover:bg-gray-100">
-              <Plus className="mr-2 h-4 w-4" />
-              New Model
-            </Button>
+            <div>
+              <Button
+                className="bg-white text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={data?.credit < 100}
+                onClick={() => {
+                  if (data?.credit < 100) {
+                    toast({
+                      title: "Insufficient Credits",
+                      description:
+                        "You need at least 100 credits to create a new model",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                New Model
+              </Button>
+              {data?.credit < 100 && (
+                <p className="mt-2 text-sm text-red-500">
+                  You need at least 100 credits to create a new model
+                </p>
+              )}
+            </div>
           </SheetTrigger>
           <SheetContent className="w-full border border-gray-700/50 bg-gray-800 bg-opacity-30 backdrop-blur-lg sm:max-w-lg">
             <SheetHeader className="space-y-4 pb-8">
@@ -431,13 +448,6 @@ export default function TrainModelForm() {
                   Start by creating a new model training
                 </p>
               </div>
-              <Button
-                onClick={() => setOpen(true)}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                New Model
-              </Button>
             </div>
           ) : (
             <Table>
