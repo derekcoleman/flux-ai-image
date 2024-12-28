@@ -106,18 +106,18 @@ export function ModelSelector({
               >
                 <div className="grid gap-2">
                   <h4 className="font-medium leading-none">
-                    {peekedModel.name}
+                    {peekedModel?.name}
                   </h4>
                   <div className="text-sm text-muted-foreground">
-                    {peekedModel.description}
+                    {peekedModel?.description}
                   </div>
-                  {peekedModel.strengths ? (
+                  {peekedModel?.strengths ? (
                     <div className="mt-4 grid gap-2">
                       <h5 className="text-sm font-medium leading-none">
                         Strengths
                       </h5>
                       <ul className="text-sm text-muted-foreground">
-                        {peekedModel.strengths}
+                        {peekedModel?.strengths}
                       </ul>
                     </div>
                   ) : null}
@@ -128,20 +128,22 @@ export function ModelSelector({
                   <CommandInput placeholder="Search Models..." />
                   <CommandEmpty>No Models found.</CommandEmpty>
                   <HoverCardTrigger />
-                  <CommandGroup heading="Flux AI">
-                    {baseModels.map((model) => (
-                      <ModelItem
-                        key={model.id}
-                        model={model}
-                        isSelected={selectedModel?.id === model.id}
-                        onPeek={(model) => setPeekedModel(model)}
-                        onSelect={() => {
-                          onChange(model);
-                          setOpen(false);
-                        }}
-                      />
-                    ))}
-                  </CommandGroup>
+                  {customModels && baseModels.length > 0 && (
+                    <CommandGroup heading="Flux AI">
+                      {baseModels.map((model) => (
+                        <ModelItem
+                          key={model.id}
+                          model={model}
+                          isSelected={selectedModel?.id === model.id}
+                          onPeek={(model) => setPeekedModel(model)}
+                          onSelect={() => {
+                            onChange(model);
+                            setOpen(false);
+                          }}
+                        />
+                      ))}
+                    </CommandGroup>
+                  )}
                   {customModels.length > 0 && (
                     <CommandGroup heading="Your Trained Models">
                       {customModels.map((model) => (
@@ -187,7 +189,6 @@ export function ModelSelector({
     </div>
   );
 }
-
 interface ModelItemProps {
   model: Model;
   isSelected: boolean;

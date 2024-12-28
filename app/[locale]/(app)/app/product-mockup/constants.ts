@@ -14,7 +14,8 @@ export const defaultValues = {
   resolution: "512,768,1024",
   autocaption: true,
   input_images: undefined,
-  trigger_word: "TOK",
+  product_name: "",
+  trigger_word: "",
   learning_rate: 0.0004,
   wandb_project: "flux_train_replicate",
   wandb_save_interval: 100,
@@ -48,7 +49,8 @@ export const trainingConfigSchema = z.object({
       return false;
     return true;
   }, "Please upload a ZIP file"),
-  trigger_word: z.string().min(1),
+  product_name: z.string().min(1, "Product name is required"),
+  trigger_word: z.string(),
   learning_rate: z.number().positive(),
   wandb_project: z.string(),
   wandb_save_interval: z.number().positive(),
