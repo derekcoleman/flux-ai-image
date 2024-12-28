@@ -19,6 +19,7 @@ export const useSaveProductMockup = (
 
   const mutation = useMutation<void, Error, Productmockup>({
     mutationFn: async (data) => {
+      console.log(data, "here is my all the data");
       const result = await saveProductMockup(data);
       setUrls((result as any).urls);
     },

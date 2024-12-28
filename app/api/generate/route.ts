@@ -3,7 +3,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import dayjs from "dayjs";
-import { generate } from "random-words";
 import Replicate from "replicate";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
@@ -47,6 +46,7 @@ const CreateGenerateSchema = z.object({
   locale: z.string().default("en"),
   loraName: z.string().optional(),
   inputImageUrl: z.string().url().optional(),
+  productName: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -80,7 +80,10 @@ export async function POST(req: NextRequest) {
       locale,
       loraName,
       inputImageUrl,
+      productName,
     } = CreateGenerateSchema.parse(data);
+
+    console.log("productName", productName);
 
     if (
       Object.prototype.hasOwnProperty.call(loraTriggerWords, loraName || "")
@@ -93,7 +96,7 @@ export async function POST(req: NextRequest) {
     // }
 
     const finalPrompt = modelName.startsWith("vizyai/")
-      ? `${inputPrompt} ${generate({ exactly: 1 })[0].toUpperCase()}`
+      ? `${inputPrompt} in ${productName?.toUpperCase() || ""} style`
       : triggerWord
         ? `${inputPrompt} ${triggerWord}`
         : inputPrompt;
