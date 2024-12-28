@@ -11,6 +11,7 @@ export interface Model {
   type: ModelType;
   credits?: number;
   strengths?: string;
+  triggerWord?: string;
 }
 
 export const TextToImageModel: Model[] = [

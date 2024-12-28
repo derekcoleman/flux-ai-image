@@ -1,9 +1,9 @@
+/* eslint-disable react/react-in-jsx-scope */
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useAuth } from "@clerk/nextjs";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Plus, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -12,6 +12,7 @@ import {
   DescriptionField,
   InputImagesField,
   ModelNameField,
+  ProductNameField,
 } from "@/components/product-mockup/FormFields";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,20 +46,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { useCancelTraining } from "@/hooks/productMockup/use-cancel-productMockup";
 import { useGetProductMockups } from "@/hooks/productMockup/use-get-productMockup";
 import { useSaveProductMockup } from "@/hooks/productMockup/use-save-productMockup";
 
-import {
-  defaultValues,
-  TrainingConfig,
-  trainingConfigSchema,
-} from "./constants";
+import { defaultValues, TrainingConfig } from "./constants";
+import ProductMockupStudio from "./ProductMockupStudio";
 
 interface Training {
   id: string;
   modelName: string;
+  productName: string;
   status: string;
   urls: {
     cancel: string;
@@ -101,6 +101,9 @@ function TrainingRow({
               {training.modelName}
             </span>
             <span className="text-sm text-gray-400">ID: {training.id}</span>
+            <span className="text-sm text-gray-400">
+              Product: {training.productName}
+            </span>
           </div>
         </TableCell>
         <TableCell className="py-4">
@@ -183,6 +186,12 @@ function TrainingRow({
                   </p>
                 </div>
                 <div>
+                  <p className="text-sm text-gray-400">Product Name</p>
+                  <p className="font-medium text-gray-200">
+                    {training.productName}
+                  </p>
+                </div>
+                <div>
                   <p className="text-sm text-gray-400">Training ID</p>
                   <p className="font-medium text-gray-200">{training.id}</p>
                 </div>
@@ -195,6 +204,10 @@ function TrainingRow({
                   <p className="font-medium text-gray-200">
                     {new Date().toLocaleString()}
                   </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Number of Images</p>
+                  <p className="font-medium text-gray-200">10-20</p>
                 </div>
               </div>
             </div>
@@ -210,9 +223,7 @@ export default function TrainModelForm() {
   const [trainings, setTrainings] = useState<Training[]>([]);
   const [open, setOpen] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-
   const { getToken } = useAuth();
-
   const { data } = useQuery({
     queryKey: ["queryUserPoints"],
     queryFn: async () => {
@@ -223,7 +234,6 @@ export default function TrainModelForm() {
   });
 
   const form = useForm<TrainingConfig>({
-    resolver: zodResolver(trainingConfigSchema),
     defaultValues: {
       ...defaultValues,
       model_name: defaultValues.model_name,
@@ -234,7 +244,6 @@ export default function TrainModelForm() {
     const storedTrainings = localStorage.getItem("trainings");
     if (storedTrainings) {
       const parsedTrainings = JSON.parse(storedTrainings);
-      // Sort trainings to show running ones first
       const sortedTrainings = parsedTrainings.sort(
         (a: Training, b: Training) => {
           if (a.status === "training" && b.status !== "training") return -1;
@@ -251,11 +260,11 @@ export default function TrainModelForm() {
     const newTraining: Training = {
       id: urls.get.split("/").pop() || "",
       modelName: form.getValues("model_name"),
+      productName: form.getValues("product_name"),
       status: "training",
       urls,
     };
 
-    // Add new training at the beginning since it's running
     const updatedTrainings = [newTraining, ...trainings];
     setTrainings(updatedTrainings);
     localStorage.setItem("trainings", JSON.stringify(updatedTrainings));
@@ -273,7 +282,6 @@ export default function TrainModelForm() {
     const updatedTrainings = trainings.map((t) =>
       t.id === id ? { ...t, status } : t,
     );
-    // Re-sort trainings after status change
     const sortedTrainings = updatedTrainings.sort((a, b) => {
       if (a.status === "training" && b.status !== "training") return -1;
       if (a.status !== "training" && b.status === "training") return 1;
@@ -317,16 +325,29 @@ export default function TrainModelForm() {
         reader.readAsDataURL(file);
       });
 
+      const modelName = form
+        .getValues("model_name")
+        .split(" ")
+        .join("-")
+        .toLowerCase();
+      const triggerWord = form
+        .getValues("product_name")
+        .split(" ")
+        .join("")
+        .toUpperCase();
+
       await saveProductData({
         ...defaultValues,
-        model_name: form.getValues("model_name"),
+        model_name: modelName,
         input_images: base64String as string,
         description: form.getValues("description"),
+        trigger_word: triggerWord,
       });
 
       form.reset({
         ...defaultValues,
         model_name: defaultValues.model_name,
+        product_name: "",
       });
       const fileInput = document.querySelector(
         'input[type="file"]',
@@ -334,11 +355,6 @@ export default function TrainModelForm() {
       if (fileInput) fileInput.value = "";
     } catch {
       console.error("Submission error");
-      form.setError("model_name", {
-        type: "manual",
-        message:
-          "Model name already exists or is invalid. Please choose a unique name that contains only letters, numbers, and hyphens.",
-      });
     }
   };
 
@@ -346,133 +362,174 @@ export default function TrainModelForm() {
     <div className="flex min-h-[80vh] flex-col space-y-8 px-4 py-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Create Training</h1>
+          <h1 className="text-3xl font-bold">Product Mockup Studio</h1>
           <p className="text-muted-foreground">
-            Train your models and manage your mockups
+            Generate images and train custom models
           </p>
         </div>
-        <Sheet open={data?.credit >= 100 ? open : false} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <div>
-              <Button
-                className="bg-white text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={data?.credit < 100}
-                onClick={() => {
-                  if (data?.credit < 100) {
-                    toast({
-                      title: "Insufficient Credits",
-                      description:
-                        "You need at least 100 credits to create a new model",
-                      variant: "destructive",
-                    });
-                  }
-                }}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                New Model
-              </Button>
-              {data?.credit < 100 && (
-                <p className="mt-2 text-sm text-red-500">
-                  You need at least 100 credits to create a new model
-                </p>
-              )}
-            </div>
-          </SheetTrigger>
-          <SheetContent className="w-full border border-gray-700/50 bg-gray-800 bg-opacity-30 backdrop-blur-lg sm:max-w-lg">
-            <SheetHeader className="space-y-4 pb-8">
-              <SheetTitle className="text-4xl font-bold text-gray-200">
-                Train Your Model
-              </SheetTitle>
-              <SheetDescription className="text-lg text-gray-400">
-                Upload your images and configure training parameters to get
-                started
-              </SheetDescription>
-            </SheetHeader>
-            <FormProvider {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
-              >
-                <div className="space-y-8">
-                  <ModelNameField control={form.control} />
-                  <DescriptionField control={form.control} />
-                  <InputImagesField control={form.control} />
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={isSaving}
-                  className="relative w-full rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 py-6 text-lg font-semibold tracking-wide shadow-lg transition-all duration-300 hover:from-blue-600 hover:to-purple-700 hover:shadow-xl focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-70"
-                >
-                  {form.formState.isSubmitting ? (
-                    <div className="flex items-center justify-center space-x-3">
-                      <Loader2 className="h-6 w-6 animate-spin" />
-                      <span className="text-gray-200">Processing...</span>
-                    </div>
-                  ) : (
-                    <span className="text-gray-200">Start Training</span>
-                  )}
-                </Button>
-              </form>
-            </FormProvider>
-          </SheetContent>
-        </Sheet>
       </div>
 
-      <Card className="w-full rounded-2xl border border-gray-700/50 bg-gray-800 bg-opacity-30 shadow-2xl backdrop-blur-lg">
-        <CardHeader className="border-b border-gray-700/50 px-8 pb-8 pt-8">
-          <CardTitle className="text-2xl font-bold text-gray-200">
-            Trainings
-          </CardTitle>
-          <CardDescription className="text-gray-400">
-            Monitor and manage your ongoing model trainings
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-6">
-          {isInitialLoading ? (
-            <div className="space-y-4">
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-            </div>
-          ) : trainings.length === 0 ? (
-            <div className="flex min-h-[200px] flex-col items-center justify-center space-y-4 rounded-lg border border-dashed border-gray-700/50 bg-gray-900/20 p-8 text-center">
-              <div className="rounded-full bg-gray-900/40 p-3">
-                <Plus className="h-6 w-6 text-gray-400" />
-              </div>
-              <div>
-                <p className="text-lg font-medium text-gray-200">
-                  No trainings yet
-                </p>
-                <p className="text-sm text-gray-400">
-                  Start by creating a new model training
-                </p>
-              </div>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="border-gray-700/50 hover:bg-gray-800/50">
-                  <TableHead className="text-gray-400">Model Name</TableHead>
-                  <TableHead className="text-gray-400">Status</TableHead>
-                  <TableHead className="text-gray-400">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {trainings.map((training) => (
-                  <TrainingRow
-                    key={training.id}
-                    training={training}
-                    onStatusChange={handleStatusChange}
-                    onCancel={handleCancelTraining}
-                    isCancelling={isCancelling}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="generate" className="w-full space-y-6">
+        <TabsList className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-transparent p-1">
+          <TabsTrigger
+            value="generate"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-sm"
+          >
+            Image Generation
+          </TabsTrigger>
+          <TabsTrigger
+            value="train"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-6 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-sm"
+          >
+            Model Training
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent
+          value="generate"
+          className="mt-6 focus-visible:outline-none"
+        >
+          <ProductMockupStudio />
+        </TabsContent>
+
+        <TabsContent value="train" className="mt-6 focus-visible:outline-none">
+          <div className="mb-4 flex justify-end">
+            <Sheet
+              open={data?.credit >= 100 ? open : false}
+              onOpenChange={setOpen}
+            >
+              <SheetTrigger asChild>
+                <div>
+                  <Button
+                    className="bg-white text-gray-800 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={data?.credit < 100}
+                    onClick={() => {
+                      if (data?.credit < 100) {
+                        toast({
+                          title: "Insufficient Credits",
+                          description:
+                            "You need at least 100 credits to create a new model",
+                          variant: "destructive",
+                        });
+                      }
+                    }}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    New Model
+                  </Button>
+                  {data?.credit < 100 && (
+                    <p className="mt-2 text-sm text-red-500">
+                      You need at least 100 credits to create a new model
+                    </p>
+                  )}
+                </div>
+              </SheetTrigger>
+              <SheetContent className="w-full overflow-y-auto border border-gray-700/50 bg-gray-800 bg-opacity-30 backdrop-blur-lg sm:max-w-lg">
+                <SheetHeader>
+                  <SheetTitle className="text-2xl font-bold text-gray-200">
+                    Create Your Product Model
+                  </SheetTitle>
+                  <SheetDescription className="text-gray-400">
+                    <div className="mt-2 rounded-lg border border-gray-700/50 bg-gray-800/50 p-4">
+                      <h4 className="font-medium text-gray-300">
+                        Quick Guide:
+                      </h4>
+                      <ul className="mt-2 list-disc pl-4 text-sm">
+                        <li>Upload 10-20 clear product images in ZIP format</li>
+                        <li>Training takes ~20 minutes</li>
+                      </ul>
+                    </div>
+                  </SheetDescription>
+                </SheetHeader>
+
+                <FormProvider {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="mt-6 space-y-6"
+                  >
+                    <ModelNameField control={form.control} />
+                    <ProductNameField control={form.control} />
+                    <DescriptionField control={form.control} />
+                    <InputImagesField control={form.control} />
+
+                    <Button
+                      type="submit"
+                      disabled={isSaving}
+                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600"
+                    >
+                      {isSaving ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Processing...</span>
+                        </div>
+                      ) : (
+                        "Start Training (100 Credits)"
+                      )}
+                    </Button>
+                  </form>
+                </FormProvider>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          <Card className="w-full rounded-2xl border border-gray-700/50 bg-gray-800 bg-opacity-30 shadow-2xl backdrop-blur-lg">
+            <CardHeader className="border-b border-gray-700/50 px-8 pb-8 pt-8">
+              <CardTitle className="text-2xl font-bold text-gray-200">
+                Trainings
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                Monitor and manage your ongoing model trainings
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              {isInitialLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-16 w-full" />
+                  <Skeleton className="h-16 w-full" />
+                  <Skeleton className="h-16 w-full" />
+                </div>
+              ) : trainings.length === 0 ? (
+                <div className="flex min-h-[200px] flex-col items-center justify-center space-y-4 rounded-lg border border-dashed border-gray-700/50 bg-gray-900/20 p-8 text-center">
+                  <div className="rounded-full bg-gray-900/40 p-3">
+                    <Plus className="h-6 w-6 text-gray-400" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-medium text-gray-200">
+                      No trainings yet
+                    </p>
+                    <p className="text-sm text-gray-400">
+                      Start by creating a new model training
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-gray-700/50 hover:bg-gray-800/50">
+                      <TableHead className="text-gray-400">
+                        Model Name
+                      </TableHead>
+                      <TableHead className="text-gray-400">Status</TableHead>
+                      <TableHead className="text-gray-400">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {trainings.map((training) => (
+                      <TrainingRow
+                        key={training.id}
+                        training={training}
+                        onStatusChange={handleStatusChange}
+                        onCancel={handleCancelTraining}
+                        isCancelling={isCancelling}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
