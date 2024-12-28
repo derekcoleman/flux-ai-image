@@ -1,8 +1,11 @@
 import React, { memo } from "react";
 
+import { Upload } from "lucide-react";
+
 import { FormFieldProps } from "@/app/[locale]/(app)/app/product-mockup/types";
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -48,7 +51,7 @@ export const DescriptionField = memo(({ control }: FormFieldProps) => (
         <FormControl>
           <Input
             className="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-white"
-            placeholder="What this training is about..."
+            placeholder="Enter model name"
             {...field}
             onChange={(e) => field.onChange(e.target.value)}
             value={field.value || ""}
@@ -195,21 +198,30 @@ export const InputImagesField = memo(({ control }: FormFieldProps) => (
   <FormField
     control={control}
     name="input_images"
-    render={({ field }) => (
+    render={({ field: { onChange, value, ...field } }) => (
       <FormItem>
-        <FormLabel className="text-white">Images (ZIP file)</FormLabel>
+        <FormLabel className="text-white">Upload Images</FormLabel>
         <FormControl>
-          <Input
-            type="file"
-            accept=".zip"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              field.onChange(file);
-            }}
-            className={`w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-white`}
-          />
+          <div className="relative">
+            <label className="flex min-h-[42px] w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-white hover:bg-gray-600">
+              <Upload className="h-4 w-4" />
+              <span>{value ? value.name : "Select ZIP file"}</span>
+              <Input
+                type="file"
+                accept=".zip"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  onChange(file);
+                }}
+                {...field}
+                className="hidden"
+              />
+            </label>
+          </div>
         </FormControl>
-
+        <FormDescription className="text-sm text-gray-400">
+          Upload a ZIP file with 10-20 high-quality product images
+        </FormDescription>
         <FormMessage />
       </FormItem>
     )}
@@ -541,6 +553,31 @@ export const WandbSaveIntervalField = memo(({ control }: FormFieldProps) => (
     )}
   />
 ));
+
+export function ProductNameField({ control }: FormFieldProps) {
+  return (
+    <FormField
+      control={control}
+      name="product_name"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel className="text-white">Product Name</FormLabel>
+          <FormControl>
+            <Input
+              className="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-white"
+              placeholder="Enter product name"
+              {...field}
+            />
+          </FormControl>
+          <FormDescription className="text-sm text-gray-400">
+            Name of your product for identification
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
 
 ModelNameField.displayName = "ModelNameField";
 DescriptionField.displayName = "DescriptionField";

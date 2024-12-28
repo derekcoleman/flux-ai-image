@@ -145,7 +145,7 @@ const ComfortingMessages: React.FC<ComfortingMessagesProps> = ({
 
   useEffect(() => {
     const changeMessage = () => {
-      const currentMessages = messages[language];
+      const currentMessages = messages[language] || messages.en;
       const randomIndex = Math.floor(Math.random() * currentMessages.length);
       setCurrentMessage(currentMessages[randomIndex]);
     };

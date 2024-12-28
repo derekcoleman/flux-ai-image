@@ -15,6 +15,7 @@ const trainModelSchema = z.object({
   model_name: z.string().min(1),
   description: z.string().min(1),
   input_images: z.string(),
+  trigger_word: z.string().min(1),
 });
 
 export async function POST(req: NextRequest) {
@@ -124,7 +125,7 @@ export async function POST(req: NextRequest) {
           resolution: "512,768,1024",
           autocaption: true,
           input_images: zipFileUrl,
-          trigger_word: "TOK",
+          trigger_word: requestData.trigger_word,
           learning_rate: 0.0004,
           wandb_project: "flux_train_replicate",
           wandb_save_interval: 100,
@@ -149,7 +150,7 @@ export async function POST(req: NextRequest) {
         resolution: "512,768,1024",
         autocaption: true,
         imageInput: zipFileUrl,
-        triggerWord: "TOK",
+        triggerWord: requestData.trigger_word,
         learningRate: 0.0004,
         wandbProject: "flux_train_replicate",
         wandbSaveInterval: 100,

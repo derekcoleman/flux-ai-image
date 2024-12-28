@@ -70,6 +70,8 @@ const useCreateTaskMutation = (config?: {
 
   return useMutation({
     mutationFn: async (values: any) => {
+      console.log("values", values);
+
       const res = await fetch("/api/generate", {
         body: JSON.stringify(values),
         method: "POST",
@@ -105,34 +107,6 @@ export default function Playground({
   tab: string;
 }) {
   const { data: trainedModelsData } = useGetTrainedModel();
-  const [productMockups, setProductMockups] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchProductMockups = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch("/api/products-mockup", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch product mockups");
-        }
-
-        const data = await response.json();
-        if (data.models) {
-          // Process models data if needed
-          setProductMockups(data.models);
-        }
-      } catch (error) {
-        console.error("Error fetching product mockups:", error);
-      }
-    };
-
-    fetchProductMockups();
-  }, []);
 
   const models = useMemo(() => {
     const baseModels =
@@ -147,19 +121,11 @@ export default function Playground({
           description: `Custom trained model - ${m.triggerWord}`,
           type: "product" as const,
           credits: 10,
+          triggerWord: m.triggerWord,
         })) || [];
 
-    const mockupModels =
-      productMockups?.map((m) => ({
-        id: `vizyai/${m.modelName}`,
-        name: m.modelName,
-        description: m.description || "No description",
-        type: "product" as const,
-        triggerWord: m.triggerWord,
-      })) || [];
-
-    return [...baseModels, ...trainedModels, ...mockupModels];
-  }, [tab, trainedModelsData, productMockups]);
+    return [...baseModels, ...trainedModels];
+  }, [tab, trainedModelsData]);
 
   console.log("models", models);
 
@@ -275,6 +241,9 @@ export default function Playground({
         ? uploadInputImage?.[0]?.completedUrl
         : undefined;
       const loraName = selectedModel.id === model.general ? lora : undefined;
+      const productName = models.find((m) => m.id === selectedModel.id);
+
+      console.log("productName", productName);
 
       const res = await useCreateTask.mutateAsync({
         model: selectedModel.id,
@@ -285,6 +254,7 @@ export default function Playground({
         isPrivate: isPublic ? 0 : 1,
         loraName,
         locale,
+        productName: productName?.triggerWord,
       });
       console.log("res--->", res);
       if (!res.error) {
